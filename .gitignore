@@ -1,4 +1,1 @@
-./bin/dataset
-./bin/simToData
-./bin/structDictionary.C
-./bin/start.translate
+./bin/*
