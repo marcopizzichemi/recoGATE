@@ -1,0 +1,15 @@
+/gate/source/addSource sourcePlanar
+/gate/source/sourcePlanar/setType backtoback
+/gate/source/sourcePlanar/gps/centre 0. 0. 0. mm
+/gate/source/sourcePlanar/gps/particle gamma
+/gate/source/sourcePlanar/gps/energytype Mono
+/gate/source/sourcePlanar/gps/monoenergy 0.511 MeV
+/gate/source/sourcePlanar/gps/type Volume
+/gate/source/sourcePlanar/gps/shape Para
+/gate/source/sourcePlanar/gps/halfy 78 mm
+/gate/source/sourcePlanar/gps/halfz 0.1 mm
+/gate/source/sourcePlanar/gps/halfx 91 mm
+/gate/source/sourcePlanar/gps/angtype iso
+
+
+#/gate/source/sourcePlanar/visualize 5000 red 2

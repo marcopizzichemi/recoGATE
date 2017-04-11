@@ -1,0 +1,37 @@
+
+#source will be embedded in a cylinder
+/gate/world/daughters/name cylinderSource
+/gate/world/daughters/insert cylinder
+/gate/cylinderSource/setMaterial Air
+/gate/cylinderSource/geometry/setRmax 100 mm
+/gate/cylinderSource/geometry/setHeight 182 mm
+/gate/cylinderSource/vis/setColor blue
+/gate/cylinderSource/vis/forceWireframe
+/gate/cylinderSource/vis/setVisible 1
+
+
+#uniform source in fov, to test normalization
+
+
+
+
+/gate/source/addSource sourceUniform
+/gate/source/sourceUniform/setType backtoback
+/gate/source/sourceUniform/gps/centre 0. 0. 0. mm
+/gate/source/sourceUniform/gps/particle gamma
+/gate/source/sourceUniform/gps/energytype Mono
+/gate/source/sourceUniform/gps/monoenergy 0.511 MeV
+/gate/source/sourceUniform/gps/type Volume
+/gate/source/sourceUniform/gps/shape Cylinder
+/gate/source/sourceUniform/gps/radius 100 mm
+/gate/source/sourceUniform/gps/halfz 91 mm
+/gate/source/sourceUniform/gps/angtype iso
+
+/gate/source/sourceUniform/attachTo cylinderSource
+
+# ROTATE sources to align to detectors
+/gate/cylinderSource/placement/setRotationAxis 0 1 0
+/gate/cylinderSource/placement/setRotationAngle 90 deg
+
+
+#/gate/source/sourceUniform/visualize 5000 red 2

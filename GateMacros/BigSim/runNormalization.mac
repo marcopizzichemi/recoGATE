@@ -1,0 +1,28 @@
+/vis/disable
+#/control/execute ./visu.mac
+
+/gate/geometry/setMaterialDatabase ./GateMaterials.db
+/control/execute ./physics.mac
+
+/control/execute ./geometry-plates-similar-clearpem.mac    # 2 plates about as big as clearpem
+/control/execute ./attachToSystem.mac
+
+# INITIALIZE
+/gate/run/initialize
+
+/control/execute ./sourcePlanar.mac
+/gate/source/sourcePlanar/setActivity 1000000 becquerel
+
+/gate/geometry/rebuild
+
+# ROOT Output format
+/gate/output/root/enable
+/gate/output/root/setFileName BigNormalization
+/gate/output/root/setRootSinglesFlag 0
+/gate/output/root/setRootCoincidencesFlag 0
+
+/gate/application/setTimeSlice     5  s
+/gate/application/setTimeStart     0.   s
+/gate/application/setTimeStop      5  s
+# S T A R T  the A C Q U I S I T I O N
+/gate/application/startDAQ

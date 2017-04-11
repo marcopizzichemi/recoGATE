@@ -1,0 +1,35 @@
+#/vis/disable
+/control/execute ./visu.mac
+
+/gate/geometry/setMaterialDatabase ./GateMaterials.db
+/control/execute ./physics.mac
+
+/control/execute ./geometry-plates-similar-clearpem.mac    # 2 plates about as big as clearpem
+/control/execute ./attachToSystem.mac
+
+# INITIALIZE
+/gate/run/initialize
+
+
+/control/execute ./sourcesAndBg.mac
+
+# ROTATE sources to align to detectors
+/gate/cubeOfSources/placement/setRotationAxis 1 0 0
+/gate/cubeOfSources/placement/setRotationAngle 0 deg
+
+
+/gate/geometry/rebuild
+
+#/control/execute ./digitizer.mac
+
+# ROOT Output format
+/gate/output/root/enable
+/gate/output/root/setFileName Big
+/gate/output/root/setRootSinglesFlag 0
+/gate/output/root/setRootCoincidencesFlag 0
+
+/gate/application/setTimeSlice     600  s
+/gate/application/setTimeStart     0.   s
+/gate/application/setTimeStop      600  s
+# S T A R T  the A C Q U I S I T I O N
+#/gate/application/startDAQ
