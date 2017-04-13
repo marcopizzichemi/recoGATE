@@ -21,12 +21,12 @@ void * rec_kernel(void* parameter)
 	float centerX = PEM_xLength/2;
 	float centerY = PEM_yLength/2;
 
-	srand( (unsigned)time( NULL ) ); 
+	srand( (unsigned)time( NULL ) );
 
 	float randomDriftX1 = 0, randomDriftY1 = 0, randomDriftZ1 = 0;
 	float randomDriftX2 = 0, randomDriftY2 = 0, randomDriftZ2 = 0;
 
-	for (int i=data->beginNum; i<data->totalNum + data->beginNum; i++)	
+	for (int i=data->beginNum; i<data->totalNum + data->beginNum; i++)
 	{
 
 		DKFZFormat &event = data->listData[i];
@@ -36,17 +36,18 @@ void * rec_kernel(void* parameter)
 
 
 		if(nRays <= 0) {
+
 			float dx = 0;
 			float dy = 0;
-		
-			float x1 = (event.x1+dx); 
+
+			float x1 = (event.x1+dx);
 			float y1 = (event.y1+dy) * cosTheta + event.z1 * sinTheta;
 			float z1 = - (event.y1+dy) * sinTheta + event.z1 * cosTheta;
-			
+
 			float x2 = (event.x2+dx);
 			float y2 = (event.y2+dy) * cosTheta + event.z2 * sinTheta;
 			float z2 = - (event.y2+dy) * sinTheta + event.z2 * cosTheta;
-			
+      // fprintf(stderr,"prima %d\n",i);
 			siddon_rec1( data->ip,
 				     x1, y1, z1,
 				     x2, y2, z2,
@@ -55,20 +56,21 @@ void * rec_kernel(void* parameter)
 					 data->randImage,
 					 data->rand_cut
 				);
+        // fprintf(stderr,"dopo %d\n",i);
 		}
 		else {
 			for(int ray = 0; ray < nRays; ray++) {
 				float dx = next();
 				float dy = next();
 
-				float x1 = (event.x1+dx); 
+				float x1 = (event.x1+dx);
 				float y1 = (event.y1+dy) * cosTheta + event.z1 * sinTheta;
 				float z1 = - (event.y1+dy) * sinTheta + event.z1 * cosTheta;
-				
+
 				float x2 = (event.x2+dx);
 				float y2 = (event.y2+dy) * cosTheta + event.z2 * sinTheta;
 				float z2 = - (event.y2+dy) * sinTheta + event.z2 * cosTheta;
-				
+
 				siddon_rec1( data->ip,
 					     x1, y1, z1,
 					     x2, y2, z2,
@@ -78,17 +80,17 @@ void * rec_kernel(void* parameter)
 						 data->rand_cut
 					);
 			}
-			
+
 		}
-		
+
 	}
 	pthread_exit(NULL);
 }
 
 
 
-void siddon_rec1(struct image_params *ip, 
-		 float x1, float y1, float z1, float x2, float y2, float z2, 
+void siddon_rec1(struct image_params *ip,
+		 float x1, float y1, float z1, float x2, float y2, float z2,
 		 float *image, float *diffImage, float norm, float *randImage, float rand_cut)
 {
 	float PIXELLENGTH = ip->pixelLength;
@@ -96,19 +98,23 @@ void siddon_rec1(struct image_params *ip,
 	int YDim = ip->yDim;
 	int ZDim = ip->zDim;
 
+  // fprintf(stderr,"start %f %d %d %d \n",PIXELLENGTH,XDim,YDim,ZDim);
+  // fprintf(stderr,"before %f %f %f %f %f %f \n",x1,y1,z1,y2,y2,z2);
 	x1 /= float(PIXELLENGTH);
 	y1 /= float(PIXELLENGTH);
 	z1 /= float(PIXELLENGTH);
 	x2 /= float(PIXELLENGTH);
 	y2 /= float(PIXELLENGTH);
 	z2 /= float(PIXELLENGTH);
+
+  // fprintf(stderr,"then %f %f %f %f %f %f \n",x1,y1,z1,y2,y2,z2);
 	register int x, y, z = 0, bv;
 	int   bilstartx, bilstarty, bilstartz, bilstopx, bilstopy, bilstopz,
 		BV, hfsx = XDim / 2, hfsy = YDim / 2, hfsz = ZDim / 2;
 	char  xflag, yflag, zflag;
-	float ax[XDim*2], ay[YDim*2], az[ZDim*2], bx, by, bz, blpx, nsux, 
-		nsuy, nsuz, psux, psuy, psuz, dmin, dminx, dminy, dminz, dmax, 
-		dmaxx, dmaxy, dmaxz, tx, ty, tz, batte, gammatogammaforw, amid, 
+	float ax[XDim*2], ay[YDim*2], az[ZDim*2], bx, by, bz, blpx, nsux,
+		nsuy, nsuz, psux, psuy, psuz, dmin, dminx, dminy, dminz, dmax,
+		dmaxx, dmaxy, dmaxz, tx, ty, tz, batte, gammatogammaforw, amid,
 		blivcm, blivpx, bvattecoeff, battefac, bvattew_, fact, t1, t2;
 	int          *x_ = NULL, *y_ = NULL, *z_ = NULL;
 	float        *alpha = NULL, *bvattew = NULL;
@@ -116,11 +122,13 @@ void siddon_rec1(struct image_params *ip,
 	gammatogammaforw = 0.0;
 	float randomforw = 0.0;
 	float randnorm;
- 
+
 	if (fabs(bx = x1 - x2) < 1.e-6) bx = 1.e-6;
 	if (fabs(by = y1 - y2) < 1.e-6) by = 1.e-6;
 	if (fabs(bz = z1 - z2) < 1.e-6) bz = 1.e-6;
-	blpx = sqrt(bx * bx + by * by + bz * bz); 
+  // fprintf(stderr,"delta  %f %f %f \n",fabs(bx = x1 - x2), fabs(by = y1 - y2), fabs(bz = z1 - z2));
+  // fprintf(stderr,"bx by bz %f %f %f \n",bx, by, bz);
+	blpx = sqrt(bx * bx + by * by + bz * bz);
 	nsux = (-hfsx - x2) / bx;
 	psux = ( hfsx - x2) / bx;
 	nsuy = (-hfsy - y2) / by;
@@ -132,6 +140,7 @@ void siddon_rec1(struct image_params *ip,
 	dminz = (nsuz < psuz) ? nsuz : psuz;
 	t1 = (0.0 > dminx) ? 0.0 : dminx;
 	t2 = (dminy > dminz) ? dminy : dminz;
+
 	dmin = (t1 > t2) ? t1 : t2;
 	dmaxx = (nsux > psux) ? nsux : psux;
 	dmaxy = (nsuy > psuy) ? nsuy : psuy;
@@ -142,70 +151,83 @@ void siddon_rec1(struct image_params *ip,
 
 
 	if (dmax <= dmin)
-	{ //fprintf(stderr, "siddon: the beam does not intersect the array (!)\n"); 
+	{ //fprintf(stderr, "siddon: the beam does not intersect the array (!)\n");
 		return; }
-
+  // fprintf(stderr,"no return ---\n");
 	if (bx >= 0.0)
 	{
-		bilstartx = (fabs(dmin - dminx) < 1.e-6) ? 
-			(int)(hfsx + dmin * bx + x2 + 0.5) : 
+    // fprintf(stderr,"bx >= 0 ---\n");
+		bilstartx = (fabs(dmin - dminx) < 1.e-6) ?
+			(int)(hfsx + dmin * bx + x2 + 0.5) :
 			(int)(hfsx + dmin * bx + x2 + 1);
-		bilstopx  = (fabs(dmax - dmaxx) < 1.e-6) ? 
-			(int)(hfsx + x2 + dmax * bx + 0.5) : 
+    // fprintf(stderr,"bilstartx factors %f %f %f %f %lf \n",dmin, dminx,hfsx,bx,x2);
+		bilstopx  = (fabs(dmax - dmaxx) < 1.e-6) ?
+			(int)(hfsx + x2 + dmax * bx + 0.5) :
 			(int)(hfsx + x2 + dmax * bx);
 	}
 	else
 	{
-		bilstartx = (fabs(dmax - dmaxx) < 1.e-6) ? 
-			(int)(hfsx + dmax * bx + x2 + 0.5) : 
+    // fprintf(stderr,"bx < 0 ---\n");
+		bilstartx = (fabs(dmax - dmaxx) < 1.e-6) ?
+			(int)(hfsx + dmax * bx + x2 + 0.5) :
 			(int)(hfsx + dmax * bx + x2 + 1);
-		bilstopx  = (fabs(dmin - dminx) < 1.e-6) ? 
-			(int)(hfsx + x2 + dmin * bx + 0.5) : 
+    // fprintf(stderr,"bilstartx factors %f %f %f %f %lf \n",dmin, dminx,hfsx,bx,x2);
+		bilstopx  = (fabs(dmin - dminx) < 1.e-6) ?
+			(int)(hfsx + x2 + dmin * bx + 0.5) :
 			(int)(hfsx + x2 + dmin * bx);
 	}
 	if (by >= 0.0)
 	{
-		bilstarty = (fabs(dmin - dminy) < 1.e-6) ? 
-			(int)(hfsy + dmin * by + y2 + 0.5) : 
+    // fprintf(stderr,"by >= 0 ---\n");
+		bilstarty = (fabs(dmin - dminy) < 1.e-6) ?
+			(int)(hfsy + dmin * by + y2 + 0.5) :
 			(int)(hfsy + dmin * by + y2 + 1);
-		bilstopy  = (fabs(dmax - dmaxy) < 1.e-6) ? 
-			(int)(hfsy + y2 + dmax * by + 0.5) : 
+		bilstopy  = (fabs(dmax - dmaxy) < 1.e-6) ?
+			(int)(hfsy + y2 + dmax * by + 0.5) :
 			(int)(hfsy + y2 + dmax * by);
 	}
 	else
 	{
-		bilstarty = (fabs(dmax - dmaxy) < 1.e-6) ? 
-			(int)(hfsy + dmax * by + y2 + 0.5) : 
+    // fprintf(stderr,"by < 0 ---\n");
+		bilstarty = (fabs(dmax - dmaxy) < 1.e-6) ?
+			(int)(hfsy + dmax * by + y2 + 0.5) :
 			(int)(hfsy + dmax * by + y2 + 1);
-		bilstopy  = (fabs(dmin - dminy) < 1.e-6) ? 
-			(int)(hfsy + y2 + dmin * by + 0.5) : 
+		bilstopy  = (fabs(dmin - dminy) < 1.e-6) ?
+			(int)(hfsy + y2 + dmin * by + 0.5) :
 			(int)(hfsy + y2 + dmin * by);
 	}
 	if (bz >= 0.0)
 	{
-		bilstartz = (fabs(dmin - dminz) < 1.e-6) ? 
-                        (int)(hfsz + dmin * bz + z2 + 0.5) : 
+    // fprintf(stderr,"bz >= 0 ---\n");
+		bilstartz = (fabs(dmin - dminz) < 1.e-6) ?
+                        (int)(hfsz + dmin * bz + z2 + 0.5) :
                         (int)(hfsz + dmin * bz + z2 + 1);
-		bilstopz  = (fabs(dmax - dmaxz) < 1.e-6) ? 
-                        (int)(hfsz + z2 + dmax * bz + 0.5) : 
+		bilstopz  = (fabs(dmax - dmaxz) < 1.e-6) ?
+                        (int)(hfsz + z2 + dmax * bz + 0.5) :
                         (int)(hfsz + z2 + dmax * bz);
 	}
 	else
 	{
-		bilstartz = (fabs(dmax - dmaxz) < 1.e-6) ? 
-                        (int)(hfsz + dmax * bz + z2 + 0.5) : 
+    // fprintf(stderr,"bz < 0 ---\n");
+		bilstartz = (fabs(dmax - dmaxz) < 1.e-6) ?
+                        (int)(hfsz + dmax * bz + z2 + 0.5) :
                         (int)(hfsz + dmax * bz + z2 + 1);
-		bilstopz  = (fabs(dmin - dminz) < 1.e-6) ? 
-                        (int)(hfsz + z2 + dmin * bz + 0.5) : 
+		bilstopz  = (fabs(dmin - dminz) < 1.e-6) ?
+                        (int)(hfsz + z2 + dmin * bz + 0.5) :
                         (int)(hfsz + z2 + dmin * bz);
 	}
 
-	ax[bilstartx] = (bilstartx - hfsx - x2) /bx;
+  // fprintf(stderr,"bilstartx %d\n",bilstartx);
+  // fprintf(stderr,"bilstarty %d\n",bilstarty);
+  // fprintf(stderr,"bilstartz %d\n",bilstartz);
+	ax[bilstartx] = (bilstartx - hfsx - x2) /bx;  //<------------seg fault qui. perchè?
+
 	for (x = bilstartx + 1, fact = 1.0 / bx; x <= bilstopx; x++)
 		ax[x] = ax[x-1] + fact;
 	ay[bilstarty] = (bilstarty - hfsy - y2) /by;
 	for (y = bilstarty + 1, fact = 1.0 / by; y <= bilstopy; y++)
 		ay[y] = ay[y-1] + fact;
+
 	az[bilstartz] = (bilstartz - hfsz - z2)/bz;
 	for (z = bilstartz + 1, fact = 1.0 / bz; z <= bilstopz; z++)
 		az[z] = az[z-1] + fact;
@@ -223,7 +245,7 @@ void siddon_rec1(struct image_params *ip,
 
 
 
-	BV = (bilstopx - bilstartx + 1) + (bilstopy - bilstarty + 1) + 
+	BV = (bilstopx - bilstartx + 1) + (bilstopy - bilstarty + 1) +
 		(bilstopz - bilstartz + 1);
 	alpha = (float *)malloc((BV+2) * sizeof(float));
 	for (bv = 0; bv < BV; bv++)
@@ -270,13 +292,13 @@ void siddon_rec1(struct image_params *ip,
 		y_[bv]=y;
 		x_[bv]=x;
 
-		if (image[x+y*XDim+z*XDim*YDim] > 1.e-15) 
+		if (image[x+y*XDim+z*XDim*YDim] > 1.e-15)
 		{
-			blivpx = (alpha[bv] - alpha[bv-1]) * blpx; 
+			blivpx = (alpha[bv] - alpha[bv-1]) * blpx;
 			bvattew_ = bvattew[bv] = blivpx;
 			if (bvattew_ < 0.0)
 				fprintf(stderr, "siddon: probably dimensions of ax, ay, az vectors to short !\n");
-    
+
 			gammatogammaforw += bvattew_ * image[x+y*XDim+z*XDim*YDim];
 			randomforw += bvattew_ * randImage[x+y*XDim+z*XDim*YDim];
 		}
@@ -294,13 +316,12 @@ void siddon_rec1(struct image_params *ip,
 			}
 		}
 	}
-
 	free(alpha);
 	free(bvattew);
 	free(x_);
 	free(y_);
 	free(z_);
-}   
+}
 
 void zero_out(struct image_params *ip, float *image)
 {
@@ -308,7 +329,7 @@ void zero_out(struct image_params *ip, float *image)
 	int XDim = ip->xDim;
 	int YDim = ip->yDim;
 	int ZDim = ip->zDim;
-	
+
 	std::set<float>	 uniqueAngles;
 	for(std::multiset<float>::iterator i = ip->angles.begin(); i != ip->angles.end(); i++)
 		uniqueAngles.insert(*i);
@@ -328,7 +349,7 @@ void zero_out(struct image_params *ip, float *image)
 					float x_rot = x;
 					float y_rot = +y * cosTheta + z * sinTheta;
 					float z_rot = -y * sinTheta + z * cosTheta;
-					
+
 					if ((fabs(y_rot) > ip->transaxialSize/2) || (fabs(z_rot) > ip->transaxialSize/2))
 						image[xi+yi*XDim+zi*XDim*YDim] = 0;
 
@@ -340,8 +361,8 @@ void zero_out(struct image_params *ip, float *image)
 		}
 	}
 
-/*	float radius = (ip->platesDistance - 60)/2;	
-	
+/*	float radius = (ip->platesDistance - 60)/2;
+
 	for(int xi = 0; xi < XDim; xi++)
 	 	for(int yi = 0; yi < YDim; yi++)
 			for(int zi = 0; zi < ZDim; zi++) {
@@ -356,7 +377,7 @@ void zero_out(struct image_params *ip, float *image)
 			}*/
 }
 
-static float gaussian(float sigma, int n, float d2) 
+static float gaussian(float sigma, int n, float d2)
 {
 	return 1/powf(sqrtf(2*M_PI)*sigma, n) * expf(- d2/(2*sigma*sigma));
 }
@@ -374,8 +395,8 @@ void gaussian_filter_3d(float *recImage, float sigma, struct image_params *ip)
 	const int ks = 5;
 	const int kw = 2*ks + 1;
 	float weights[kw][kw][kw];
-	
-	for(int i = 0; i < kw; i++) {		
+
+	for(int i = 0; i < kw; i++) {
 		for(int j = 0; j < kw; j++) {
 			for (int k = 0; k < kw; k++) {
 				float x = (i - ks) * PIXELLENGTH;
@@ -386,7 +407,7 @@ void gaussian_filter_3d(float *recImage, float sigma, struct image_params *ip)
 
 			}
 		}
-	}	
+	}
 
 	float srcTotal = 0;
 	float fltTotal = 0;
@@ -405,20 +426,20 @@ void gaussian_filter_3d(float *recImage, float sigma, struct image_params *ip)
 						}
 					}
 				}
-				
-				tempFilterResult[xi+yi*XDim+zi*XDim*YDim] = sum;	
+
+				tempFilterResult[xi+yi*XDim+zi*XDim*YDim] = sum;
 				fltTotal += sum;
 			}
 		}
 	}
-	
-	/* 
-	 * Copy and normalize 
-	 */ 
+
+	/*
+	 * Copy and normalize
+	 */
 	for(int i = 0; i < XDim * YDim * ZDim; i++)
 		recImage[i] = tempFilterResult[i] * (srcTotal / fltTotal);
 	delete [] tempFilterResult;
-	
+
 }
 
 void gaussian_filter_21d(float *recImage, float sigma, struct image_params *ip)
@@ -433,7 +454,7 @@ void gaussian_filter_21d(float *recImage, float sigma, struct image_params *ip)
 	const int ks = 5;
 	const int kw = 2*ks + 1;
 	float weightsYZ[kw][kw];
-	
+
 	for(int j = 0; j < kw; j++) {
 		for (int k = 0; k < kw; k++) {
 			float y = (j - ks) * PIXELLENGTH;
@@ -441,14 +462,14 @@ void gaussian_filter_21d(float *recImage, float sigma, struct image_params *ip)
 			float w = gaussian(sigma, 2, y*y + z*z);
 			weightsYZ[j][k] = w;
 		}
-	}	
+	}
 
 
 	/*
 	 * Filter Y and Z
 	 */
 	float srcTotal = 0;
-	
+
 	for (int xi = 0; xi < XDim; xi++) {
 		for (int yi = 0; yi < YDim; yi++) {
 			for (int zi = 0; zi < ZDim; zi++) {
@@ -460,8 +481,8 @@ void gaussian_filter_21d(float *recImage, float sigma, struct image_params *ip)
 						if ((yi+j-ks < 0) || (yi+j-ks >= YDim)) continue;
 						sum += weightsYZ[j][k] * recImage[(xi)+(yi+j-ks)*XDim+(zi+k-ks)*XDim*YDim];
 					}
-				}				
-				tempFilterResult[xi+yi*XDim+zi*XDim*YDim] = sum;	
+				}
+				tempFilterResult[xi+yi*XDim+zi*XDim*YDim] = sum;
 			}
 		}
 	}
@@ -480,26 +501,26 @@ void gaussian_filter_21d(float *recImage, float sigma, struct image_params *ip)
 	float fltTotal = 0;
 	for (int xi = 0; xi < XDim; xi++) {
 		for (int yi = 0; yi < YDim; yi++) {
-			for (int zi = 0; zi < ZDim; zi++) {				
+			for (int zi = 0; zi < ZDim; zi++) {
 				float sum = 0;
 				for (int i = 0; i < kw; i++) {
 					if ((xi+i-ks < 0) || (xi+i-ks >= XDim)) continue;
 					sum += weightsX[i] * tempFilterResult[(xi+i-ks)+(yi)*XDim+(zi)*XDim*YDim];
-				}							
-				recImage[xi+yi*XDim+zi*XDim*YDim] = sum;	
+				}
+				recImage[xi+yi*XDim+zi*XDim*YDim] = sum;
 				fltTotal += sum;
-			
+
 			}
 		}
 	}
 
-	/* 
-	 * Normalize 
-	 */ 
+	/*
+	 * Normalize
+	 */
 	for(int i = 0; i < XDim * YDim * ZDim; i++)
 		recImage[i] = recImage[i] * (srcTotal / fltTotal);
 	delete [] tempFilterResult;
-	
+
 }
 
 void gaussian_filter_2d(float *recImage, float sigma, struct image_params *ip)
@@ -514,7 +535,7 @@ void gaussian_filter_2d(float *recImage, float sigma, struct image_params *ip)
 	const int ks = 5;
 	const int kw = 2*ks + 1;
 	float weightsYZ[kw][kw];
-	
+
 	for(int j = 0; j < kw; j++) {
 		for (int k = 0; k < kw; k++) {
 			float y = (j - ks) * PIXELLENGTH;
@@ -522,7 +543,7 @@ void gaussian_filter_2d(float *recImage, float sigma, struct image_params *ip)
 			float w = gaussian(sigma, 2, y*y + z*z);
 			weightsYZ[j][k] = w;
 		}
-	}	
+	}
 
 
 	/*
@@ -530,7 +551,7 @@ void gaussian_filter_2d(float *recImage, float sigma, struct image_params *ip)
 	 */
 	float srcTotal = 0;
 	float fltTotal = 0;
-	
+
 	for (int xi = 0; xi < XDim; xi++) {
 		for (int yi = 0; yi < YDim; yi++) {
 			for (int zi = 0; zi < ZDim; zi++) {
@@ -542,18 +563,18 @@ void gaussian_filter_2d(float *recImage, float sigma, struct image_params *ip)
 						if ((yi+j-ks < 0) || (yi+j-ks >= YDim)) continue;
 						sum += weightsYZ[j][k] * recImage[(xi)+(yi+j-ks)*XDim+(zi+k-ks)*XDim*YDim];
 					}
-				}				
-				tempFilterResult[xi+yi*XDim+zi*XDim*YDim] = sum;	
+				}
+				tempFilterResult[xi+yi*XDim+zi*XDim*YDim] = sum;
 				fltTotal += sum;
 			}
 		}
 	}
 
-	/* 
-	 * Normalize 
-	 */ 
+	/*
+	 * Normalize
+	 */
 	for(int i = 0; i < XDim * YDim * ZDim; i++)
 		recImage[i] = tempFilterResult[i] * (srcTotal / fltTotal);
 	delete [] tempFilterResult;
-	
+
 }

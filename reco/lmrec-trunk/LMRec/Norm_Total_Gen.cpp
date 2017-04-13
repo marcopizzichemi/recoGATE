@@ -30,12 +30,12 @@ int main(int argc, char *argv[])
 		{ "rays", required_argument, 0, 0 },
 		{ NULL, 0, 0, 0 }
 	};
-	
+
 	while(1) {
-		
+
 		int optionIndex = 0;
 		int c = getopt_long(argc, argv, "i:o:d:n:", longOptions, &optionIndex);
-		
+
 		if (c == -1) {
 			break;
 		}
@@ -47,48 +47,52 @@ int main(int argc, char *argv[])
 			nRays = boost::lexical_cast<int>((char *)optarg);
 		}
 		else {
-			fprintf(stderr, "Usage: %s [--threads nThreads ][ --rays nRays] <plates distance> <pixel length> <angles file> <input file> <output prefix>\n", argv[0]);
+			fprintf(stderr, "Usage: %s [--threads nThreads ][ --rays nRays] <transaxial size> <axial size> <pixel length> <input file> <output file>\n", argv[0]);
 			return 1;
 		}
-		
+
 	}
 
 	if ((argc - optind) < 5) {
-			fprintf(stderr, "Usage: %s [--threads nThreads ][ --rays nRays] <plates distance> <pixel length> <angles file> <input file> <output prefix>\n", argv[0]);
-			
+			fprintf(stderr, "Usage: %s [--threads nThreads ][ --rays nRays] <transaxial size> <axial size> <pixel length> <input file> <output file>\n", argv[0]);
+
 		return 1;
 	}
-	
+
 	fprintf(stderr, "Using %d threads\n", nThreads);
 
-	float platesDistance = boost::lexical_cast<float>(argv[optind+0]);
-	float pixelLength = boost::lexical_cast<float>(argv[optind+1]);
-	char * angleFileName = argv[optind+2];
+	float transaxialSize = boost::lexical_cast<float>(argv[optind+0]);
+  float axialSize = boost::lexical_cast<float>(argv[optind+1]);
+	float pixelLength = boost::lexical_cast<float>(argv[optind+2]);
 	char * inputFileName = argv[optind+3];
-	char * outputPrefix = argv[optind+4];
+	char * outputFileName = argv[optind+4];
+	// char * outputPrefix = argv[optind+4];
 
-	float transaxialSize = platesDistance - 60 < PEM_yLength ? platesDistance - 60 : PEM_yLength;
+	// float transaxialSize = platesDistance - 60 < PEM_yLength ? platesDistance - 60 : PEM_yLength;
 	struct image_params ip = {
-		transaxialSize, 
-		PEM_xLength, 
-		platesDistance, 
-		pixelLength,
+		transaxialSize,  //set from argv
+		axialSize,       //set from argv
+		0,
+		pixelLength,     //set from argv
 		multiset<float>(),
-		int(2 + ceil(PEM_xLength / pixelLength / 2)*2), //Ensure dimensions are even
+		int(2 + ceil(axialSize / pixelLength / 2)*2),     //Ensure dimensions are even and it will be set from argv
 		int(2 + ceil(transaxialSize / pixelLength / 2)*2),
-		int(2 + ceil(transaxialSize / pixelLength / 2)*2)	
+		int(2 + ceil(transaxialSize / pixelLength / 2)*2)
 	};
 
-	FILE *angleFile = fopen(angleFileName, "r");
-	assert(angleFile != NULL);
-	while(1) {
-		float angle;
-		int r = fscanf(angleFile, "%f\n", &angle);
-		if(r != 1) break;
-		ip.angles.insert(angle*M_PI/180);
-	}
-	fclose(angleFile);
-	
+  ip.angles.insert(0.0); //fixed to just 1 angle, 0
+	// FILE *angleFile = fopen(angleFileName, "r");
+	// assert(angleFile != NULL);
+	// while(1) {
+	// 	float angle;
+	// 	int r = fscanf(angleFile, "%f\n", &angle);
+	// 	if(r != 1) break;
+	// 	ip.angles.insert(angle*M_PI/180);
+	// }
+	// fclose(angleFile);
+
+
+
 	std::set<float>	 uniqueAngles;
 	for(std::multiset<float>::iterator i = ip.angles.begin(); i != ip.angles.end(); i++)
 		uniqueAngles.insert(*i);
@@ -102,7 +106,7 @@ int main(int argc, char *argv[])
 
 
 	char fnBuffer[1024];
-    
+
 	//begin to calculate totalImage
 
 	float PIXELLENGTH = ip.pixelLength;
@@ -114,28 +118,28 @@ int main(int argc, char *argv[])
 	for (int i=0; i<XDim*YDim*ZDim; i++)
 		recImage[i] = 1.0;
 
-	float** diffImage = (float**)malloc(sizeof(float*)*nThreads);    
+	float** diffImage = (float**)malloc(sizeof(float*)*nThreads);
 	for (int i=0; i<nThreads; i++)
 	{
 		diffImage[i] = new float[XDim*YDim*ZDim];
 		for (int j=0; j<XDim*YDim*ZDim; j++)
 			diffImage[i][j] = 0;
-		
+
 	}
-    
+
 	float *randImage = new float[ip.xDim*ip.yDim*ip.zDim];
 	for (int i=0; i<ip.xDim*ip.yDim*ip.zDim; i++)
 		randImage[i] = 0.0;
 	float rand_cut = 0.0;
-		
+
 	double eventSum = 0;
 	FILE *lmFile = NULL;
 	if(strcmp(inputFileName, "-") == 0)
 		lmFile = stdin;
-	else 
+	else
 		lmFile = fopen(inputFileName, "rb");
 
-	pthread_t threads[nThreads];  
+	pthread_t threads[nThreads];
 	struct rec_kernel_parameter parameter[nThreads];
 	for(int i = 0; i < nThreads; i++) {
 		parameter[i].nRays = nRays;
@@ -146,7 +150,7 @@ int main(int argc, char *argv[])
 	int blockSize = 100000*nThreads;
 	DKFZFormat *buffer1 = new DKFZFormat [blockSize];
 	DKFZFormat *buffer2 = new DKFZFormat [blockSize];
-	while(true) {        
+	while(true) {
 		int n = fread((void*)buffer1, sizeof(DKFZFormat), blockSize, lmFile);
 		if (n <= 0) break;
 
@@ -157,8 +161,8 @@ int main(int argc, char *argv[])
 		for(std::set<float>::iterator i = uniqueAngles.begin(); i != uniqueAngles.end(); i++) {
 			float theta = *i;
 			int count = ip.angles.count(theta);
-			
-			
+
+
 
 			for(int j = 0; j < n; j++) {
 				buffer2[j].angle = theta;
@@ -173,7 +177,7 @@ int main(int argc, char *argv[])
 				int end = (i+1) * eventsPerThread;
 				if (end > n) end = n;
 				if(end < start) end = start;
-	
+
 				parameter[i].ip = &ip;
 				parameter[i].listData = buffer2;
 				parameter[i].beginNum = start;
@@ -184,11 +188,11 @@ int main(int argc, char *argv[])
 				//parameter[i].normImage1 = normImage1;
 				//parameter[i].normImage2 = normImage2;
 
-				pthread_create(&threads[i], NULL, rec_kernel, (void*)&parameter[i]);	
+				pthread_create(&threads[i], NULL, rec_kernel, (void*)&parameter[i]);
 			}
 
 			for (int i=0; i<nThreads; i++)
-				pthread_join(threads[i], NULL);	
+				pthread_join(threads[i], NULL);
 		}
 	}
 	delete [] buffer2;
@@ -208,13 +212,13 @@ int main(int argc, char *argv[])
 		// recImage[i] = diffThread (sum of diffImage for each thread)
 		recImage[i] = recImage[i] * diffThread;
 	}
-	
+
 
 	if(eventSum == 0) {
 		// If we had not events, we'll just force the output image to be full of ones
 		for (int i=0; i<XDim*YDim*ZDim; i++)
                 recImage[i] = 1.0;
-	} 
+	}
 	else {
 		// Normalize
 		double total = 0.0;
@@ -223,13 +227,12 @@ int main(int argc, char *argv[])
 		if (total == 0) total = 1.0; // Avoid division by zero
 		for (int i=0; i<XDim*YDim*ZDim; i++)
 			recImage[i] = recImage[i] * eventSum / total;
-		
+
 	}
-		
-	sprintf(fnBuffer, "%s_total", outputPrefix);
+
+	sprintf(fnBuffer, "%s", outputFileName);
 	FILE *outputFile = fopen(fnBuffer, "wb");
 	fwrite(recImage, sizeof(float), XDim*YDim*ZDim, outputFile);
 	fclose(outputFile);
 	return 0;
 }
-

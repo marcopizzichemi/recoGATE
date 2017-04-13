@@ -18,7 +18,7 @@ static float halfLifeTime = 0;
 static double t0 = -1;
 
 
-int main(int argc, char * argv[]) 
+int main(int argc, char * argv[])
 {
 	char * outputFileName = NULL;
 	char * randomFileName = NULL;
@@ -26,11 +26,11 @@ int main(int argc, char * argv[])
 
 	bool noDOI = false;
         bool directCorrection = false;
-	
+
 	static struct option longOptions[] = {
 			{ "energy-low", required_argument, 0, 0 },
-			{ "energy-high", required_argument, 0, 0 }, 
-			{ "time-window", required_argument, 0, 0 },			
+			{ "energy-high", required_argument, 0, 0 },
+			{ "time-window", required_argument, 0, 0 },
 			{ "randoms-file", required_argument, 0, 0 },
 			{ "no-doi", no_argument, 0, 0 },
 			{ "half-life", required_argument, 0, 0 },
@@ -40,17 +40,17 @@ int main(int argc, char * argv[])
 			{ NULL, 0, 0, 0 }
 		};
 
-	
+
 	while(1) {
 
 		int optionIndex = 0;
 		int c = getopt_long(argc, argv, "o:", longOptions, &optionIndex);
-		
+
 		if (c == -1) {
 			break;
 		}
-		
-	
+
+
 		if (c == 'o') {
 			outputFileName = optarg;
 		}
@@ -85,7 +85,7 @@ int main(int argc, char * argv[])
 			std::cout << "Usage: " << argv[0]
 				  << "[ -o <outfile.lm> ]"
 				  << "[ --scatter-total-events <count.txt> ]"
-				  << "[ --energy-low <energy in keV> ] " 
+				  << "[ --energy-low <energy in keV> ] "
 				  << "[ --energy-high <energy in keV> ] "
 				  << "[ --time-window <time window in ns> ] "
 				  << "[ --randoms-file <randoms.lm> ] "
@@ -94,7 +94,7 @@ int main(int argc, char * argv[])
                                   << "[ --use-direct-correction ]"
 				  << std::endl;
 			return 1;
-		}		
+		}
 	}
 
 	if ((argc - optind) < 1) {
@@ -108,7 +108,7 @@ int main(int argc, char * argv[])
 			outputFile = stdout;
 		else
 			outputFile = fopen(outputFileName, "wb");
-					
+
 		if (outputFile == NULL) {
 			fprintf(stderr, "Could not open %s for writing\n", outputFileName);
 			return 1;
@@ -121,7 +121,7 @@ int main(int argc, char * argv[])
 			randomFile = stdout;
 		else
 			randomFile = fopen(randomFileName, "wb");
-			
+
 		if (randomFile == NULL) {
 			fprintf(stderr, "Could not open %s for writing\n", randomFileName);
 			return 1;
@@ -158,15 +158,15 @@ int main(int argc, char * argv[])
 			fIn = stdin;
 		else
 			fIn = fopen(argv[i], "rb");
-				
+
 		if (fIn == NULL) {
 			fprintf(stderr, "File %s does not exist\n", argv[i]);
 			continue;
 		}
-		
+
 		ELM2Format fe;
 		while(fread((void*)&fe, sizeof(fe), 1, fIn) == 1) {
-			if(nRead == 0) 
+			if(nRead == 0)
 				fprintf(stderr, "Distance is %f\n", fe.d);
 
 			//fprintf(stderr, "%f %f %f -- %f %f %f --- %f\n", fe.x1, fe.y1, fe.z1, fe.x2, fe.y2, fe.z2, fe.dt);
@@ -185,7 +185,7 @@ int main(int argc, char * argv[])
  			float u = fe.x1 - fe.x2;
 			float v = fe.y1 - fe.y2;
 			float w = fe.z1 - fe.z2;
-		
+
 
 			if(fabs(w) < fe.d/2.0) {
 				nBad++;
@@ -197,10 +197,9 @@ int main(int argc, char * argv[])
  			if(fe.e1 < eMin || fe.e1 > eMax ||
  			   fe.e2 < eMin || fe.e2 > eMax)
 			   continue;
-			
 			fe.dt = fabs(fe.dt);
 			float weight = 1;
-			if(fe.dt > 90E-9) 
+			if(fe.dt > 90E-9)
 				continue;
 			else if(fe.dt > 20E-9) {
 				fe.random = 1;
@@ -211,24 +210,24 @@ int main(int argc, char * argv[])
 
 			if(fe.n1 > maxHits || fe.n2 > maxHits)
 				continue;
-			
+
 			if (fe.z1 > 0)
 				fe.dt *= -1;
 
-			float decay = (halfLifeTime == 0) ? 1.0 : pow(2, -(fe.ts - t0)/halfLifeTime);			
+			float decay = (halfLifeTime == 0) ? 1.0 : pow(2, -(fe.ts - t0)/halfLifeTime);
 			weight *= 1/decay;
-			
-			DKFZFormat lmEntry = { fe.x1, fe.y1, fe.z1, fe.x2, fe.y2, fe.z2 , fe.yozRot, weight };			
+
+			DKFZFormat lmEntry = { fe.x1, fe.y1, fe.z1, fe.x2, fe.y2, fe.z2 , fe.yozRot, weight };
 			if(fe.random != 0)
 				lmEntry.weight *= -1;
-			
-			if (fe.random == 0 || directCorrection) 
+
+			if (fe.random == 0 || directCorrection)
 				if(outputFile != NULL)
-					fwrite((void*) &lmEntry, sizeof(lmEntry), 1, outputFile);			
-			
+					fwrite((void*) &lmEntry, sizeof(lmEntry), 1, outputFile);
+
 			if ((fe.random != 0) && (randomFile != NULL))
 					fwrite((void*) &lmEntry, sizeof(lmEntry), 1, randomFile);
-			
+
 			//printf("%d %f %f\n", fe.random, weight, fe.dt * 1E9);
 
 			if(fe.random == 0)
@@ -255,14 +254,14 @@ int main(int argc, char * argv[])
 		fprintf(stderr, "%f ", (*i) * 180/M_PI);
 	}
 	fprintf(stderr, "\n");
-	
+  
 	printf("tMin = %f, tMax = %f, acqTime = %f\n", tMin, tMax, tMax - tMin);
 
 	if(halfLifeTime != 0 && tMin < t0) {
 		fprintf(stderr, "WARNING: t0 for decay correction is %lf, but minium time found in data was %lf seconds earlier\n", t0, t0-tMin);
 		fprintf(stderr, "WARNING: Maybe this should be re-run with --initial-time %lf\n", tMin);
-	
+
 	}
 	return 0;
-	
+
 }
