@@ -1,0 +1,151 @@
+#include "elm2.hpp"
+#include "elm3.hpp"
+
+#include <getopt.h>
+#include <stdio.h>
+#include <math.h>
+
+#include <iostream>
+#include <fstream>
+
+#include <boost/lexical_cast.hpp>
+
+#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
+
+static float eMin = 100;
+static float eMax = 700;
+static float dMax = 20E-9;
+
+int main(int argc, char * argv[]) 
+{
+	using namespace std;
+	using namespace boost;
+	using namespace boost::iostreams;
+	
+	static struct option longOptions[] = {
+			{ "energy-low", required_argument, 0, 0 }, 
+			{ "energy-high", required_argument, 0, 0 }, 
+			{ "time-window", required_argument, 0, 0 },
+			{ NULL, 0, 0, 0 }
+		};
+
+	while(1) {
+
+		int optionIndex = 0;
+		int c = getopt_long(argc, argv, "", longOptions, &optionIndex);
+		
+		if (c == -1) {
+			break;
+		}
+		
+		if (c != 0) {
+			std::cout << "Usage: " << argv[0]
+				  << "[ --energy-low <energy in keV> ] " 
+				  << "[ --energy-high <energy in keV> ] "
+				  << "[ --time-window <time window in ns> ] "
+				  << std::endl;
+			return 1;
+		}
+		
+		if(optionIndex == 0) {
+			eMin = boost::lexical_cast<float>(optarg);
+		}
+		else if (optionIndex == 1) {
+			eMax = boost::lexical_cast<float>(optarg);
+		}
+		else if (optionIndex == 2) {
+			dMax = boost::lexical_cast<float>(optarg) * 1E-9;
+		}
+		
+	}
+
+	if ((argc - optind) < 2) {
+		printf("Usage: %s <fileOut.elm3> <file1.elm2> <file2.elm2> ... <fileN.elm2>\n", argv[0]);
+		return 1;
+	}
+
+ 	char * fnOut = argv[optind];	
+// 	FILE *fOut = fopen(fnOut, "w");		
+// 	if (fOut == NULL) {
+// 		fprintf(stderr, "Could not open %s for writing\n", fnOut);
+// 		return 1;
+// 	}
+
+	ofstream fOut(fnOut, ios_base::out | ios_base::binary);	
+	filtering_streambuf<output> out;
+	out.push(gzip_compressor());
+	out.push(fOut);
+
+	for(int i = optind+1; i < argc; i++) {
+		FILE * fIn = fopen(argv[i], "r");	
+		if (fIn == NULL) {
+			fprintf(stderr, "File %s does not exist\n", argv[i]);
+			continue;
+		}
+
+		ELM3::HeaderFormat elm3Header = { 0, 0, 0, 0, 0 };		
+		ELM3::EventFormat *elm3Events = new ELM3::EventFormat[ELM3::maxEventsPerHeader];
+		
+		ELM2::EventFormat elm2Event;
+		while(fread((void*)&elm2Event, sizeof(elm2Event), 1, fIn) == 1) {
+			double timeDelta = elm2Event.ts - elm3Header.timebase;
+			if((elm3Header.nEvents >= ELM3::maxEventsPerHeader) || 
+			   (timeDelta > ELM3::maxTimeDeltaPerHeader) ||
+			   (timeDelta < 0) ||
+			   (elm3Header.yozRotation != elm2Event.yozRot) || 
+			   (elm3Header.distance != elm2Event.d)) {
+				out.sputn((char*)&elm3Header, sizeof(elm3Header));
+				for(unsigned i = 0; i < elm3Header.nEvents; i++) {
+// 					printf(".ts = %5u, (%4d, %4d, %4d) - (%4d, %4d, %4d), e1 = %u, e2 = %u, dt=%d\n", 
+// 					       elm3Events[i].ts,
+// 					       elm3Events[i].x1, elm3Events[i].y1, elm3Events[i].z1,
+// 					       elm3Events[i].x2, elm3Events[i].y2, elm3Events[i].z2,
+// 					       elm3Events[i].e1,
+// 					       elm3Events[i].e2,
+// 					       elm3Events[i].delta
+// 						);
+					out.sputn((char*)&elm3Events[i], sizeof(elm3Events[i]));
+				}
+				
+				elm3Header.timebase = elm2Event.ts;
+				elm3Header.nEvents = 0;
+				elm3Header.yozRotation = elm2Event.yozRot;
+				elm3Header.distance = elm2Event.d;
+			}
+ 
+			ELM3::EventFormat &elm3Event = elm3Events[elm3Header.nEvents];
+			elm3Event.ts = uint16_t(round((elm2Event.ts - elm3Header.timebase) * 100E6));
+			elm3Event.x1 = int16_t(round(elm2Event.x1 * 10));
+			elm3Event.y1 = int16_t(round(elm2Event.y1 * 10));
+			elm3Event.z1 = int16_t(round(elm2Event.z1 * 10));
+
+			elm3Event.x2 = int16_t(round(elm2Event.x2 * 10));
+			elm3Event.y2 = int16_t(round(elm2Event.y2 * 10));
+			elm3Event.z2 = int16_t(round(elm2Event.z2 * 10));
+
+			elm3Event.e1 = int16_t(round(elm2Event.e1 / 5));
+			elm3Event.e2 = int16_t(round(elm2Event.e2 / 5));
+
+			elm3Event.delta = int16_t(round(elm2Event.dt * 1E9 * 2));
+			elm3Event.flags = 0;
+			elm3Event.flags |= elm2Event.random != 0 ? 0x80 : 0x00;
+			elm3Event.flags |= elm2Event.n1 << 0;
+			elm3Event.flags |= elm2Event.n2 << 2;
+			
+			elm3Header.nEvents++;
+		}
+		
+		if (elm3Header.nEvents > 0) {
+			out.sputn((char*)&elm3Header, sizeof(elm3Header));
+			for(unsigned i = 0; i < elm3Header.nEvents; i++) {
+				out.sputn((char*)&elm3Events[i], sizeof(elm3Events[i]));
+			}
+		}
+	}
+	
+	out.pop();
+	fOut.close();
+	return 0;
+}

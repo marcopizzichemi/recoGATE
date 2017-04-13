@@ -1,0 +1,5 @@
+#!/bin/sh
+
+D=$(dirname $0)
+${D}/pem.recon.py $*
+# ssh reco.localdomain "${D}/pem.recon.py $*"

@@ -1,0 +1,42 @@
+Index: lmFormats/elm2todkfz.cpp
+===================================================================
+--- lmFormats/elm2todkfz.cpp	(revision 40)
++++ lmFormats/elm2todkfz.cpp	(working copy)
+@@ -154,17 +154,34 @@
+ 			angleSet.insert(fe.yozRot);
+ 
+  			if(fe.e1 < eMin || fe.e1 > eMax ||
+- 			   fe.e2 < eMin || fe.e2 > eMax ||
+- 			   fabs(fe.dt) > dMax)
++ 			   fe.e2 < eMin || fe.e2 > eMax)
+ 			   continue;
+ 
++			// Large random statistics;
++			if(fe.random != 0) continue; // Discard random flagged events to avoid duplication
++			float weight = 1;
++			if(fabs(fe.dt) < dMax) {    // Prompts
++				fe.random = 0;
++				weight = 1;
++			}
++			else if (fabs(fe.dt) < 20E-9) { // Rejected
++				continue;
++			}
++			else if(fabs(fe.dt) < 90E-9) { // Randoms
++				fe.random = 1;
++				weight = dMax/(90E-9 - 20E-9);
++			}
++			else {  // Rejected
++				continue;
++			}
++
+ 			if(fe.n1 > maxHits || fe.n2 > maxHits)
+ 				continue;
+ 			
+ 			if (fe.z1 > 0)
+ 				fe.dt *= -1;
+ 
+-			DKFZFormat lmEntry = { fe.x1, fe.y1, fe.z1, fe.x2, fe.y2, fe.z2 , fe.yozRot, 1 };
++			DKFZFormat lmEntry = { fe.x1, fe.y1, fe.z1, fe.x2, fe.y2, fe.z2 , fe.yozRot, weight };
+ 			
+ 			if(fe.random != 0)
+ 				lmEntry.weight *= -1;

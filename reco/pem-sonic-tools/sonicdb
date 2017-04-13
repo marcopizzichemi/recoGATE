@@ -1,0 +1,249 @@
+#!/usr/bin/python
+
+
+import sys
+from optparse import OptionParser
+from time import strptime
+from datetime import date, datetime
+from os.path import isfile, join, expanduser
+
+import libexamdb
+from ConfigParser import SafeConfigParser, NoOptionError, NoSectionError
+
+def cmd_addpatient(db, argv):
+	cmd = argv[0]
+	parser = OptionParser();
+	parser.add_option("--name", dest="name")
+	parser.add_option("--birth", dest="birth")
+	(options, argv) = parser.parse_args(argv[1:])
+
+	for o in ["name", "birth"]:
+		if not options.__dict__[o]:
+			print 'Usage: %(cmd)s addpatient --name <patient name> --birth <birth date>' % locals()
+			return None
+
+	patientBirthDate = date(*strptime(options.birth, "%Y-%m-%d")[0:3])
+	patient = db.addPatient()
+	patient.setName(options.name)
+	patient.setBirthDate(patientBirthDate)
+	print "%05d" % patient.getID();
+	return None
+
+
+def cmd_listpatients(db, argv):
+	parser = OptionParser();
+	parser.add_option("--name", dest="name", action="store_true", default=False)
+	(options, argv) = parser.parse_args(argv[1:])
+
+	for patient in db.getPatients():
+		patientID = patient.getID();
+		if options.name:
+			patientName = patient.getName()
+			print "%(patientID)05d %(patientName)s" % locals();
+		else:
+			print "%(patientID)05d" % locals();
+		
+		
+	return None
+
+def cmd_addexam(db, argv):
+	cmd = argv[0]
+	parser = OptionParser()
+	parser.add_option("--patient", dest="patient", default=1)
+	parser.add_option("--desc", dest="description", default="")
+	parser.add_option("--time", dest="time")
+	parser.add_option("--pem-data", dest="pemData")
+	parser.add_option("--pem-dose", dest="pemDose", type="float")
+	parser.add_option("--pem-dose-time", dest="pemDoseTime")
+	parser.add_option("--pem-isotope-hl", dest="pemIsotopeHalfLife", type="float")
+	parser.add_option("--patient-weight", dest="weight", type="float")
+	(options, argv) = parser.parse_args(argv[1:])
+
+
+	for o in ["patient", "pemData"]:
+		if not options.__dict__[o]:
+			print 'Usage: %(cmd)s addexam --patient <patient ID> [ --time <exam time> ] [--desc <exam description> ] --pem-data <data file>'\
+			      ' [ --patient-weight <weight in kg> ] [ --pem-dose <dose in MBq> --pem-dose-time <activity time> ]'% locals()
+			return None
+
+	pid = int(options.patient)
+	if options.time:
+		examTime = datetime(*strptime(options.time, "%Y-%m-%d %H:%M")[0:6])	
+	else:
+		examTime = datetime.now()
+
+	if not isfile(options.pemData):
+		print "%s is not a	(options, argv) = parser.parse_args(argv[2:]) file" % options.pemData
+		return None
+	
+	patient = db.getPatientByID(pid)
+	exam = patient.addExam()
+	exam.setDescription(options.description)
+	exam.setTime(examTime)
+	if options.pemDose:
+		exam.pem().setInjectedDose(float(options.pemDose))		
+		exam.pem().setInjectedDoseTime(datetime(*strptime(options.pemDoseTime, "%Y-%m-%d %H:%M")[0:6]))
+		exam.pem().setIsotopeHalfLifeTime(options.pemIsotopeHalfLife)
+			
+	if options.weight: exam.setPatientWeight(float(options.weight))
+	exam.pem().storeELM2(options.pemData)
+	print exam.getID()
+	return None    
+
+def cmd_listexams(db, argv):
+	cmd = argv[0]
+	parser = OptionParser()
+	parser.add_option("--patient", dest="patient", default=1)
+	parser.add_option("--desc", dest="desc", action="store_true", default=False)
+	parser.add_option("--date", dest="date", action="store_true", default=False)
+
+	(options, argv) = parser.parse_args(argv[1:])
+	
+	if not options.patient:
+		print "Usage: %(cmd)s --patient [--desc]" % locals()
+		return None
+
+	pid = int(options.patient)
+
+	for exam in db.getPatientByID(pid).getExams():
+		eid = exam.getID();
+		line = "%05d" % eid;
+		
+		if options.date:
+			line += " %s" % str(exam.getTime().date())
+	
+		if options.desc:
+			line += " %s" % exam.getDescription();
+		print line
+		
+		
+	return None
+
+def cmd_getpempreview(db, argv):
+	cmd = argv[0]
+	parser = OptionParser()
+	parser.add_option("--patient", dest="patient", default=1)
+	parser.add_option("--exam", dest="exam")
+	(options, argv) = parser.parse_args(argv[1:])
+
+	for o in ["patient", "exam"]:
+		if not options.__dict__[o]:
+			print 'Usage: %(cmd)s getpempreview --patient <patient ID> --exam <exam id>' % locals()
+			return None	
+	
+	pid = int(options.patient)
+	eid = int(options.exam)
+	
+	patient = db.getPatientByID(pid)
+	exam = patient.getExamByID(eid)
+
+	h, d = exam.pem().getPreviewName();
+	if isfile(h) and isfile(d):
+		print h
+
+
+def cmd_listpemimages(db, argv):
+	cmd = argv[0]
+	parser = OptionParser()
+	parser.add_option("--patient", dest="patient", default=1)
+	parser.add_option("--exam", dest="exam")
+	parser.add_option("--flags", dest="flags", action="store_true", default=False)
+	(options, argv) = parser.parse_args(argv[1:])
+
+	for o in ["patient", "exam"]:
+		if not options.__dict__[o]:
+			print 'Usage: %(cmd)s listpemimages --patient <patient ID> --exam <exam id>' % locals()
+			return None	
+	
+	pid = int(options.patient)
+	eid = int(options.exam)
+	
+	patient = db.getPatientByID(pid)
+	exam = patient.getExamByID(eid)
+	for processing in exam.pem().getProcessings():
+		ppid = processing.getID();
+		if options.flags:
+			flags = (', ').join(processing.getFlags())
+			print "%(ppid)05d %s" % locals()
+		else:
+			print "%(ppid)05d" % locals()
+	
+
+def cmd_getpemimage(db, argv):
+	cmd = argv[0]
+	parser = OptionParser()
+	parser.add_option("--patient", dest="patient", default=1)
+	parser.add_option("--exam", dest="exam")
+	parser.add_option("--processing", dest="processing")
+	parser.add_option("--sinogram", dest="sinogram", action="store_true", default=False);
+	(options, argv) = parser.parse_args(argv[1:])
+
+	for o in ["patient", "exam", "processing"]:
+		if not options.__dict__[o]:
+			print 'Usage: %(cmd)s getpemimage --patient <patient ID> --exam <exam id> --processing <processing id>' % locals()
+			return None	
+
+	pid = int(options.patient)
+	eid = int(options.exam)
+	ppid = int(options.processing)
+
+	patient = db.getPatientByID(pid)
+	exam = patient.getExamByID(eid)
+	processing = exam.pem().getProcessingByID(ppid)
+	
+	if options.sinogram:
+		h, d = processing.getSinogramName()
+	else:
+		h, d = processing.getImageName()
+	
+	if isfile(h) and isfile(d):
+		print h
+	return None
+
+def main(argv):
+	if len(argv) < 2:
+        	print "Usage: %s <cmd>" % argv[0]
+        	return 1
+
+	config = SafeConfigParser()
+	config.read(expanduser('~/.pem.rc'))
+	try:
+		basePath = config.get('global', 'base')
+	except	NoOptionError, e:
+		basePath = None
+	except NoSectionError, e:
+		basePath = None
+
+
+
+
+	if '--base' in argv:
+		n = argv.index('--base')
+		basePath = argv[n+1]
+		argv.remove('--base')
+		argv.remove(basePath)
+		basePath = expanduser(basePath)
+		
+	if basePath is None:
+		print "Need to specify a base path in %s or with --base!" % expanduser('~/.pem.rc')
+	
+		
+	db = libexamdb.ExamDB(join(basePath, "exam"))
+
+	cmd = "cmd_" + argv[1]
+
+	if cmd  == 'cmd_printtemp':
+		print join(basePath, 'tmp')		
+	elif cmd in globals():
+		handler = globals()[cmd]
+		handler(db, argv[1:])
+	else:
+		validCommands = [ x[4:] for x in globals() if "cmd_" in x]
+		print 'Invalid command "%s". Valid commands are %s' % (cmd[4:], (", ").join(sorted(validCommands)))
+		return 1   
+    
+	return None
+
+    
+if __name__ == '__main__':
+	main(sys.argv)

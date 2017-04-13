@@ -1,0 +1,117 @@
+#!/usr/bin/env python
+
+from sys import argv
+from libpem import scanDistance
+from libstir import getSensitivity
+import libliji
+from time import strptime, strftime, localtime
+from datetime import datetime
+from os.path import dirname, isdir, expanduser, join
+import shutil
+from os import listdir, mkdir, system
+from ConfigParser import SafeConfigParser, NoOptionError, NoSectionError
+from tempfile import mkstemp, mkdtemp, NamedTemporaryFile
+
+
+def mkdir2(d):
+	try:
+		mkdir(d)
+	except OSError, e:
+		if e.errno != 17:
+			raise e
+
+def move(src, dst):
+	shutil.move(src, dst)	
+
+def addNormalization(basePath, elm2Name):
+    distance = scanDistance(elm2Name)
+    nearDistance = int(round(distance))
+
+    dir1 = join(basePath,
+                "pemNormalization",
+                "listMode",
+                str(nearDistance))
+    mkdir2(dir1);
+    dataDir = join(dir1, 
+                   strftime("%Y-%m-%d", localtime()))
+    mkdir2(dataDir);
+    print dataDir
+    move(elm2Name, join(dataDir, "data.elm2"));
+    return None
+
+def runSensitivities(basePath):
+    srcPath = dirname(__file__)
+    if srcPath is "": srcPath = '.'
+    binPath = srcPath
+    
+    for noNorm in [True, False]: 
+        for voxelSize in [1, 2, 4]: 
+                for angles in [[0,90], [0,90,45,-45]]:
+                    parameters = {}
+                        
+                    parameters['eMin'] = float(400)
+                    parameters['eMax'] = float(650)
+                    parameters['dMax'] = float(4)
+                    parameters['voxelSize'] = float(voxelSize)
+                    parameters['noNorm'] = noNorm
+                    parameters['subsets'] = 4
+		    parameters['iterations'] = 6
+
+                    p1 = join(basePath,
+			      "pemNormalization",
+                              "listMode")
+
+                    for d1 in listdir(p1):
+                        p2 = join(p1, d1)
+                        if not isdir(p2):
+                            continue
+
+                        try:
+                            distance = float(d1)
+                        except ValueError, e:
+                            continue
+
+            
+
+                        for d2 in listdir(p2):
+                            try:
+                                time = datetime(*strptime(d2, "%Y-%m-%d")[0:6])
+                            except ValueError, e:
+                                continue
+
+	
+                    	    tmpDir = mkdtemp(dir=join(basePath, "tmp"))
+			    p = libliji.getNormalization(time, distance, angles, parameters,
+							   basePath, binPath, tmpDir, False)
+			    system("rm -rf %s" % tmpDir)
+
+                    	    tmpDir = mkdtemp(dir=join(basePath, "tmp"))
+                            hv,v = getSensitivity(time, distance, angles, parameters,
+                                      basePath, binPath, tmpDir, False)
+			    system("rm -rf %s" % tmpDir)
+
+def main(argv):
+    config = SafeConfigParser()
+    config.read(expanduser('~/.pem.rc'))
+    try:
+        basePath = config.get('global', 'base')
+    except	NoOptionError, e:
+        basePath = None
+    except NoSectionError, e:
+        basePath = None
+
+    if basePath is None:
+        print "Need to set a base path in %s" % expanduser('~/.pem.rc')
+        return 1
+
+
+    if argv[1] == 'add':
+        addNormalization(basePath, argv[2])
+
+    elif argv[1] == 'precalc':
+        runSensitivities(basePath)
+
+    return None
+
+if __name__ == '__main__':
+    main(argv)
