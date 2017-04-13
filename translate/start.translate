@@ -8,7 +8,7 @@ from os.path import join, expanduser, dirname
 import os.path
 import os
 from tempfile import mkdtemp
-import pexpect
+#import pexpect
 from datetime import datetime
 import subprocess , shlex
 import signal
