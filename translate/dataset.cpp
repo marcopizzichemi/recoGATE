@@ -274,10 +274,10 @@ int main(int argc, char** argv)
     baseName += "_NOBG_";
   }
   //OUTPUT STREAMS
-  std::string ofs2cryName                =  baseName + "2cry";
-  std::string ofs3cry_avgName            =  baseName + "3cry-avg";
-  std::string ofs3cry_magicalComptonName =  baseName + "3cry-magicalCompton";
-  std::string ofs3cry_effComptonName     =  baseName + "3cry-effCompton";
+  std::string ofs2cryName                =  baseName + "_2cry";
+  std::string ofs3cry_avgName            =  baseName + "_3cry-avg";
+  std::string ofs3cry_magicalComptonName =  baseName + "_3cry-magicalCompton";
+  std::string ofs3cry_effComptonName     =  baseName + "_3cry-effCompton";
 
   std::cout << ofs2cryName << " " << ofs3cry_avgName <<std::endl;
 
