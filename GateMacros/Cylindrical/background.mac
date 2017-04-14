@@ -13,5 +13,5 @@
 
 # attach to the volume that will rotate
 /gate/source/background/attachTo cylinderSource
-/gate/source/background/setActivity 100000 becquerel
+/gate/source/background/setActivity 1000000 becquerel
 #/gate/source/background/visualize 1000 red 2

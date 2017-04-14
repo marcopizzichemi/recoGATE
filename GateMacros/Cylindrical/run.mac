@@ -30,7 +30,7 @@
 # OUTPUT
 # ROOT Output format
 /gate/output/root/enable
-/gate/output/root/setFileName Big
+/gate/output/root/setFileName Sources
 /gate/output/root/setRootSinglesFlag 0
 /gate/output/root/setRootCoincidencesFlag 0
 
