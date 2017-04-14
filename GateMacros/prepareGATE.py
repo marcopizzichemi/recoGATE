@@ -4,6 +4,7 @@ import os
 import stat
 import sys
 import argparse
+import random
 
 def main(argv):
    
@@ -85,6 +86,8 @@ def main(argv):
      currentdir = folder + "/job" + str(jobcounter)
      os.makedirs(currentdir)
      filename = str(jobcounter)
+     
+     randNum = str(random.randint(0,900000000))
      #filename += "_"
      #filename += str(angle_step*i)
      #filename += "_"
@@ -94,6 +97,7 @@ def main(argv):
      f.write("/vis/disable                                                                                                  \n")
      f.write("#/control/execute %s/visu.mac                                                                                 \n" % macros)
      f.write("                                                                                                              \n")
+     f.write("/gate/random/setEngineSeed %s \n" % randNum ) 
      f.write("/gate/geometry/setMaterialDatabase %s/GateMaterials.db                                                        \n" % macros)
      f.write("/control/execute %s/physics.mac                                                                               \n" % macros)
      f.write("                                                                                                              \n")
