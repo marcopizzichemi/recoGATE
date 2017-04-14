@@ -833,24 +833,43 @@ int main(int argc, char** argv)
           float xsub = ( (averageDepEvents[iAvg].submoduleID / repsuby) + 0.5 ) * (arraysubx) - arraysubx*(repsubx/2.0);
           float ycry = ( (averageDepEvents[iAvg].crystalID % repcryy) + 0.5 ) * (arraycryy) - arraycryy*(repcryy/2.0);
           float xcry = ( (averageDepEvents[iAvg].crystalID / repcryy) + 0.5 ) * (arraycryx) - arraycryx*(repcryx/2.0);
+          //calculate x and y in FOV BEFORE the rsectorID rotation on the basis of their module id, submodule etc..
+          float yabs = ymod+ysub+ycry;
+          float xabs = xmod+xsub+xcry;
+          // CAREFUL!!!!! while posX posY posZ reflect the real positions in the FOV, localPosX localPosY localPosZ are relative to the volume BEFORE "any" rotation.
+          // so not just the rsectorID rotation which we reconstruct later, but even the rotation that rotates the entire FOV before the simulation. It's quite confusing...
+          // now we want to calculate the x y z in real FOV coordinates, moduleID, submoduleID, crystalID give us the x y coordinates in real FOV, because the the IDs rotate with the
+          // elements they identify, of course. the localPosX etc coordinate do not, so the localPosX is always the doi coordinate because the crystals are placed in a system that
+          // that in principle rotates around the z axis, then the entire FOV is rotatated around the Y axis to go back to the original ClearPEM coordinates and use
+          // their reco algo (with that choiceof coordinates? who knows...). Crystal main axis is axis, as you can check in the GATE macro at the line
+          // /gate/crystal/geometry/setXLength 15. mm
+          // therefore for the z coordinate in FOV BEFORE the rsectorID rotation, the coordinate to use is the localPosX, hence averageDepEvents[iAvg].x, and NOT the localPosZ
+          float doiAbs = rmin + (averageDepEvents[iAvg].x + (crylength/2.0));
 
-
-          float doiAbs = rmin + (averageDepEvents[iAvg].z + (crylength/2.0));
           float zdoi;
           if(smearedDoi)
             zdoi = (float) gaussianSmear(doiAbs,doiResolutionFWHM);
           else
             zdoi = doiAbs;
 
-          float yabs = ymod+ysub+ycry;
-          float xabs = xmod+xsub+xcry;
+          //force the event to be inside the crystal...
+          if(fabs(zdoi) > fabs(rmin+crylength))
+            if( zdoi > 0 )
+              zdoi = rmin+crylength;
+            else
+              zdoi = - (rmin+crylength);
+          if(fabs(zdoi) < fabs(rmin))
+            if( zdoi > 0 )
+              zdoi = rmin;
+            else
+              zdoi = - (rmin);
 
-          // float x = xabs*cos(ang*averageDepEvents[iAvg].rsectorID) + zdoi*sin(ang*averageDepEvents[iAvg].rsectorID);
-          // float y = yabs;
-          // float z = zdoi*cos(ang*averageDepEvents[iAvg].rsectorID) - xabs*sin(ang*averageDepEvents[iAvg].rsectorID);
+          // now we have the xyz coordinates if the sector was not rotated, but each sector is rotated and after all the FOV rotations our rot axis is x, so
+          // the real coordinates will be
           float x = xabs;
           float y = yabs*cos(ang*averageDepEvents[iAvg].rsectorID) - zdoi*sin(ang*averageDepEvents[iAvg].rsectorID);
           float z = yabs*sin(ang*averageDepEvents[iAvg].rsectorID) + zdoi*cos(ang*averageDepEvents[iAvg].rsectorID);
+
 
 
           //debug

@@ -40,9 +40,9 @@ def main(argv):
     parser.add_option("--inner-radius"          , dest="rmin",default=100)
     parser.add_option("--rotation-angle"          , dest="rotationAngle",default=0)
     parser.add_option("--crystal-length"        , dest="crylength",default=15)
-    parser.add_option("--radial-sectors"        , dest="repsec",default=2)
-    parser.add_option("--module-repetions-x"    , dest="repmodx",default=16)
-    parser.add_option("--module-repetions-y"    , dest="repmody",default=6)
+    parser.add_option("--radial-sectors"        , dest="repsec",default=48)
+    parser.add_option("--module-repetions-x"    , dest="repmodx",default=14)     # these are the the repetitions and array in the rotate (i.e. clearpem system)
+    parser.add_option("--module-repetions-y"    , dest="repmody",default=1)      # so the z coordinate is the radial one, and the rotation of rsectorID is around x
     parser.add_option("--module-repetions-z"    , dest="repmodz",default=1)
     parser.add_option("--module-distance-x"     , dest="arraymodx",default=13)
     parser.add_option("--module-distance-y"     , dest="arraymody",default=13)

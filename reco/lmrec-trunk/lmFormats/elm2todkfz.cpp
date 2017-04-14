@@ -167,7 +167,7 @@ int main(int argc, char * argv[])
 		ELM2Format fe;
 		while(fread((void*)&fe, sizeof(fe), 1, fIn) == 1) {
 			if(nRead == 0)
-				fprintf(stderr, "Distance is %f\n", fe.d);
+				fprintf(stderr, "Diameter is %f\n", fe.d);
 
 			//fprintf(stderr, "%f %f %f -- %f %f %f --- %f\n", fe.x1, fe.y1, fe.z1, fe.x2, fe.y2, fe.z2, fe.dt);
 
@@ -177,6 +177,7 @@ int main(int argc, char * argv[])
 			tMax = tMax > fe.ts ? tMax : fe.ts;
 
 			// Place events at plates surface when DOI is not to be used
+      // FIXME to be modified if we want to use this flag in cylindrical conf
 			if(noDOI) {
 				fe.z1 = fe.z1 < 0 ? -fe.d/2.0 : fe.d/2.0;
 				fe.z2 = fe.z2 < 0 ? -fe.d/2.0 : fe.d/2.0;
@@ -186,8 +187,8 @@ int main(int argc, char * argv[])
 			float v = fe.y1 - fe.y2;
 			float w = fe.z1 - fe.z2;
 
-
-			if(fabs(w) < fe.d/2.0) {
+      //the "insanity condition" now is just "one of the two hits is inside the FOV"
+			if( ( fabs(sqrt(pow(fe.y1,2)+pow(fe.z1,2))) < fe.d/2.0 ) | ( fabs(sqrt(pow(fe.y2,2)+pow(fe.z2,2))) < fe.d/2.0 ) ) {
 				nBad++;
 				continue;
 			}
@@ -211,8 +212,8 @@ int main(int argc, char * argv[])
 			if(fe.n1 > maxHits || fe.n2 > maxHits)
 				continue;
 
-			if (fe.z1 > 0)
-				fe.dt *= -1;
+			// if (fe.z1 > 0)
+				// fe.dt *= -1;
 
 			float decay = (halfLifeTime == 0) ? 1.0 : pow(2, -(fe.ts - t0)/halfLifeTime);
 			weight *= 1/decay;
@@ -254,7 +255,7 @@ int main(int argc, char * argv[])
 		fprintf(stderr, "%f ", (*i) * 180/M_PI);
 	}
 	fprintf(stderr, "\n");
-  
+
 	printf("tMin = %f, tMax = %f, acqTime = %f\n", tMin, tMax, tMax - tMin);
 
 	if(halfLifeTime != 0 && tMin < t0) {

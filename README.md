@@ -32,7 +32,7 @@ Step 2: recostruct image
 
 - elm2todkfz to transform patient acq in format dkfz
 
-home/marco/Universita/Ideas/ComptonRecovery/recoGATE/reco/pem-sonic-tools/elm2todkfz -o data.image.lm --energy-low 400 --energy-high 650 --time-window 4 --scatter-total-events scatter.txt  unif.elm2
+/home/marco/Universita/Ideas/ComptonRecovery/recoGATE/reco/pem-sonic-tools/elm2todkfz -o data.image.lm --energy-low 400 --energy-high 650 --time-window 4 --scatter-total-events scatter.txt  unif.elm2
 
 - ClearPEM_LMRec to produce the image
 
