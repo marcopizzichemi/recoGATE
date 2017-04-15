@@ -152,7 +152,7 @@ def main(argv):
      job.write("unbuffer %s %s                                                                    \n" % (executable,runfile) )
      #job.write("cp out%s.root %s                                           \n" %(filename, folder) )
      #job.write("cd %s \n" % folder)
-     job.write("unbuffer %s --input ./out%s.root --output-dir ./  \n" %(translate_exec,filename) )
+     job.write("unbuffer %s --input ./out%s.root --output-dir ./ --fov-rotation-axis y --fov-rotation-angle 90 \n" %(translate_exec,filename) )
      job.write("cp ./out%s_2cry.elm2 %s \n" % (filename, folder) )
      job.write("cp ./out%s_3cry-avg.elm2 %s \n" % (filename, folder) )
      job.write("cp ./out%s_3cry-magicalCompton.elm2 %s \n" % (filename, folder) )
