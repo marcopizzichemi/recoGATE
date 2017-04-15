@@ -38,7 +38,7 @@
 /gate/rsector/setMaterial Air
 /gate/rsector/vis/forceWireframe
 /gate/rsector/vis/setColor green
-
+/gate/rsector/vis/setVisible 1
 
 # M O D U L E
 /gate/rsector/daughters/name module
@@ -48,7 +48,7 @@
 /gate/module/geometry/setZLength 13 mm
 #temp material BaSO4 -> define Vikuiti
 /gate/module/setMaterial BaSO4
-/gate/module/vis/forceSolid
+/gate/module/vis/forceWireframe
 /gate/module/vis/setColor gray
 /gate/module/vis/setVisible 0
 

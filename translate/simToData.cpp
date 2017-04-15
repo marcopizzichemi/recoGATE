@@ -31,6 +31,8 @@
 #include "TCanvas.h"
 #include "TRandom.h"
 
+#define PI 3.141592653
+
 
 
 
@@ -127,36 +129,40 @@ int main(int argc, char** argv)
   int repsec = 2;
   // float ang = 3.1415*2/repsec;
   //module
-  int repmodx = 16;
-  int repmody = 6;
+  int repmodx = 1;
+  int repmody = 1;
   int repmodz = 1;
   //array
   float arraymodx = 13;
   float arraymody = 13;
-  float arraymodz = 0;
+  float arraymodz = 13;
   //submod
   //repetitions
-  int repsubx = 4;
-  int repsuby = 4;
+  int repsubx = 1;
+  int repsuby = 1;
   int repsubz = 1;
   //positions
   float arraysubx = 3.2;
   float arraysuby = 3.2;
-  float arraysubz = 0;
+  float arraysubz = 3.2;
   //crystal
   //repetitions
-  int repcryx = 2;
-  int repcryy = 2;
+  int repcryx = 1;
+  int repcryy = 1;
   int repcryz = 1;
   //positions
   float arraycryx = 1.6;
   float arraycryy = 1.6;
-  float arraycryz = 0;
+  float arraycryz = 1.6;
   //detector parameters
   int smearedDoi = 1;
   int smearedEnergy = 1;
   Double_t energyResolutionFWHM = 0.12; //12% FWHM @511, for the moment we take the same also for low energy...
   Double_t doiResolutionFWHM = 2.8; //2.8mm doi res measured on the module
+
+  bool fovRotation = false; // fov rotated?
+  char* fovRotationAxis = NULL; // rotation axis for entire fov. can be only x y or z
+  float fovRotationAngle = 0.0;
 
   char* inputName = NULL;
   char* outputName = NULL;
@@ -195,28 +201,30 @@ int main(int argc, char** argv)
 			{ "inner-radius", required_argument, 0, 0 },
 			{ "crystal-length", required_argument, 0, 0 },
 			{ "radial-sectors", required_argument, 0, 0 },
-			{ "module-repetions-x", required_argument, 0, 0 },
-			{ "module-repetions-y", required_argument, 0, 0 },
-			{ "module-repetions-z", required_argument, 0, 0 },
+			{ "module-repetitions-x", required_argument, 0, 0 },
+			{ "module-repetitions-y", required_argument, 0, 0 },
+			{ "module-repetitions-z", required_argument, 0, 0 },
       { "module-distance-x", required_argument, 0, 0 },
 			{ "module-distance-y", required_argument, 0, 0 },
 			{ "module-distance-z", required_argument, 0, 0 },
-      { "submodule-repetions-x", required_argument, 0, 0 },
-			{ "submodule-repetions-y", required_argument, 0, 0 },
-			{ "submodule-repetions-z", required_argument, 0, 0 },
+      { "submodule-repetitions-x", required_argument, 0, 0 },
+			{ "submodule-repetitions-y", required_argument, 0, 0 },
+			{ "submodule-repetitions-z", required_argument, 0, 0 },
       { "submodule-distance-x", required_argument, 0, 0 },
 			{ "submodule-distance-y", required_argument, 0, 0 },
 			{ "submodule-distance-z", required_argument, 0, 0 },
-      { "crystals-repetions-x", required_argument, 0, 0 },
-			{ "crystals-repetions-y", required_argument, 0, 0 },
-			{ "crystals-repetions-z", required_argument, 0, 0 },
-      { "crystals-distance-x", required_argument, 0, 0 },
-			{ "crystals-distance-y", required_argument, 0, 0 },
-			{ "crystals-distance-z", required_argument, 0, 0 },
+      { "crystal-repetitions-x", required_argument, 0, 0 },
+			{ "crystal-repetitions-y", required_argument, 0, 0 },
+			{ "crystal-repetitions-z", required_argument, 0, 0 },
+      { "crystal-distance-x", required_argument, 0, 0 },
+			{ "crystal-distance-y", required_argument, 0, 0 },
+			{ "crystal-distance-z", required_argument, 0, 0 },
       { "energy-resolution-fwhm", required_argument, 0, 0 },
       { "doi-resolution-fwhm", required_argument, 0, 0 },
       { "smeared-energy", required_argument, 0, 0 },
       { "smeared-doi", required_argument, 0, 0},
+      { "fov-rotation-axis", required_argument, 0, 0},
+      { "fov-rotation-angle", required_argument, 0, 0},
 			{ NULL, 0, 0, 0 }
 	};
 
@@ -310,7 +318,13 @@ int main(int argc, char** argv)
     else if (c == 0 && optionIndex == 24){
       smearedDoi = atoi((char *)optarg);
     }
-
+    else if (c == 0 && optionIndex == 25){
+      fovRotationAxis = (char *)optarg;
+      fovRotation = true;
+    }
+    else if (c == 0 && optionIndex == 26){
+      fovRotationAngle = atof((char *)optarg);
+    }
 		else { //FIXME
 			std::cout	<< "Usage: " << argv[0] << std::endl
 			<< "\t\t" << "[ -i <input file> ] " << std::endl
@@ -340,6 +354,18 @@ int main(int argc, char** argv)
     std::cout	<< "ERROR: you need to provide at least input and output file!!!" << std::endl;
     return 1;
   }
+  if(fovRotation)
+  {
+    if( (fovRotationAxis[0] == 'x') | (fovRotationAxis[0] == 'y') | (fovRotationAxis[0] == 'z') )
+    {
+      //ok
+    }
+    else
+    {
+      std::cout	<< "ERROR: rotation axis not valid. It can be only x y or z." << std::endl;
+      return 1;
+    }
+  }
 
   std::cout << "SIM TO DATA -----------------------------------"<< std::endl;
   std::cout << "Input file name      = " << inputName           << std::endl
@@ -368,8 +394,17 @@ int main(int argc, char** argv)
             << "smearedDoi           = " << smearedDoi          << std::endl
             << "smearedEnergy        = " << smearedEnergy       << std::endl
             << "energyResolutionFWHM = " << energyResolutionFWHM<< std::endl
-            << "doiResolutionFWHM    = " << doiResolutionFWHM   << std::endl
-            <<  std::endl;
+            << "doiResolutionFWHM    = " << doiResolutionFWHM   << std::endl;
+  if(fovRotation)
+  {
+    std::cout << "FOV is rotated around axis " << fovRotationAxis << " by angle " << fovRotationAngle <<  " degrees" << std::endl;
+  }
+  else
+  {
+    std::cout << "NO FOV rotation" << std::endl;
+  }
+
+
 
 
 
@@ -632,7 +667,7 @@ int main(int argc, char** argv)
   // float crylength = 15;
   // //rsector
   // int repsec = 2;
-  float ang = 3.1415*2/repsec;
+  float ang = PI*2.0/repsec;
   // //module
   // int repmodx = 16;
   // int repmody = 6;
@@ -814,62 +849,129 @@ int main(int argc, char** argv)
           }
         }
 
-        // now output the reading of this event, like this
-        //calculate hit position, for each crystal
 
         for(int iAvg = 0; iAvg < averageDepEvents.size(); iAvg++)
         {
-          //coordinates from crytal hit
-          // float ymod = ( (averageDepEvents[iAvg].moduleID % repmody) + 0.5 ) * (arraymody) - arraymody*(repmody/2.0);
-          // float zmod = ( (averageDepEvents[iAvg].moduleID / repmody) + 0.5 ) * (arraymodz) - arraymodz*(repmodz/2.0);
-          // float ysub = ( (averageDepEvents[iAvg].submoduleID % repsuby) + 0.5 ) * (arraysuby) - arraysuby*(repsuby/2.0);
-          // float zsub = ( (averageDepEvents[iAvg].submoduleID / repsuby) + 0.5 ) * (arraysubz) - arraysubz*(repsubz/2.0);
-          // float ycry = ( (averageDepEvents[iAvg].crystalID % repcryy) + 0.5 ) * (arraycryy) - arraycryy*(repcryy/2.0);
-          // float zcry = ( (averageDepEvents[iAvg].crystalID / repcryy) + 0.5 ) * (arraycryz) - arraycryz*(repcryz/2.0);
+          // now output the reading of this event, like this
+          //coordinates from crystal hit, but in non rotated FOV
+
+
+          //-------------------------------//
+          //       rsectorID rotation      //
+          //-------------------------------//
+          // first, module, submodule and crystal x and z position before any rotation due to rsectorID (and before the fov rotation)
+          // gate creates the cylindricalPET with z as rotation axis (i.e main axis of the scanner) and there is nothing to do with it
+          // then it creates elements and places them in the appropriate places. In particular, they all start in the center of mother volume, ang give the hierarchy of
+          // module -> submodule -> crystal
+          // we can start by looking for the y-z position of the modules inside their rsector.
+          // they are placed like this
+          //
+          //    Z
+          //    ^
+          //    |
+          //    |
+          //    |
+          //    |  12  13  14   15
+          //    |  8   9   10   11
+          //    |  4   5    6    7
+          //    |  0   1    2    3
+          //    |-------------------------------------------->  Y
+          //
+          // in a simple 4x4 configuration for example
+          // So given the distances and the numb of repetitions along y and z
+          // the y coordinate is the displacement array in y times the rest of division by the repetition on y direction
+          // the z is the displacement array in z times the integral part of the same division
+          // on top of that, we want the center of these elements (so we had half of their displacement array) and we shift everything to go to 0,0
 
           float ymod = ( (averageDepEvents[iAvg].moduleID % repmody) + 0.5 ) * (arraymody) - arraymody*(repmody/2.0);
-          float xmod = ( (averageDepEvents[iAvg].moduleID / repmody) + 0.5 ) * (arraymodx) - arraymodx*(repmodx/2.0);
+          float zmod = ( (averageDepEvents[iAvg].moduleID / repmody) + 0.5 ) * (arraymodz) - arraymodz*(repmodz/2.0);
+          // same goes for submodules and crystals
           float ysub = ( (averageDepEvents[iAvg].submoduleID % repsuby) + 0.5 ) * (arraysuby) - arraysuby*(repsuby/2.0);
-          float xsub = ( (averageDepEvents[iAvg].submoduleID / repsuby) + 0.5 ) * (arraysubx) - arraysubx*(repsubx/2.0);
+          float zsub = ( (averageDepEvents[iAvg].submoduleID / repsuby) + 0.5 ) * (arraysubz) - arraysubz*(repsubz/2.0);
           float ycry = ( (averageDepEvents[iAvg].crystalID % repcryy) + 0.5 ) * (arraycryy) - arraycryy*(repcryy/2.0);
-          float xcry = ( (averageDepEvents[iAvg].crystalID / repcryy) + 0.5 ) * (arraycryx) - arraycryx*(repcryx/2.0);
-          //calculate x and y in FOV BEFORE the rsectorID rotation on the basis of their module id, submodule etc..
+          float zcry = ( (averageDepEvents[iAvg].crystalID / repcryy) + 0.5 ) * (arraycryz) - arraycryz*(repcryz/2.0);
+          // now the absolute y and z coordinates of the crystal hit can be calculated simply summing the element displacements of hits module, submodule and crystal
           float yabs = ymod+ysub+ycry;
-          float xabs = xmod+xsub+xcry;
-          // CAREFUL!!!!! while posX posY posZ reflect the real positions in the FOV, localPosX localPosY localPosZ are relative to the volume BEFORE "any" rotation.
-          // so not just the rsectorID rotation which we reconstruct later, but even the rotation that rotates the entire FOV before the simulation. It's quite confusing...
-          // now we want to calculate the x y z in real FOV coordinates, moduleID, submoduleID, crystalID give us the x y coordinates in real FOV, because the the IDs rotate with the
-          // elements they identify, of course. the localPosX etc coordinate do not, so the localPosX is always the doi coordinate because the crystals are placed in a system that
-          // that in principle rotates around the z axis, then the entire FOV is rotatated around the Y axis to go back to the original ClearPEM coordinates and use
-          // their reco algo (with that choiceof coordinates? who knows...). Crystal main axis is axis, as you can check in the GATE macro at the line
-          // /gate/crystal/geometry/setXLength 15. mm
-          // therefore for the z coordinate in FOV BEFORE the rsectorID rotation, the coordinate to use is the localPosX, hence averageDepEvents[iAvg].x, and NOT the localPosZ
+          float zabs = zmod+zsub+zcry;
+
+          // now, the doi coordinate instead is given by the LOCAL coordinates of the hit inside the crystal. These where already averaged in the steps before. Plus, we start with the crystal that is
+          // placed in rotation angle 0, as if it was rsectorID = 0, so the crystal is placed in a x coordinate (positive since for now rsectorID = 0) given by the radius of the scanner
           float doiAbs = rmin + (averageDepEvents[iAvg].x + (crylength/2.0));
-
-          float zdoi;
+          // this coordinate can go from rmin to rmin + crylength, since averageDepEvents[iAvg].x is localPosX and this goes from -crylength/2.0 to +crylength/2.0. The -crylength/2.0 end is the closest
+          // to the center fo FOV.
+          // now we smear the doi position introducing the doi resolution (if the user said so)
+          float xdoi;
           if(smearedDoi)
-            zdoi = (float) gaussianSmear(doiAbs,doiResolutionFWHM);
+            xdoi = fabs((float) gaussianSmear(doiAbs,doiResolutionFWHM));
           else
-            zdoi = doiAbs;
-
-          //force the event to be inside the crystal...
-          if(fabs(zdoi) > fabs(rmin+crylength))
-            if( zdoi > 0 )
-              zdoi = rmin+crylength;
+            xdoi = doiAbs;
+          // also, we want to force the event to be inside the crystal
+          // again, the event for now is still not rotated wrt rsectorID, so the xdoi variable is strictly positive, approximately from rmin to rmin +crylength (approximately because of smearing)
+          if(xdoi > (rmin+crylength) )
+          {
+            xdoi = rmin+crylength;
+          }
+          else
+          {
+            if (xdoi < rmin )
+            {
+              xdoi = rmin;
+            }
             else
-              zdoi = - (rmin+crylength);
-          if(fabs(zdoi) < fabs(rmin))
-            if( zdoi > 0 )
-              zdoi = rmin;
-            else
-              zdoi = - (rmin);
+            {
+              // stays like that
+            }
+          }
 
-          // now we have the xyz coordinates if the sector was not rotated, but each sector is rotated and after all the FOV rotations our rot axis is x, so
-          // the real coordinates will be
-          float x = xabs;
-          float y = yabs*cos(ang*averageDepEvents[iAvg].rsectorID) - zdoi*sin(ang*averageDepEvents[iAvg].rsectorID);
-          float z = yabs*sin(ang*averageDepEvents[iAvg].rsectorID) + zdoi*cos(ang*averageDepEvents[iAvg].rsectorID);
+          // now we have the xyz "absolute" coordinates, if the rsector was not rotated, but each sector is rotated around z axis
+          // the angle can be calculated from the numeber of sectors and the rsectorID.
+          // the rotation is positive around z (x axis rotates towards y)
+          // The rotation axis is z, by angle ang*averageDepEvents[iAvg].rsectorID
+          float xfov = xdoi*cos(ang*averageDepEvents[iAvg].rsectorID) - yabs*sin(ang*averageDepEvents[iAvg].rsectorID);
+          float yfov = xdoi*sin(ang*averageDepEvents[iAvg].rsectorID) + yabs*cos(ang*averageDepEvents[iAvg].rsectorID);
+          float zfov = zabs;
 
+          //-------------------------------//
+          //       rsectorID rotation      //
+          //-------------------------------//
+          float x,y,z;
+          // now the entire fov is rotated because of the (crazy) way ClearPEM axis where chosen. Or for another axis chosen by the user. By default there will be no rotation assumed and the main
+          // scanner axis will be the z axis, but CAREFUL that this won't work with the ClearPEM reco algo. So first let's check the rotation axis (if any)
+          if(fovRotation)
+          {
+            float rotAng = (fovRotationAngle / 180.0) * PI;
+            // check which rotation axis was given
+            if(fovRotationAxis[0] == 'x')  // it is meant as a positive rotation around this axis
+            {
+              x = xfov;
+              y = yfov*cos(rotAng) - zfov*sin(rotAng);
+              z = yfov*sin(rotAng) + zfov*cos(rotAng);
+            }
+            if(fovRotationAxis[0] == 'y') // it is meant as a positive rotation around this axis
+            {
+              // For ClearPEM, the rotation axis is x, and it is pointing towards the ground. in these comments we will assume this.
+              // (let's say same orientation as the gravity vector). So before translating this data into ClearPEM data, we need to rotate everything accordingly. In particular, the
+              // simulation (and in the future the acquistions) was executed in ClearPEM coordinates, so the crystals and the relative hits are in reality in that coordinate system,
+              // where the rotation axis is x. To reconstruct those coordinates, we need to rotate every point around the y axis of 90 degrees, with z axis going towards x axis.
+              // this means positive rotation around y, and the angle is given by the user
+              // so the trasformations is
+              x = xfov*cos(rotAng) + zfov*sin(rotAng);
+              y = yfov;
+              z = zfov*cos(rotAng) - xfov*sin(rotAng);
+            }
+            if(fovRotationAxis[0] == 'z') // it is meant as a positive rotation around this axis
+            {
+              x = xfov*cos(rotAng) - yfov*sin(rotAng);
+              y = xfov*sin(rotAng) + yfov*cos(rotAng);
+              z = zfov;
+            }
+          }
+          else // no fov rotation
+          {
+            x = xfov;
+            y = yfov;
+            z = zfov;
+          }
 
 
           //debug

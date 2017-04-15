@@ -36,29 +36,29 @@ def main(argv):
     print "---------------------------------- %s" % pathToCmd
     parser = OptionParser()
     parser.add_option("--input"                 , dest="inputFile")
-    parser.add_option("--output-dir"                , dest="outputDir")
+    parser.add_option("--output-dir"                , dest="outputDir",default="./")
     parser.add_option("--inner-radius"          , dest="rmin",default=100)
     parser.add_option("--rotation-angle"          , dest="rotationAngle",default=0)
     parser.add_option("--crystal-length"        , dest="crylength",default=15)
     parser.add_option("--radial-sectors"        , dest="repsec",default=48)
-    parser.add_option("--module-repetions-x"    , dest="repmodx",default=14)     # these are the the repetitions and array in the rotate (i.e. clearpem system)
-    parser.add_option("--module-repetions-y"    , dest="repmody",default=1)      # so the z coordinate is the radial one, and the rotation of rsectorID is around x
-    parser.add_option("--module-repetions-z"    , dest="repmodz",default=1)
+    parser.add_option("--module-repetitions-x"    , dest="repmodx",default=1)
+    parser.add_option("--module-repetitions-y"    , dest="repmody",default=1)
+    parser.add_option("--module-repetitions-z"    , dest="repmodz",default=14)
     parser.add_option("--module-distance-x"     , dest="arraymodx",default=13)
     parser.add_option("--module-distance-y"     , dest="arraymody",default=13)
-    parser.add_option("--module-distance-z"     , dest="arraymodz",default=0)
-    parser.add_option("--submodule-repetions-x" , dest="repsubx",default=4)
-    parser.add_option("--submodule-repetions-y" , dest="repsuby",default=4)
-    parser.add_option("--submodule-repetions-z" , dest="repsubz",default=1)
+    parser.add_option("--module-distance-z"     , dest="arraymodz",default=13)
+    parser.add_option("--submodule-repetitions-x" , dest="repsubx",default=1)
+    parser.add_option("--submodule-repetitions-y" , dest="repsuby",default=4)
+    parser.add_option("--submodule-repetitions-z" , dest="repsubz",default=4)
     parser.add_option("--submodule-distance-x"  , dest="arraysubx",default=3.2)
     parser.add_option("--submodule-distance-y"  , dest="arraysuby",default=3.2)
-    parser.add_option("--submodule-distance-z"  , dest="arraysubz",default=0)
-    parser.add_option("--crystals-repetions-x"  , dest="repcryx",default=2)
-    parser.add_option("--crystals-repetions-y"  , dest="repcryy",default=2)
-    parser.add_option("--crystals-repetions-z"  , dest="repcryz",default=1)
-    parser.add_option("--crystals-distance-x"   , dest="arraycryx",default=1.6)
-    parser.add_option("--crystals-distance-y"   , dest="arraycryy",default=1.6)
-    parser.add_option("--crystals-distance-z"   , dest="arraycryz",default=0)
+    parser.add_option("--submodule-distance-z"  , dest="arraysubz",default=3.2)
+    parser.add_option("--crystal-repetitions-x"  , dest="repcryx",default=1)
+    parser.add_option("--crystal-repetitions-y"  , dest="repcryy",default=2)
+    parser.add_option("--crystal-repetitions-z"  , dest="repcryz",default=2)
+    parser.add_option("--crystal-distance-x"   , dest="arraycryx",default=1.6)
+    parser.add_option("--crystal-distance-y"   , dest="arraycryy",default=1.6)
+    parser.add_option("--crystal-distance-z"   , dest="arraycryz",default=1.6)
     parser.add_option("--energy-resolution-fwhm", dest="energyResolutionFWHM",default=0.12)
     parser.add_option("--doi-resolution-fwhm"   , dest="doiResolutionFWHM",default=2.8)
     parser.add_option("--smeared-energy"        , dest="smearedEnergy",default=1)
@@ -78,6 +78,8 @@ def main(argv):
     parser.add_option("--iterations", dest="iterations", default=6)
     parser.add_option("--voxel-size"            , dest="voxelSize", default=2)
     parser.add_option("--rays"                  , dest="rays", default=0)
+    parser.add_option("--fov-rotation-axis"     , dest="fovRotationAxis")
+    parser.add_option("--fov-rotation-angle"    , dest="fovRotationAngle", default=90.0)
     # parser.add_option("--no-osem"               , dest="osem", default=True, action="store_false")
 
     (options, argv) = parser.parse_args(argv)
@@ -132,6 +134,9 @@ def main(argv):
                   'osem':                False,
                   'rays':                options.rays,
                   'iterations':          options.iterations,
+                  'fovRotation':         False,
+                  'fovRotationAxis':     options.fovRotationAxis,
+                  'fovRotationAngle':    options.fovRotationAngle,
                   'scatter_total_events_file': 'scatter_total.txt'
                   }
 
@@ -139,6 +144,10 @@ def main(argv):
         print 'ERROR: you need to provide at least an input file!!!'
         print 'Syntax: %(cmd)s --input <name of input root file>' %locals()
         return 1
+    if parameters['fovRotationAxis'] == None:
+        print 'No rotation of FOV'
+    else:
+        parameters['fovRotation'] = True
 
     baseFile = parameters['inputFile'][0:len(parameters['inputFile'])-5]
     print baseFile
@@ -203,6 +212,9 @@ def main(argv):
     print 'compton_eff          = %(compton_eff)s' %parameters
     print 'enMin                = %(enMin)s' %parameters
     print 'enMax                = %(enMax)s' %parameters
+    if parameters['fovRotation']:
+        print 'fovRotationAxis      = %(fovRotationAxis)s' %parameters
+        print 'fovRotationAngle     = %(fovRotationAngle)s' %parameters
 
     simToData_cmd = pathToCmd
     simToData_cmd += "simToData " \
@@ -211,28 +223,31 @@ def main(argv):
                     "--inner-radius %(rmin)s " \
                     "--crystal-length %(crylength)s " \
                     "--radial-sectors %(repsec)s " \
-                    "--module-repetions-x %(repmodx)s " \
-                    "--module-repetions-y %(repmody)s " \
-                    "--module-repetions-z %(repmodz)s " \
+                    "--module-repetitions-x %(repmodx)s " \
+                    "--module-repetitions-y %(repmody)s " \
+                    "--module-repetitions-z %(repmodz)s " \
                     "--module-distance-x %(arraymodx)s " \
                     "--module-distance-y %(arraymody)s " \
                     "--module-distance-z %(arraymodz)s " \
-                    "--submodule-repetions-x %(repsubx)s " \
-                    "--submodule-repetions-y %(repsuby)s " \
-                    "--submodule-repetions-z %(repsubz)s " \
+                    "--submodule-repetitions-x %(repsubx)s " \
+                    "--submodule-repetitions-y %(repsuby)s " \
+                    "--submodule-repetitions-z %(repsubz)s " \
                     "--submodule-distance-x %(arraysubx)s " \
                     "--submodule-distance-y %(arraysuby)s " \
                     "--submodule-distance-z %(arraysubz)s " \
-                    "--crystals-repetions-x %(repcryx)s " \
-                    "--crystals-repetions-y %(repcryy)s " \
-                    "--crystals-repetions-z %(repcryz)s " \
-                    "--crystals-distance-x %(arraycryx)s " \
-                    "--crystals-distance-y %(arraycryy)s " \
-                    "--crystals-distance-z %(arraycryz)s " \
+                    "--crystal-repetitions-x %(repcryx)s " \
+                    "--crystal-repetitions-y %(repcryy)s " \
+                    "--crystal-repetitions-z %(repcryz)s " \
+                    "--crystal-distance-x %(arraycryx)s " \
+                    "--crystal-distance-y %(arraycryy)s " \
+                    "--crystal-distance-z %(arraycryz)s " \
                     "--energy-resolution-fwhm %(energyResolutionFWHM)s " \
                     "--doi-resolution-fwhm %(doiResolutionFWHM)s " \
                     "--smeared-energy %(smearedEnergy)s " \
                     "--smeared-doi %(smearedDoi)s " %parameters
+    if parameters['fovRotation']:
+        simToData_cmd += "--fov-rotation-axis %(fovRotationAxis)s " \
+                         "--fov-rotation-angle %(fovRotationAngle)s " %parameters
 
 
 
