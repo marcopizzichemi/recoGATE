@@ -28,14 +28,14 @@ int main(int argc, char *argv[])
 {
 	using namespace std;
 
-  int XDim = atoi(argv[1]);
+  int XDim = atoi(argv[1]); // coordinates in lm mode 
   int YDim = atoi(argv[2]);
   int ZDim = atoi(argv[3]);
 
   float* recImage = new float[XDim*YDim*ZDim];
   for (int i=0; i<XDim*YDim*ZDim; i++)
 		recImage[i] = 1.0;
-  
+
 	FILE *outputFile = fopen("unit.lm", "wb");
 	fwrite(recImage, sizeof(float), XDim*YDim*ZDim, outputFile);
 	fclose(outputFile);
