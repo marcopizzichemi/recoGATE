@@ -26,6 +26,7 @@ def main(argv):
    parser.add_argument('-s','--tslice',help='Time slice length [s]', required=True)
    parser.add_argument('-q','--queue',help='Queue name ', required=True)
    parser.add_argument('-c','--convert',help='Translate command', required=True)
+   parser.add_argument('-p','--specific',help='Specific args for start.translate', required=False)
    #parser.add_argument('-l','--life',help='Isotope half life [s]', required=False)
    args = parser.parse_args()
 
@@ -41,6 +42,10 @@ def main(argv):
    tslice         = float(args.tslice)
    queue          = args.queue
    translate_exec = args.convert
+   if(args.specific == None):
+       specific = ""
+   else:
+       specific       = args.specific
    if args.runtype == 'normalization':
      runtype = 0
    elif args.runtype == 'sources':
@@ -63,6 +68,7 @@ def main(argv):
    print ("Time slice       (per job) [s] : %f" % tslice )
    print ("lxplus Queue                   : %s" % queue )
    print ("Run type                       : %s = %d " % (args.runtype,runtype) )
+   print ("Specific translate string      : %s " % specific )
    #print ("Isotope Half life [s]: %f" % thalf )
 
    #make the output directory
@@ -152,7 +158,7 @@ def main(argv):
      job.write("unbuffer %s %s                                                                    \n" % (executable,runfile) )
      #job.write("cp out%s.root %s                                           \n" %(filename, folder) )
      #job.write("cd %s \n" % folder)
-     job.write("unbuffer %s --input ./out%s.root --output-dir ./ --fov-rotation-axis y --fov-rotation-angle 90 \n" %(translate_exec,filename) )
+     job.write("unbuffer %s --input ./out%s.root --output-dir ./ --fov-rotation-axis y --fov-rotation-angle 90 %s \n" %(translate_exec,filename,specific) )
      job.write("cp ./out%s_2cry.elm2 %s \n" % (filename, folder) )
      job.write("cp ./out%s_3cry-avg.elm2 %s \n" % (filename, folder) )
      job.write("cp ./out%s_3cry-magicalCompton.elm2 %s \n" % (filename, folder) )
