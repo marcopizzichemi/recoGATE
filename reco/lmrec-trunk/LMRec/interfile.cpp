@@ -45,14 +45,14 @@ void writeInterFile(char *prefix, struct image_params *ip, float *image)
 	fprintf(header, "data offset in bytes[1] := 0\n");
 	fprintf(header, "quantification units := 1\n");
 	fprintf(header, "!END OF INTERFILE :=\n");
-	
+
 	for(int xi = 0; xi < XDim; xi++)
 		for(int zi = 0; zi < ZDim; zi++)
 			for(int yi = 0; yi < YDim; yi++)
 				fwrite((void*)&image[(XDim-xi-1)+(ZDim-zi-1)*XDim+(yi)*XDim*YDim], sizeof(float), 1, data);
-	
-	
-	
+
+
+
 	fclose(data);
 	fclose(header);
 
