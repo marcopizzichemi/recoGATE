@@ -15,8 +15,9 @@
 # crystal 1.53x1.53x15 mm + 0.07 mm vikuiti in between.
 # matrix 8x8 crystals -> size 12.8x12.8 mm
 /gate/cylindricalPET/geometry/setHeight 182 mm
-
 /gate/cylindricalPET/vis/forceWireframe
+/gate/cylindricalPET/vis/setVisible 0
+
 
 # R S E C T O R
 /gate/cylindricalPET/daughters/name rsector
@@ -28,6 +29,7 @@
 /gate/rsector/setMaterial Air
 /gate/rsector/vis/forceSolid
 /gate/rsector/vis/setColor red
+/gate/rsector/vis/setVisible 0
 
 
 # M O D U L E
@@ -38,9 +40,9 @@
 /gate/module/geometry/setZLength 13 mm
 #temp material BaSO4 -> define Vikuiti
 /gate/module/setMaterial BaSO4
-/gate/module/vis/forceSolid
+/gate/module/vis/forceWireframe
 /gate/module/vis/setColor gray
-/gate/module/vis/setVisible 0
+/gate/module/vis/setVisible 1
 
 
 # S U B M O D U L E

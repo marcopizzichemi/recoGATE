@@ -27,6 +27,7 @@
 # matrix 8x8 crystals -> size 12.8x12.8 mm
 /gate/cylindricalPET/geometry/setHeight 182 mm
 /gate/cylindricalPET/vis/forceWireframe
+/gate/cylindricalPET/vis/setVisible 1
 
 # R S E C T O R
 /gate/cylindricalPET/daughters/name rsector
@@ -38,7 +39,7 @@
 /gate/rsector/setMaterial Air
 /gate/rsector/vis/forceWireframe
 /gate/rsector/vis/setColor green
-/gate/rsector/vis/setVisible 1
+/gate/rsector/vis/setVisible 0
 
 # M O D U L E
 /gate/rsector/daughters/name module
