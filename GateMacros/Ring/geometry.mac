@@ -21,8 +21,8 @@
 /gate/world/daughters/name cylindricalPET
 /gate/world/daughters/insert cylinder
 /gate/cylindricalPET/setMaterial Air
-/gate/cylindricalPET/geometry/setRmax 136 mm
-/gate/cylindricalPET/geometry/setRmin 120 mm
+/gate/cylindricalPET/geometry/setRmax 118 mm
+/gate/cylindricalPET/geometry/setRmin 100 mm
 # crystal 1.53x1.53x15 mm + 0.07 mm vikuiti in between.
 # matrix 8x8 crystals -> size 12.8x12.8 mm
 /gate/cylindricalPET/geometry/setHeight 13 mm
@@ -31,7 +31,7 @@
 # R S E C T O R
 /gate/cylindricalPET/daughters/name rsector
 /gate/cylindricalPET/daughters/insert box
-/gate/rsector/placement/setTranslation 127.5 0 0 mm
+/gate/rsector/placement/setTranslation 107.5 0 0 mm
 /gate/rsector/geometry/setXLength 15. mm
 /gate/rsector/geometry/setYLength 13 mm
 /gate/rsector/geometry/setZLength 13 mm
@@ -109,14 +109,14 @@
 
 # R E P E A T R S E C T O R
 /gate/rsector/repeaters/insert ring
-/gate/rsector/ring/setRepeatNumber 58
+/gate/rsector/ring/setRepeatNumber 48
 
 # S O U R C E S 
 # will be embedded in a cylinder
 /gate/world/daughters/name cylinderSource
 /gate/world/daughters/insert cylinder
 /gate/cylinderSource/setMaterial Air
-/gate/cylinderSource/geometry/setRmax 120 mm
+/gate/cylinderSource/geometry/setRmax 100 mm
 /gate/cylinderSource/geometry/setHeight 13 mm
 /gate/cylinderSource/vis/setColor blue
 /gate/cylinderSource/vis/forceWireframe
