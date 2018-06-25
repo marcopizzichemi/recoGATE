@@ -295,7 +295,7 @@ int main(int argc, char** argv)
   std::ofstream ofs3cry_avg;
   std::ofstream ofs3cry_magicalCompton;
   std::ofstream ofs3cry_effCompton;
-  std::ofstream ofs3ofs3cry_maxEnergy;
+  std::ofstream ofs3cry_maxEnergy;
 
   // bool listmodeoutput = true;
   // std::ofstream *listMode2cry = NULL;
