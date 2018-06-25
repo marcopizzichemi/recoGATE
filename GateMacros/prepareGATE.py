@@ -73,6 +73,9 @@ def main(argv):
 
    #make the output directory
    os.makedirs(folder)
+   cernboxBase = "/eos/user/m/mpizzich/Universita/Ideas/ComptonRecovery/Simulations/"
+   cernboxFolder = cernboxBase + args.folder
+   os.makedirs(cernboxFolder)
 
    #calculating the angles
    #angle_step = 360.0 / (angles*2);
@@ -91,6 +94,7 @@ def main(argv):
      #make the job folder and store the base filename
      currentdir = folder + "/job" + str(jobcounter)
      os.makedirs(currentdir)
+
      filename = str(jobcounter)
 
      randNum = str(random.randint(0,900000000))
@@ -155,16 +159,16 @@ def main(argv):
      job.write("source /afs/cern.ch/sw/lcg/external/gcc/4.9.3/x86_64-slc6-gcc49-opt/setup.sh                                                                                                 \n")
      job.write("source /afs/cern.ch/sw/lcg/external/geant4/10.2.p03/x86_64-slc6-gcc49-opt/bin/geant4.sh                                                    \n")
      job.write("source /afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.36/x86_64-slc6-gcc49-opt/root/bin/thisroot.sh                                            \n")
-     job.write("unbuffer %s %s                                                                    \n" % (executable,runfile) )
+     job.write("%s %s                                                                    \n" % (executable,runfile) )
      #job.write("cp out%s.root %s                                           \n" %(filename, folder) )
      #job.write("cd %s \n" % folder)
-     job.write("unbuffer %s --input ./out%s.root --output-dir ./ --fov-rotation-axis y --fov-rotation-angle 90 %s \n" %(translate_exec,filename,specific) )
-     job.write("cp ./out%s_2cry.elm2 %s \n" % (filename, folder) )
-     job.write("cp ./out%s_3cry-avg.elm2 %s \n" % (filename, folder) )
-     job.write("cp ./out%s_3cry-magicalCompton.elm2 %s \n" % (filename, folder) )
-     job.write("cp ./out%s_3cry-effCompton.elm2 %s \n" % (filename, folder) )
-     job.write("cp ./out%s_3cry-maxEnergy.elm2 %s \n" % (filename, folder) )
-     job.write("cd %s \n" % folder)
+     job.write("%s --input ./out%s.root --output-dir ./ --fov-rotation-axis y --fov-rotation-angle 90 %s \n" %(translate_exec,filename,specific) )
+     job.write("cp ./out%s_2cry.elm2 %s \n" % (filename, cernboxFolder) )
+     job.write("cp ./out%s_3cry-avg.elm2 %s \n" % (filename, cernboxFolder) )
+     job.write("cp ./out%s_3cry-magicalCompton.elm2 %s \n" % (filename, cernboxFolder) )
+     job.write("cp ./out%s_3cry-effCompton.elm2 %s \n" % (filename, cernboxFolder) )
+     job.write("cp ./out%s_3cry-maxEnergy.elm2 %s \n" % (filename, cernboxFolder) )
+     job.write("cd %s \n" % cernboxFolder)
      #job.write("rm ./out%s_points.root \n" % filename)
      job.close()
      #and make it executable
