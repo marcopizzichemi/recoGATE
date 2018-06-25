@@ -279,7 +279,7 @@ int main(int argc, char** argv)
   std::string ofs3cry_avgName            =  baseName + "_3cry-avg";
   std::string ofs3cry_magicalComptonName =  baseName + "_3cry-magicalCompton";
   std::string ofs3cry_effComptonName     =  baseName + "_3cry-effCompton";
-  std::string ofs3ofs3cry_maxEnergyName  =  baseName + "_3cry-maxEnergy";
+  std::string ofs3cry_maxEnergyName      =  baseName + "_3cry-maxEnergy";
 
   std::cout << ofs2cryName << " " << ofs3cry_avgName <<std::endl;
 
@@ -313,13 +313,13 @@ int main(int argc, char** argv)
     ofs3cry_avgName+= ".bin";
     ofs3cry_magicalComptonName+= ".bin";
     ofs3cry_effComptonName+= ".bin";
-    ofs3ofs3cry_maxEnergyName+= ".bin";
+    ofs3cry_maxEnergyName+= ".bin";
 
     ofs2cry.open (ofs2cryName.c_str(), std::ios::binary);
     ofs3cry_avg.open (ofs3cry_avgName.c_str(), std::ios::binary);
     ofs3cry_magicalCompton.open (ofs3cry_magicalComptonName.c_str(), std::ios::binary);
     ofs3cry_effCompton.open (ofs3cry_effComptonName.c_str(), std::ios::binary);
-    ofs3ofs3cry_maxEnergy.open (ofs3ofs3cry_maxEnergyName.c_str(), std::ios::binary);
+    ofs3cry_maxEnergy.open (ofs3cry_maxEnergyName.c_str(), std::ios::binary);
   }
   else
   {
@@ -329,12 +329,13 @@ int main(int argc, char** argv)
       ofs3cry_avgName+= ".elm2";
       ofs3cry_magicalComptonName+= ".elm2";
       ofs3cry_effComptonName+= ".elm2";
-      ofs3ofs3cry_maxEnergyName+= ".elm2";
+      ofs3cry_maxEnergyName+= ".elm2";
+
       ofs2cry.open (ofs2cryName.c_str(), std::ios::binary);
       ofs3cry_avg.open (ofs3cry_avgName.c_str(), std::ios::binary);
       ofs3cry_magicalCompton.open (ofs3cry_magicalComptonName.c_str(), std::ios::binary);
       ofs3cry_effCompton.open (ofs3cry_effComptonName.c_str(), std::ios::binary);
-      ofs3ofs3cry_maxEnergy.open (ofs3ofs3cry_maxEnergyName.c_str(), std::ios::binary);
+      ofs3cry_maxEnergy.open (ofs3cry_maxEnergyName.c_str(), std::ios::binary);
     }
     else
     {
@@ -342,13 +343,13 @@ int main(int argc, char** argv)
       ofs3cry_avgName+= ".txt";
       ofs3cry_magicalComptonName+= ".txt";
       ofs3cry_effComptonName+= ".txt";
-      ofs3ofs3cry_maxEnergyName+= ".txt";
+      ofs3cry_maxEnergyName+= ".txt";
 
       ofs2cry.open (ofs2cryName.c_str(), std::ofstream::out);
       ofs3cry_avg.open (ofs3cry_avgName.c_str(), std::ofstream::out);
       ofs3cry_magicalCompton.open (ofs3cry_magicalComptonName.c_str(), std::ofstream::out);
       ofs3cry_effCompton.open (ofs3cry_effComptonName.c_str(), std::ofstream::out);
-      ofs3ofs3cry_maxEnergy.open (ofs3ofs3cry_maxEnergyName.c_str(), std::ios::binary);
+      ofs3cry_maxEnergy.open (ofs3cry_maxEnergyName.c_str(), std::ios::binary);
     }
 
 
