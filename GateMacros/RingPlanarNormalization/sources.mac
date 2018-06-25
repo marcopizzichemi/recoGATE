@@ -1,0 +1,237 @@
+/gate/source/addSource source0_0
+/gate/source/source0_0/setType backtoback
+/gate/source/source0_0/gps/centre 0. 0. 0. mm
+/gate/source/source0_0/gps/particle gamma
+/gate/source/source0_0/gps/energytype Mono
+/gate/source/source0_0/gps/monoenergy 0.511 MeV
+/gate/source/source0_0/gps/type Volume
+/gate/source/source0_0/gps/shape Sphere
+/gate/source/source0_0/gps/radius 0.15 mm
+/gate/source/source0_0/gps/angtype iso
+
+#/gate/source/addSource source0_1
+#/gate/source/source0_1/setType backtoback
+#/gate/source/source0_1/gps/centre 5. 0. 0. mm
+#/gate/source/source0_1/gps/particle gamma
+#/gate/source/source0_1/gps/energytype Mono
+#/gate/source/source0_1/gps/monoenergy 0.511 MeV
+#/gate/source/source0_1/gps/type Volume
+#/gate/source/source0_1/gps/shape Sphere
+#/gate/source/source0_1/gps/radius 0.15 mm
+#/gate/source/source0_1/gps/angtype iso
+#
+#/gate/source/addSource source0_2
+#/gate/source/source0_2/setType backtoback
+#/gate/source/source0_2/gps/centre 10. 0. 0. mm
+#/gate/source/source0_2/gps/particle gamma
+#/gate/source/source0_2/gps/energytype Mono
+#/gate/source/source0_2/gps/monoenergy 0.511 MeV
+#/gate/source/source0_2/gps/type Volume
+#/gate/source/source0_2/gps/shape Sphere
+#/gate/source/source0_2/gps/radius 0.15 mm
+#/gate/source/source0_2/gps/angtype iso
+#
+#/gate/source/addSource source0_3
+#/gate/source/source0_3/setType backtoback
+#/gate/source/source0_3/gps/centre 15. 0. 0. mm
+#/gate/source/source0_3/gps/particle gamma
+#/gate/source/source0_3/gps/energytype Mono
+#/gate/source/source0_3/gps/monoenergy 0.511 MeV
+#/gate/source/source0_3/gps/type Volume
+#/gate/source/source0_3/gps/shape Sphere
+#/gate/source/source0_3/gps/radius 0.15 mm
+#/gate/source/source0_3/gps/angtype iso
+#
+#/gate/source/addSource source0_4
+#/gate/source/source0_4/setType backtoback
+#/gate/source/source0_4/gps/centre 25. 0. 0. mm
+#/gate/source/source0_4/gps/particle gamma
+#/gate/source/source0_4/gps/energytype Mono
+#/gate/source/source0_4/gps/monoenergy 0.511 MeV
+#/gate/source/source0_4/gps/type Volume
+#/gate/source/source0_4/gps/shape Sphere
+#/gate/source/source0_4/gps/radius 0.15 mm
+#/gate/source/source0_4/gps/angtype iso
+#
+#/gate/source/addSource source0_5
+#/gate/source/source0_5/setType backtoback
+#/gate/source/source0_5/gps/centre 50. 0. 0. mm
+#/gate/source/source0_5/gps/particle gamma
+#/gate/source/source0_5/gps/energytype Mono
+#/gate/source/source0_5/gps/monoenergy 0.511 MeV
+#/gate/source/source0_5/gps/type Volume
+#/gate/source/source0_5/gps/shape Sphere
+#/gate/source/source0_5/gps/radius 0.15 mm
+#/gate/source/source0_5/gps/angtype iso
+#
+#/gate/source/addSource source0_6
+#/gate/source/source0_6/setType backtoback
+#/gate/source/source0_6/gps/centre 75. 0. 0. mm
+#/gate/source/source0_6/gps/particle gamma
+#/gate/source/source0_6/gps/energytype Mono
+#/gate/source/source0_6/gps/monoenergy 0.511 MeV
+#/gate/source/source0_6/gps/type Volume
+#/gate/source/source0_6/gps/shape Sphere
+#/gate/source/source0_6/gps/radius 0.15 mm
+#/gate/source/source0_6/gps/angtype iso
+#
+#/gate/source/addSource source0_7
+#/gate/source/source0_7/setType backtoback
+#/gate/source/source0_7/gps/centre 100. 0. 0. mm
+#/gate/source/source0_7/gps/particle gamma
+#/gate/source/source0_7/gps/energytype Mono
+#/gate/source/source0_7/gps/monoenergy 0.511 MeV
+#/gate/source/source0_7/gps/type Volume
+#/gate/source/source0_7/gps/shape Sphere
+#/gate/source/source0_7/gps/radius 0.15 mm
+#/gate/source/source0_7/gps/angtype iso
+
+
+#/gate/source/addSource source1_0
+#/gate/source/source1_0/setType backtoback
+#/gate/source/source1_0/gps/centre 0. 0. 45.5 mm
+#/gate/source/source1_0/gps/particle gamma
+#/gate/source/source1_0/gps/energytype Mono
+#/gate/source/source1_0/gps/monoenergy 0.511 MeV
+#/gate/source/source1_0/gps/type Volume
+#/gate/source/source1_0/gps/shape Sphere
+#/gate/source/source1_0/gps/radius 0.15 mm
+#/gate/source/source1_0/gps/angtype iso
+#
+#/gate/source/addSource source1_1
+#/gate/source/source1_1/setType backtoback
+#/gate/source/source1_1/gps/centre 5. 0. 45.5 mm
+#/gate/source/source1_1/gps/particle gamma
+#/gate/source/source1_1/gps/energytype Mono
+#/gate/source/source1_1/gps/monoenergy 0.511 MeV
+#/gate/source/source1_1/gps/type Volume
+#/gate/source/source1_1/gps/shape Sphere
+#/gate/source/source1_1/gps/radius 0.15 mm
+#/gate/source/source1_1/gps/angtype iso
+#
+#/gate/source/addSource source1_2
+#/gate/source/source1_2/setType backtoback
+#/gate/source/source1_2/gps/centre 10. 0. 45.5 mm
+#/gate/source/source1_2/gps/particle gamma
+#/gate/source/source1_2/gps/energytype Mono
+#/gate/source/source1_2/gps/monoenergy 0.511 MeV
+#/gate/source/source1_2/gps/type Volume
+#/gate/source/source1_2/gps/shape Sphere
+#/gate/source/source1_2/gps/radius 0.15 mm
+#/gate/source/source1_2/gps/angtype iso
+#
+#/gate/source/addSource source1_3
+#/gate/source/source1_3/setType backtoback
+#/gate/source/source1_3/gps/centre 15. 0. 45.5 mm
+#/gate/source/source1_3/gps/particle gamma
+#/gate/source/source1_3/gps/energytype Mono
+#/gate/source/source1_3/gps/monoenergy 0.511 MeV
+#/gate/source/source1_3/gps/type Volume
+#/gate/source/source1_3/gps/shape Sphere
+#/gate/source/source1_3/gps/radius 0.15 mm
+#/gate/source/source1_3/gps/angtype iso
+#
+#/gate/source/addSource source1_4
+#/gate/source/source1_4/setType backtoback
+#/gate/source/source1_4/gps/centre 25. 0. 45.5 mm
+#/gate/source/source1_4/gps/particle gamma
+#/gate/source/source1_4/gps/energytype Mono
+#/gate/source/source1_4/gps/monoenergy 0.511 MeV
+#/gate/source/source1_4/gps/type Volume
+#/gate/source/source1_4/gps/shape Sphere
+#/gate/source/source1_4/gps/radius 0.15 mm
+#/gate/source/source1_4/gps/angtype iso
+#
+#/gate/source/addSource source1_5
+#/gate/source/source1_5/setType backtoback
+#/gate/source/source1_5/gps/centre 50. 0. 45.5 mm
+#/gate/source/source1_5/gps/particle gamma
+#/gate/source/source1_5/gps/energytype Mono
+#/gate/source/source1_5/gps/monoenergy 0.511 MeV
+#/gate/source/source1_5/gps/type Volume
+#/gate/source/source1_5/gps/shape Sphere
+#/gate/source/source1_5/gps/radius 0.15 mm
+#/gate/source/source1_5/gps/angtype iso
+#
+#/gate/source/addSource source1_6
+#/gate/source/source1_6/setType backtoback
+#/gate/source/source1_6/gps/centre 75. 0. 45.5 mm
+#/gate/source/source1_6/gps/particle gamma
+#/gate/source/source1_6/gps/energytype Mono
+#/gate/source/source1_6/gps/monoenergy 0.511 MeV
+#/gate/source/source1_6/gps/type Volume
+#/gate/source/source1_6/gps/shape Sphere
+#/gate/source/source1_6/gps/radius 0.15 mm
+#/gate/source/source1_6/gps/angtype iso
+#
+#/gate/source/addSource source1_7
+#/gate/source/source1_7/setType backtoback
+#/gate/source/source1_7/gps/centre 99. 0. 45.5 mm
+#/gate/source/source1_7/gps/particle gamma
+#/gate/source/source1_7/gps/energytype Mono
+#/gate/source/source1_7/gps/monoenergy 0.511 MeV
+#/gate/source/source1_7/gps/type Volume
+#/gate/source/source1_7/gps/shape Sphere
+#/gate/source/source1_7/gps/radius 0.15 mm
+#/gate/source/source1_7/gps/angtype iso
+
+
+
+
+
+/gate/source/source0_0/attachTo cylinderSource
+#/gate/source/source0_1/attachTo cylinderSource
+#/gate/source/source0_2/attachTo cylinderSource
+#/gate/source/source0_3/attachTo cylinderSource
+#/gate/source/source0_4/attachTo cylinderSource
+#/gate/source/source0_5/attachTo cylinderSource
+#/gate/source/source0_6/attachTo cylinderSource
+#/gate/source/source0_7/attachTo cylinderSource
+#/gate/source/source1_0/attachTo cylinderSource
+#/gate/source/source1_1/attachTo cylinderSource
+#/gate/source/source1_2/attachTo cylinderSource
+#/gate/source/source1_3/attachTo cylinderSource
+#/gate/source/source1_4/attachTo cylinderSource
+#/gate/source/source1_5/attachTo cylinderSource
+#/gate/source/source1_6/attachTo cylinderSource
+#/gate/source/source1_7/attachTo cylinderSource
+
+
+# small sources (0.3 mm diameter), activity/mm3 = bg x 10 for detectability test
+# high activity for spatial resolution test
+/gate/source/source0_0/setActivity 3000000 becquerel
+#/gate/source/source0_1/setActivity 100000 becquerel
+#/gate/source/source0_2/setActivity 100000 becquerel
+#/gate/source/source0_3/setActivity 100000 becquerel
+#/gate/source/source0_4/setActivity 100000 becquerel
+#/gate/source/source0_5/setActivity 100000 becquerel
+#/gate/source/source0_6/setActivity 100000 becquerel
+#/gate/source/source0_7/setActivity 100000 becquerel
+#/gate/source/source1_0/setActivity 100000 becquerel
+#/gate/source/source1_1/setActivity 100000 becquerel
+#/gate/source/source1_2/setActivity 100000 becquerel
+#/gate/source/source1_3/setActivity 100000 becquerel
+#/gate/source/source1_4/setActivity 100000 becquerel
+#/gate/source/source1_5/setActivity 100000 becquerel
+#/gate/source/source1_6/setActivity 100000 becquerel
+#/gate/source/source1_7/setActivity 100000 becquerel
+
+
+
+#/gate/source/source0_0/visualize 1000 red 2
+#/gate/source/source0_1/visualize 1000 red 2
+#/gate/source/source0_2/visualize 1000 red 2
+#/gate/source/source0_3/visualize 1000 red 2
+#/gate/source/source0_4/visualize 1000 red 2
+#/gate/source/source0_5/visualize 1000 red 2
+#/gate/source/source0_6/visualize 1000 red 2
+#/gate/source/source0_7/visualize 1000 red 2
+#/gate/source/source1_0/visualize 1000 red 2
+#/gate/source/source1_1/visualize 1000 red 2
+#/gate/source/source1_2/visualize 1000 red 2
+#/gate/source/source1_3/visualize 1000 red 2
+#/gate/source/source1_4/visualize 1000 red 2
+#/gate/source/source1_5/visualize 1000 red 2
+#/gate/source/source1_6/visualize 1000 red 2
+#/gate/source/source1_7/visualize 1000 red 2
+

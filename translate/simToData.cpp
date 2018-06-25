@@ -663,58 +663,15 @@ int main(int argc, char** argv)
   //######################################################################################
   // TODO find a way to make them external
   // gate geometry
-  // float rmin = 100;
-  // float crylength = 15;
-  // //rsector
-  // int repsec = 2;
+
   float ang = PI*2.0/repsec;
-  // //module
-  // int repmodx = 16;
-  // int repmody = 6;
-  // int repmodz = 1;
-  //
-  //
-  // float arraymodx = 13;
-  // float arraymody = 13;
-  // float arraymodz = 1;
-  //
-  // //submod
-  // int repsubx = 4;
-  // int repsuby = 4;
-  // int repsubz = 1;
-  //
-  // float arraysubx = 3.2;
-  // float arraysuby = 3.2;
-  // float arraysubz = 0;
-  // //crystal
-  //
-  // int repcryx = 2;
-  // int repcryy = 2;
-  // int repcryz = 0;
-  //
-  // float arraycryx = 1.6;
-  // float arraycryy = 1.6;
-  // float arraycryz = 0;
-  //
+
   //variables for global id
   Int_t nRSectors          = repsec;
   Int_t nModulesXRSector   = repmodx*repmody*repmodz;
   Int_t nSubmodulesXModule = repsubx*repsubz*repsuby;
   Int_t nCrystalXSubmodule  = repcryx*repcryz*repcryy;
   Int_t nLayersXCrystal    = 1;
-  //
-  // //detector parameters
-  // bool smeared = true;
-  // Double_t energyResolutionFWHM = 0.12; //12% FWHM @511, for the moment we take the same also for low energy...
-  // Double_t doiResolutionFWHM = 2.8; //2.8mm doi res measured on the module
-
-  // for (Int_t i = 0 ; i < (Int_t)(Hits->GetEntries()) ; i++)
-  // {
-  //   Hits->GetEntry(i); // each i is a energyDeposition
-  //   if(HITStrackID > 3) std::cout << i  <<  " "  << HITStrackID  << " " << HITSparentID <<  std::endl;
-  // }
-  // std::cout << std::endl;
-
 
   Int_t eventCounter = 0;
   int statuscounter = 0;
@@ -932,7 +889,7 @@ int main(int argc, char** argv)
           float zfov = zabs;
 
           //-------------------------------//
-          //       rsectorID rotation      //
+          //          FOV rotation         //
           //-------------------------------//
           float x,y,z;
           // now the entire fov is rotated because of the (crazy) way ClearPEM axis where chosen. Or for another axis chosen by the user. By default there will be no rotation assumed and the main
@@ -1016,23 +973,8 @@ int main(int argc, char** argv)
 
         // outAvg = averageDepEvents;
         outputTree->Fill();
-        // if(averageDepEvents.size()<3)
-        // {
-        //   // std::cout << eventCounter << " " << averageDepEvents[iAvg].globalCryID << " " << averageDepEvents[iAvg].time << " " << averageDepEvents[iAvg].energy << " " << averageDepEvents[iAvg].x << " " << averageDepEvents[iAvg].y << " " << averageDepEvents[iAvg].z << " " << averageDepEvents[iAvg].parentID << " " << averageDepEvents[iAvg].trackID <<   std::endl;
-        // }
-
-          //
-          // eventCounter++;
-          // for(int iAvg = 0; iAvg < averageDepEvents.size() ; iAvg++)
-          // {
-          //   std::cout << eventCounter << " " << averageDepEvents[iAvg].globalCryID << " " << averageDepEvents[iAvg].time << " " << averageDepEvents[iAvg].energy << " " << averageDepEvents[iAvg].x << " " << averageDepEvents[iAvg].y << " " << averageDepEvents[iAvg].z << " " << averageDepEvents[iAvg].parentID << " " << averageDepEvents[iAvg].trackID <<   std::endl;
-          // }
-        // }
-
       }
       // std::cout<< "----------------------" << std::endl;
-
-
       //move to next pair of gammas, reset
       eventsCheck = HITSeventID;
       energyDeposition.clear();
@@ -1079,25 +1021,10 @@ int main(int argc, char** argv)
   }
   std::cout << std::endl;
 
-  // for (Int_t i = 0 ; i < COINCnentries ; i++)
-  // {
-  //   Coincidences->GetEntry(i);
-  //   //
-  //   if (eventID1 == eventID2)
-	//   {
-	//     if ((comptonPhantom1 == 0) && (comptonPhantom2 == 0)) Trues++;
-	//     else Scatters++;
-	//   }
-  //   else Randoms++;
-  //
-  //
-  // }
+
   outputFile->cd();
   outputTree->Write();
   outputFile->Close();
-  // std::cout << "Trues    = " << Trues << std::endl;
-  // std::cout << "Scatters = " << Scatters << std::endl;
-  // std::cout << "Randoms  = " << Randoms << std::endl;
 
   return 0;
 }

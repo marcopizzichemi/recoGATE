@@ -1,0 +1,18 @@
+# P L A N A R   S O U R C E
+/gate/source/addSource planar
+/gate/source/planar/setType backtoback
+/gate/source/planar/gps/centre 0. 0. 0. mm
+/gate/source/planar/gps/particle gamma
+/gate/source/planar/gps/energytype Mono
+/gate/source/planar/gps/monoenergy 0.511 MeV
+/gate/source/planar/gps/type Volume
+/gate/source/planar/gps/shape Para
+/gate/source/planar/gps/halfx 0.1 mm
+/gate/source/planar/gps/halfy 6.5 mm
+/gate/source/planar/gps/halfz 6.5 mm
+/gate/source/planar/gps/angtype iso
+
+# attach to the volume that will rotate
+/gate/source/planar/attachTo cylinderSource
+/gate/source/planar/setActivity 1000000 becquerel
+#/gate/source/planar/visualize 1000 red 2

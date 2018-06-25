@@ -1,0 +1,721 @@
+#/vis/viewer/set/style solid
+/gate/world/daughters/name micro_derenzo
+/gate/world/daughters/insert cylinder
+/gate/micro_derenzo/setMaterial Polyethylene
+/gate/micro_derenzo/geometry/setRmax 25 mm
+/gate/micro_derenzo/geometry/setRmin 0. mm
+/gate/micro_derenzo/geometry/setHeight 37. mm
+/gate/micro_derenzo/attachPhantomSD
+/gate/micro_derenzo/vis/setColor grey
+
+/gate/micro_derenzo/daughters/name hole1
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole1/setMaterial Air
+/gate/hole1/geometry/setRmax 1.1947 mm
+/gate/hole1/geometry/setRmin 0. mm
+/gate/hole1/geometry/setHeight 37. mm
+/gate/hole1/placement/setTranslation -19.4395 -2.9528 0. mm
+/gate/hole1/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole2
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole2/setMaterial Air
+/gate/hole2/geometry/setRmax 1.5881 mm
+/gate/hole2/geometry/setRmin 0. mm
+/gate/hole2/geometry/setHeight 37. mm
+/gate/hole2/placement/setTranslation -17.8383 3.0455 0. mm
+/gate/hole2/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole3
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole3/setMaterial Air
+/gate/hole3/geometry/setRmax 1.1947 mm
+/gate/hole3/geometry/setRmin 0. mm
+/gate/hole3/geometry/setHeight 37. mm
+/gate/hole3/placement/setTranslation -17.0353 -7.1047 0. mm
+/gate/hole3/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole4
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole4/setMaterial Air
+/gate/hole4/geometry/setRmax 1.5881 mm
+/gate/hole4/geometry/setRmin 0. mm
+/gate/hole4/geometry/setHeight 37. mm
+/gate/hole4/placement/setTranslation -14.6379 8.5824 0. mm
+/gate/hole4/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole5
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole5/setMaterial Air
+/gate/hole5/geometry/setRmax 1.1959 mm
+/gate/hole5/geometry/setRmin 0. mm
+/gate/hole5/geometry/setHeight 37. mm
+/gate/hole5/placement/setTranslation -14.6368 -11.2587 0. mm
+/gate/hole5/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole6
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole6/setMaterial Air
+/gate/hole6/geometry/setRmax 1.1898 mm
+/gate/hole6/geometry/setRmin 0. mm
+/gate/hole6/geometry/setHeight 37. mm
+/gate/hole6/placement/setTranslation -14.6446 -2.9494 0. mm
+/gate/hole6/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole7
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole7/setMaterial Air
+/gate/hole7/geometry/setRmax 1.1898 mm
+/gate/hole7/geometry/setRmin 0. mm
+/gate/hole7/geometry/setHeight 37. mm
+/gate/hole7/placement/setTranslation -12.2429 -15.4138 0. mm
+/gate/hole7/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole8
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole8/setMaterial Air
+/gate/hole8/geometry/setRmax 1.1935 mm
+/gate/hole8/geometry/setRmin 0. mm
+/gate/hole8/geometry/setHeight 37. mm
+/gate/hole8/placement/setTranslation -12.2431 -7.1035 0. mm
+/gate/hole8/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole9
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole9/setMaterial Air
+/gate/hole9/geometry/setRmax 1.5937 mm
+/gate/hole9/geometry/setRmin 0. mm
+/gate/hole9/geometry/setHeight 37. mm
+/gate/hole9/placement/setTranslation -11.4423 3.0511 0. mm
+/gate/hole9/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole10
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole10/setMaterial Air
+/gate/hole10/geometry/setRmax 1.5918 mm
+/gate/hole10/geometry/setRmin 0. mm
+/gate/hole10/geometry/setHeight 37. mm
+/gate/hole10/placement/setTranslation -11.445 14.1224 0. mm
+/gate/hole10/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole11
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole11/setMaterial Air
+/gate/hole11/geometry/setRmax 1.191 mm
+/gate/hole11/geometry/setRmin 0. mm
+/gate/hole11/geometry/setHeight 37. mm
+/gate/hole11/placement/setTranslation -9.846 -11.2564 0. mm
+/gate/hole11/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole12
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole12/setMaterial Air
+/gate/hole12/geometry/setRmax 1.1898 mm
+/gate/hole12/geometry/setRmin 0. mm
+/gate/hole12/geometry/setHeight 37. mm
+/gate/hole12/placement/setTranslation -9.8453 -2.9458 0. mm
+/gate/hole12/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole13
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole13/setMaterial Air
+/gate/hole13/geometry/setRmax 1.5881 mm
+/gate/hole13/geometry/setRmin 0. mm
+/gate/hole13/geometry/setHeight 37. mm
+/gate/hole13/placement/setTranslation -8.2467 8.5824 0. mm
+/gate/hole13/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole14
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole14/setMaterial Air
+/gate/hole14/geometry/setRmax 0.79174 mm
+/gate/hole14/geometry/setRmin 0. mm
+/gate/hole14/geometry/setHeight 37. mm
+/gate/hole14/placement/setTranslation -7.8485 -19.7874 0. mm
+/gate/hole14/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole15
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole15/setMaterial Air
+/gate/hole15/geometry/setRmax 1.1898 mm
+/gate/hole15/geometry/setRmin 0. mm
+/gate/hole15/geometry/setHeight 37. mm
+/gate/hole15/placement/setTranslation -7.4464 -7.1032 0. mm
+/gate/hole15/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole16
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole16/setMaterial Air
+/gate/hole16/geometry/setRmax 0.80281 mm
+/gate/hole16/geometry/setRmin 0. mm
+/gate/hole16/geometry/setHeight 37. mm
+/gate/hole16/placement/setTranslation -6.25 -17.0263 0. mm
+/gate/hole16/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole17
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole17/setMaterial Air
+/gate/hole17/geometry/setRmax 1.5872 mm
+/gate/hole17/geometry/setRmin 0. mm
+/gate/hole17/geometry/setHeight 37. mm
+/gate/hole17/placement/setTranslation -5.0481 3.0461 0. mm
+/gate/hole17/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole18
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole18/setMaterial Air
+/gate/hole18/geometry/setRmax 1.1861 mm
+/gate/hole18/geometry/setRmin 0. mm
+/gate/hole18/geometry/setHeight 37. mm
+/gate/hole18/placement/setTranslation -5.0481 -2.951 0. mm
+/gate/hole18/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole19
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole19/setMaterial Air
+/gate/hole19/geometry/setRmax 1.9888 mm
+/gate/hole19/geometry/setRmin 0. mm
+/gate/hole19/geometry/setHeight 37. mm
+/gate/hole19/placement/setTranslation -3.8512 14.9687 0. mm
+/gate/hole19/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole20
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole20/setMaterial Air
+/gate/hole20/geometry/setRmax 0.79359 mm
+/gate/hole20/geometry/setRmin 0. mm
+/gate/hole20/geometry/setHeight 37. mm
+/gate/hole20/placement/setTranslation -4.6549 -19.7888 0. mm
+/gate/hole20/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole21
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole21/setMaterial Air
+/gate/hole21/geometry/setRmax 0.79174 mm
+/gate/hole21/geometry/setRmin 0. mm
+/gate/hole21/geometry/setHeight 37. mm
+/gate/hole21/placement/setTranslation -4.6574 -14.2637 0. mm
+/gate/hole21/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole22
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole22/setMaterial Air
+/gate/hole22/geometry/setRmax 0.79729 mm
+/gate/hole22/geometry/setRmin 0. mm
+/gate/hole22/geometry/setHeight 37. mm
+/gate/hole22/placement/setTranslation -3.056 -17.0272 0. mm
+/gate/hole22/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole23
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole23/setMaterial Air
+/gate/hole23/geometry/setRmax 0.79174 mm
+/gate/hole23/geometry/setRmin 0. mm
+/gate/hole23/geometry/setHeight 37. mm
+/gate/hole23/placement/setTranslation -3.0426 -11.4902 0. mm
+/gate/hole23/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole24
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole24/setMaterial Air
+/gate/hole24/geometry/setRmax 0.80098 mm
+/gate/hole24/geometry/setRmin 0. mm
+/gate/hole24/geometry/setHeight 37. mm
+/gate/hole24/placement/setTranslation -1.452 -19.798 0. mm
+/gate/hole24/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole25
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole25/setMaterial Air
+/gate/hole25/geometry/setRmax 0.79359 mm
+/gate/hole25/geometry/setRmin 0. mm
+/gate/hole25/geometry/setHeight 37. mm
+/gate/hole25/placement/setTranslation -1.4571 -14.2528 0. mm
+/gate/hole25/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole26
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole26/setMaterial Air
+/gate/hole26/geometry/setRmax 0.79174 mm
+/gate/hole26/geometry/setRmin 0. mm
+/gate/hole26/geometry/setHeight 37. mm
+/gate/hole26/placement/setTranslation -1.4568 -8.7175 0. mm
+/gate/hole26/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole27
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole27/setMaterial Air
+/gate/hole27/geometry/setRmax 1.9858 mm
+/gate/hole27/geometry/setRmin 0. mm
+/gate/hole27/geometry/setHeight 37. mm
+/gate/hole27/placement/setTranslation 0.14423 8.0448 0. mm
+/gate/hole27/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole28
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole28/setMaterial Air
+/gate/hole28/geometry/setRmax 0.79729 mm
+/gate/hole28/geometry/setRmin 0. mm
+/gate/hole28/geometry/setHeight 37. mm
+/gate/hole28/placement/setTranslation 0.14423 -17.0192 0. mm
+/gate/hole28/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole29
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole29/setMaterial Air
+/gate/hole29/geometry/setRmax 0.78614 mm
+/gate/hole29/geometry/setRmin 0. mm
+/gate/hole29/geometry/setHeight 37. mm
+/gate/hole29/placement/setTranslation 0.14423 -11.4835 0. mm
+/gate/hole29/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole30
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole30/setMaterial Air
+/gate/hole30/geometry/setRmax 0.79729 mm
+/gate/hole30/geometry/setRmin 0. mm
+/gate/hole30/geometry/setHeight 37. mm
+/gate/hole30/placement/setTranslation 0.14423 -5.9366 0. mm
+/gate/hole30/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole31
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole31/setMaterial Air
+/gate/hole31/geometry/setRmax 0.80098 mm
+/gate/hole31/geometry/setRmin 0. mm
+/gate/hole31/geometry/setHeight 37. mm
+/gate/hole31/placement/setTranslation 1.7405 -19.798 0. mm
+/gate/hole31/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole32
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole32/setMaterial Air
+/gate/hole32/geometry/setRmax 0.79359 mm
+/gate/hole32/geometry/setRmin 0. mm
+/gate/hole32/geometry/setHeight 37. mm
+/gate/hole32/placement/setTranslation 1.7456 -14.2528 0. mm
+/gate/hole32/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole33
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole33/setMaterial Air
+/gate/hole33/geometry/setRmax 0.79174 mm
+/gate/hole33/geometry/setRmin 0. mm
+/gate/hole33/geometry/setHeight 37. mm
+/gate/hole33/placement/setTranslation 1.7452 -8.7175 0. mm
+/gate/hole33/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole34
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole34/setMaterial Air
+/gate/hole34/geometry/setRmax 1.9888 mm
+/gate/hole34/geometry/setRmin 0. mm
+/gate/hole34/geometry/setHeight 37. mm
+/gate/hole34/placement/setTranslation 4.1396 14.9687 0. mm
+/gate/hole34/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole35
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole35/setMaterial Air
+/gate/hole35/geometry/setRmax 0.79729 mm
+/gate/hole35/geometry/setRmin 0. mm
+/gate/hole35/geometry/setHeight 37. mm
+/gate/hole35/placement/setTranslation 3.3445 -17.0272 0. mm
+/gate/hole35/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole36
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole36/setMaterial Air
+/gate/hole36/geometry/setRmax 0.79174 mm
+/gate/hole36/geometry/setRmin 0. mm
+/gate/hole36/geometry/setHeight 37. mm
+/gate/hole36/placement/setTranslation 3.3311 -11.4902 0. mm
+/gate/hole36/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole37
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole37/setMaterial Air
+/gate/hole37/geometry/setRmax 0.79359 mm
+/gate/hole37/geometry/setRmin 0. mm
+/gate/hole37/geometry/setHeight 37. mm
+/gate/hole37/placement/setTranslation 4.9434 -19.7888 0. mm
+/gate/hole37/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole38
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole38/setMaterial Air
+/gate/hole38/geometry/setRmax 0.79174 mm
+/gate/hole38/geometry/setRmin 0. mm
+/gate/hole38/geometry/setHeight 37. mm
+/gate/hole38/placement/setTranslation 4.9458 -14.2637 0. mm
+/gate/hole38/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole39
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole39/setMaterial Air
+/gate/hole39/geometry/setRmax 2.3833 mm
+/gate/hole39/geometry/setRmin 0. mm
+/gate/hole39/geometry/setHeight 37. mm
+/gate/hole39/placement/setTranslation 7.0673 4.0426 0. mm
+/gate/hole39/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole40
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole40/setMaterial Air
+/gate/hole40/geometry/setRmax 0.58929 mm
+/gate/hole40/geometry/setRmin 0. mm
+/gate/hole40/geometry/setHeight 37. mm
+/gate/hole40/placement/setTranslation 5.3365 -2.9417 0. mm
+/gate/hole40/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole41
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole41/setMaterial Air
+/gate/hole41/geometry/setRmax 0.80281 mm
+/gate/hole41/geometry/setRmin 0. mm
+/gate/hole41/geometry/setHeight 37. mm
+/gate/hole41/placement/setTranslation 6.5385 -17.0263 0. mm
+/gate/hole41/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole42
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole42/setMaterial Air
+/gate/hole42/geometry/setRmax 0.5992 mm
+/gate/hole42/geometry/setRmin 0. mm
+/gate/hole42/geometry/setHeight 37. mm
+/gate/hole42/placement/setTranslation 6.5306 -5.0292 0. mm
+/gate/hole42/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole43
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole43/setMaterial Air
+/gate/hole43/geometry/setRmax 0.5992 mm
+/gate/hole43/geometry/setRmin 0. mm
+/gate/hole43/geometry/setHeight 37. mm
+/gate/hole43/placement/setTranslation 7.7333 -7.0996 0. mm
+/gate/hole43/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole44
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole44/setMaterial Air
+/gate/hole44/geometry/setRmax 0.59427 mm
+/gate/hole44/geometry/setRmin 0. mm
+/gate/hole44/geometry/setHeight 37. mm
+/gate/hole44/placement/setTranslation 7.7348 -2.9407 0. mm
+/gate/hole44/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole45
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole45/setMaterial Air
+/gate/hole45/geometry/setRmax 0.79174 mm
+/gate/hole45/geometry/setRmin 0. mm
+/gate/hole45/geometry/setHeight 37. mm
+/gate/hole45/placement/setTranslation 8.137 -19.7874 0. mm
+/gate/hole45/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole46
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole46/setMaterial Air
+/gate/hole46/geometry/setRmax 0.60165 mm
+/gate/hole46/geometry/setRmin 0. mm
+/gate/hole46/geometry/setHeight 37. mm
+/gate/hole46/placement/setTranslation 8.9306 -9.1784 0. mm
+/gate/hole46/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole47
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole47/setMaterial Air
+/gate/hole47/geometry/setRmax 0.5992 mm
+/gate/hole47/geometry/setRmin 0. mm
+/gate/hole47/geometry/setHeight 37. mm
+/gate/hole47/placement/setTranslation 8.9258 -5.0331 0. mm
+/gate/hole47/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole48
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole48/setMaterial Air
+/gate/hole48/geometry/setRmax 2.3845 mm
+/gate/hole48/geometry/setRmin 0. mm
+/gate/hole48/geometry/setHeight 37. mm
+/gate/hole48/placement/setTranslation 11.8615 12.3535 0. mm
+/gate/hole48/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole49
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole49/setMaterial Air
+/gate/hole49/geometry/setRmax 0.60165 mm
+/gate/hole49/geometry/setRmin 0. mm
+/gate/hole49/geometry/setHeight 37. mm
+/gate/hole49/placement/setTranslation 10.1329 -11.2633 0. mm
+/gate/hole49/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole50
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole50/setMaterial Air
+/gate/hole50/geometry/setRmax 0.60165 mm
+/gate/hole50/geometry/setRmin 0. mm
+/gate/hole50/geometry/setHeight 37. mm
+/gate/hole50/placement/setTranslation 10.1329 -7.1021 0. mm
+/gate/hole50/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole51
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole51/setMaterial Air
+/gate/hole51/geometry/setRmax 0.59179 mm
+/gate/hole51/geometry/setRmin 0. mm
+/gate/hole51/geometry/setHeight 37. mm
+/gate/hole51/placement/setTranslation 10.1341 -2.9428 0. mm
+/gate/hole51/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole52
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole52/setMaterial Air
+/gate/hole52/geometry/setRmax 0.59674 mm
+/gate/hole52/geometry/setRmin 0. mm
+/gate/hole52/geometry/setHeight 37. mm
+/gate/hole52/placement/setTranslation 11.3247 -13.3328 0. mm
+/gate/hole52/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole53
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole53/setMaterial Air
+/gate/hole53/geometry/setRmax 0.59674 mm
+/gate/hole53/geometry/setRmin 0. mm
+/gate/hole53/geometry/setHeight 37. mm
+/gate/hole53/placement/setTranslation 11.3263 -9.1783 0. mm
+/gate/hole53/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole54
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole54/setMaterial Air
+/gate/hole54/geometry/setRmax 0.59674 mm
+/gate/hole54/geometry/setRmin 0. mm
+/gate/hole54/geometry/setHeight 37. mm
+/gate/hole54/placement/setTranslation 11.3247 -5.0326 0. mm
+/gate/hole54/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole55
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole55/setMaterial Air
+/gate/hole55/geometry/setRmax 0.59179 mm
+/gate/hole55/geometry/setRmin 0. mm
+/gate/hole55/geometry/setHeight 37. mm
+/gate/hole55/placement/setTranslation 12.538 -15.4226 0. mm
+/gate/hole55/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole56
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole56/setMaterial Air
+/gate/hole56/geometry/setRmax 0.5992 mm
+/gate/hole56/geometry/setRmin 0. mm
+/gate/hole56/geometry/setHeight 37. mm
+/gate/hole56/placement/setTranslation 12.5331 -11.2666 0. mm
+/gate/hole56/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole57
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole57/setMaterial Air
+/gate/hole57/geometry/setRmax 0.5992 mm
+/gate/hole57/geometry/setRmin 0. mm
+/gate/hole57/geometry/setHeight 37. mm
+/gate/hole57/placement/setTranslation 12.5331 -7.0988 0. mm
+/gate/hole57/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole58
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole58/setMaterial Air
+/gate/hole58/geometry/setRmax 0.59179 mm
+/gate/hole58/geometry/setRmin 0. mm
+/gate/hole58/geometry/setHeight 37. mm
+/gate/hole58/placement/setTranslation 12.538 -2.9428 0. mm
+/gate/hole58/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole59
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole59/setMaterial Air
+/gate/hole59/geometry/setRmax 0.60165 mm
+/gate/hole59/geometry/setRmin 0. mm
+/gate/hole59/geometry/setHeight 37. mm
+/gate/hole59/placement/setTranslation 13.7219 -17.4836 0. mm
+/gate/hole59/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole60
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole60/setMaterial Air
+/gate/hole60/geometry/setRmax 0.59427 mm
+/gate/hole60/geometry/setRmin 0. mm
+/gate/hole60/geometry/setHeight 37. mm
+/gate/hole60/placement/setTranslation 13.7236 -13.3325 0. mm
+/gate/hole60/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole61
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole61/setMaterial Air
+/gate/hole61/geometry/setRmax 0.59427 mm
+/gate/hole61/geometry/setRmin 0. mm
+/gate/hole61/geometry/setHeight 37. mm
+/gate/hole61/placement/setTranslation 13.7179 -9.1827 0. mm
+/gate/hole61/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole62
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole62/setMaterial Air
+/gate/hole62/geometry/setRmax 0.59427 mm
+/gate/hole62/geometry/setRmin 0. mm
+/gate/hole62/geometry/setHeight 37. mm
+/gate/hole62/placement/setTranslation 13.7236 -5.0329 0. mm
+/gate/hole62/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole63
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole63/setMaterial Air
+/gate/hole63/geometry/setRmax 2.3833 mm
+/gate/hole63/geometry/setRmin 0. mm
+/gate/hole63/geometry/setHeight 37. mm
+/gate/hole63/placement/setTranslation 16.6608 4.0407 0. mm
+/gate/hole63/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole64
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole64/setMaterial Air
+/gate/hole64/geometry/setRmax 0.59674 mm
+/gate/hole64/geometry/setRmin 0. mm
+/gate/hole64/geometry/setHeight 37. mm
+/gate/hole64/placement/setTranslation 14.9348 -15.4156 0. mm
+/gate/hole64/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole65
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole65/setMaterial Air
+/gate/hole65/geometry/setRmax 0.5992 mm
+/gate/hole65/geometry/setRmin 0. mm
+/gate/hole65/geometry/setHeight 37. mm
+/gate/hole65/placement/setTranslation 14.9369 -11.2666 0. mm
+/gate/hole65/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole66
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole66/setMaterial Air
+/gate/hole66/geometry/setRmax 0.5992 mm
+/gate/hole66/geometry/setRmin 0. mm
+/gate/hole66/geometry/setHeight 37. mm
+/gate/hole66/placement/setTranslation 14.9369 -7.0988 0. mm
+/gate/hole66/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole67
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole67/setMaterial Air
+/gate/hole67/geometry/setRmax 0.58929 mm
+/gate/hole67/geometry/setRmin 0. mm
+/gate/hole67/geometry/setHeight 37. mm
+/gate/hole67/placement/setTranslation 14.9373 -2.9408 0. mm
+/gate/hole67/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole68
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole68/setMaterial Air
+/gate/hole68/geometry/setRmax 0.58929 mm
+/gate/hole68/geometry/setRmin 0. mm
+/gate/hole68/geometry/setHeight 37. mm
+/gate/hole68/placement/setTranslation 16.1204 -13.3255 0. mm
+/gate/hole68/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole69
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole69/setMaterial Air
+/gate/hole69/geometry/setRmax 0.59179 mm
+/gate/hole69/geometry/setRmin 0. mm
+/gate/hole69/geometry/setHeight 37. mm
+/gate/hole69/placement/setTranslation 16.1183 -9.1791 0. mm
+/gate/hole69/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole70
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole70/setMaterial Air
+/gate/hole70/geometry/setRmax 0.59674 mm
+/gate/hole70/geometry/setRmin 0. mm
+/gate/hole70/geometry/setHeight 37. mm
+/gate/hole70/placement/setTranslation 16.1229 -5.031 0. mm
+/gate/hole70/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole71
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole71/setMaterial Air
+/gate/hole71/geometry/setRmax 0.59674 mm
+/gate/hole71/geometry/setRmin 0. mm
+/gate/hole71/geometry/setHeight 37. mm
+/gate/hole71/placement/setTranslation 17.3291 -11.2595 0. mm
+/gate/hole71/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole72
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole72/setMaterial Air
+/gate/hole72/geometry/setRmax 0.60165 mm
+/gate/hole72/geometry/setRmin 0. mm
+/gate/hole72/geometry/setHeight 37. mm
+/gate/hole72/placement/setTranslation 17.3358 -7.099 0. mm
+/gate/hole72/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole73
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole73/setMaterial Air
+/gate/hole73/geometry/setRmax 0.59427 mm
+/gate/hole73/geometry/setRmin 0. mm
+/gate/hole73/geometry/setHeight 37. mm
+/gate/hole73/placement/setTranslation 17.3341 -2.9479 0. mm
+/gate/hole73/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole74
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole74/setMaterial Air
+/gate/hole74/geometry/setRmax 0.58929 mm
+/gate/hole74/geometry/setRmin 0. mm
+/gate/hole74/geometry/setHeight 37. mm
+/gate/hole74/placement/setTranslation 18.5186 -9.1827 0. mm
+/gate/hole74/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole75
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole75/setMaterial Air
+/gate/hole75/geometry/setRmax 0.59179 mm
+/gate/hole75/geometry/setRmin 0. mm
+/gate/hole75/geometry/setHeight 37. mm
+/gate/hole75/placement/setTranslation 18.5197 -5.038 0. mm
+/gate/hole75/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole76
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole76/setMaterial Air
+/gate/hole76/geometry/setRmax 0.59179 mm
+/gate/hole76/geometry/setRmin 0. mm
+/gate/hole76/geometry/setHeight 37. mm
+/gate/hole76/placement/setTranslation 19.7277 -7.0992 0. mm
+/gate/hole76/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole77
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole77/setMaterial Air
+/gate/hole77/geometry/setRmax 0.59674 mm
+/gate/hole77/geometry/setRmin 0. mm
+/gate/hole77/geometry/setHeight 37. mm
+/gate/hole77/placement/setTranslation 19.733 -2.9482 0. mm
+/gate/hole77/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole78
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole78/setMaterial Air
+/gate/hole78/geometry/setRmax 0.58929 mm
+/gate/hole78/geometry/setRmin 0. mm
+/gate/hole78/geometry/setHeight 37. mm
+/gate/hole78/placement/setTranslation 20.9216 -5.0334 0. mm
+/gate/hole78/vis/setColor green
+
+/gate/micro_derenzo/daughters/name hole79
+/gate/micro_derenzo/daughters/insert cylinder
+/gate/hole79/setMaterial Air
+/gate/hole79/geometry/setRmax 0.5992 mm
+/gate/hole79/geometry/setRmin 0. mm
+/gate/hole79/geometry/setHeight 37. mm
+/gate/hole79/placement/setTranslation 22.1319 -2.9477 0. mm
+/gate/hole79/vis/setColor green
+

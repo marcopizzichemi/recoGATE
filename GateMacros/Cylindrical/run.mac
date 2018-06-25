@@ -16,8 +16,8 @@
 
 # SOURCES
 #/control/execute ./background.mac    # background cylinder, can be bg to the sources or the uniform cylinder for Normalization
-/control/execute ./sources.mac        # point sources
-
+#/control/execute ./sources.mac        # point sources
+/control/execute ./derenzo_geom.mac        # derenzo phantom
 
 # ROTATE ALL FOV
 /gate/cylindricalPET/placement/setRotationAxis 0 1 0

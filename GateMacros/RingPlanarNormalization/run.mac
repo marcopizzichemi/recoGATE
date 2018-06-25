@@ -1,0 +1,44 @@
+# VISUALITATION
+/vis/disable
+#/control/execute ./visu.mac
+
+# MATERIALS AND PHYSICS
+/gate/geometry/setMaterialDatabase ./GateMaterials.db
+/control/execute ./physics.mac
+/gate/random/setEngineSeed 123456789
+
+# GEOMETRY
+/control/execute ./geometry.mac    # 2 plates about as big as clearpem
+/control/execute ./attachToSystem.mac
+
+# INITIALIZE
+/gate/run/initialize
+
+# SOURCES
+/control/execute ./background.mac    # background cylinder, can be bg to the sources or the uniform cylinder for Normalization
+#/control/execute ./sources.mac        # point sources
+/control/execute ./planar.mac
+
+# ROTATE ALL FOV
+/gate/cylindricalPET/placement/setRotationAxis 0 1 0
+/gate/cylindricalPET/placement/setRotationAngle 90 deg
+/gate/cylinderSource/placement/setRotationAxis 0 1 0
+/gate/cylinderSource/placement/setRotationAngle 90 deg
+
+
+/gate/geometry/rebuild
+
+# OUTPUT
+# ROOT Output format
+/gate/output/root/enable
+/gate/output/root/setFileName Planar
+/gate/output/root/setRootSinglesFlag 0
+/gate/output/root/setRootCoincidencesFlag 0
+
+# SIMULATION DURATION
+/gate/application/setTimeSlice     1  s
+/gate/application/setTimeStart     0.   s
+/gate/application/setTimeStop      1  s
+
+# S T A R T   T H E   A C Q U I S I T I O N
+/gate/application/startDAQ

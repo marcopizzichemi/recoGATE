@@ -163,6 +163,7 @@ def main(argv):
      job.write("cp ./out%s_3cry-avg.elm2 %s \n" % (filename, folder) )
      job.write("cp ./out%s_3cry-magicalCompton.elm2 %s \n" % (filename, folder) )
      job.write("cp ./out%s_3cry-effCompton.elm2 %s \n" % (filename, folder) )
+     job.write("cp ./out%s_3cry-maxEnergy.elm2 %s \n" % (filename, folder) )
      job.write("cd %s \n" % folder)
      #job.write("rm ./out%s_points.root \n" % filename)
      job.close()

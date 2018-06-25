@@ -31,14 +31,14 @@
 # OUTPUT
 # ROOT Output format
 /gate/output/root/enable
-/gate/output/root/setFileName Sources
+/gate/output/root/setFileName Norm
 /gate/output/root/setRootSinglesFlag 0
 /gate/output/root/setRootCoincidencesFlag 0
 
 # SIMULATION DURATION
-/gate/application/setTimeSlice     1  s
+/gate/application/setTimeSlice     10  s
 /gate/application/setTimeStart     0.   s
-/gate/application/setTimeStop      1  s
+/gate/application/setTimeStop      10  s
 
 # S T A R T   T H E   A C Q U I S I T I O N
 #/gate/application/startDAQ
