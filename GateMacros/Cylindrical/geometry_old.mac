@@ -20,31 +20,26 @@
 # geometry like newclearpem
 /gate/world/daughters/name cylindricalPET
 /gate/world/daughters/insert cylinder
-/gate/cylindricalPET/setMaterial Vacuum
-/gate/cylindricalPET/geometry/setRmax 143.4 mm
-/gate/cylindricalPET/geometry/setRmin 124 mm
+/gate/cylindricalPET/setMaterial Air
+/gate/cylindricalPET/geometry/setRmax 115.2 mm
+/gate/cylindricalPET/geometry/setRmin 100 mm
 # crystal 1.53x1.53x15 mm + 0.07 mm vikuiti in between.
 # matrix 8x8 crystals -> size 12.8x12.8 mm
-#/gate/cylindricalPET/geometry/setHeight 182 mm
-/gate/cylindricalPET/geometry/setHeight 208 mm
+/gate/cylindricalPET/geometry/setHeight 182 mm
 /gate/cylindricalPET/vis/forceWireframe
 /gate/cylindricalPET/vis/setVisible 1
 
 # R S E C T O R
 /gate/cylindricalPET/daughters/name rsector
 /gate/cylindricalPET/daughters/insert box
-#/gate/rsector/placement/setTranslation 107.5 0 0 mm
-#/gate/rsector/geometry/setXLength 15. mm
-#/gate/rsector/geometry/setYLength 13 mm
-#/gate/rsector/geometry/setZLength 182 mm
-/gate/rsector/placement/setTranslation 132.6 0 0 mm
+/gate/rsector/placement/setTranslation 107.5 0 0 mm
 /gate/rsector/geometry/setXLength 15. mm
 /gate/rsector/geometry/setYLength 13 mm
-/gate/rsector/geometry/setZLength 208 mm
+/gate/rsector/geometry/setZLength 182 mm
 /gate/rsector/setMaterial Air
 /gate/rsector/vis/forceWireframe
 /gate/rsector/vis/setColor green
-/gate/rsector/vis/setVisible 1
+/gate/rsector/vis/setVisible 0
 
 # M O D U L E
 /gate/rsector/daughters/name module
@@ -56,7 +51,7 @@
 /gate/module/setMaterial BaSO4
 /gate/module/vis/forceWireframe
 /gate/module/vis/setColor gray
-/gate/module/vis/setVisible 1
+/gate/module/vis/setVisible 0
 
 
 # S U B M O D U L E
@@ -109,22 +104,21 @@
 
 # R E P E A T M O D U L E
 /gate/module/repeaters/insert cubicArray
-/gate/module/cubicArray/setRepeatNumberZ 16
+/gate/module/cubicArray/setRepeatNumberZ 14
 /gate/module/cubicArray/setRepeatNumberY 1
 /gate/module/cubicArray/setRepeatVector 0. 13. 13. mm
 
 # R E P E A T R S E C T O R
 /gate/rsector/repeaters/insert ring
-#/gate/rsector/ring/setRepeatNumber 48
-/gate/rsector/ring/setRepeatNumber 60
+/gate/rsector/ring/setRepeatNumber 48
 
-# S O U R C E S
+# S O U R C E S 
 # will be embedded in a cylinder
 /gate/world/daughters/name cylinderSource
 /gate/world/daughters/insert cylinder
-/gate/cylinderSource/setMaterial Vacuum
-/gate/cylinderSource/geometry/setRmax 105 mm
+/gate/cylinderSource/setMaterial Air
+/gate/cylinderSource/geometry/setRmax 100 mm
 /gate/cylinderSource/geometry/setHeight 182 mm
-#/gate/cylinderSource/vis/setColor blue
+/gate/cylinderSource/vis/setColor blue
 /gate/cylinderSource/vis/forceWireframe
-/gate/cylinderSource/vis/setVisible 0
+/gate/cylinderSource/vis/setVisible 1
