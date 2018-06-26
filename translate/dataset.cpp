@@ -98,6 +98,12 @@ struct EventFormat {
 	} __attribute__((__packed__));
 
 
+  struct primary_t
+  {
+    int id;
+    int num;
+  };
+
 //STIR PART
 Float_t    Mich_r1r2fu[N_RINGS][N_RINGS][N_DET/2][S_WIDTH]={0};
 
@@ -345,7 +351,8 @@ int main(int argc, char** argv)
       std::stringstream sname;
       sname << ofs3cry_effComptonName[i] << ".bin";
       std::ofstream* temp_ofs;
-      temp_ofs->open (sname.str(), std::ios::binary);
+      temp_ofs = new std::ofstream(sname.str().c_str(), std::ios::binary);
+      // temp_ofs->open (sname.str(), std::ios::binary);
       ofs3cry_effCompton.push_back(temp_ofs);
     }
 
@@ -394,7 +401,8 @@ int main(int argc, char** argv)
         std::stringstream sname;
         sname << ofs3cry_effComptonName[i] << ".txt";
         std::ofstream* temp_ofs;
-        temp_ofs->open (sname.str().c_str(), std::ofstream::out);
+        temp_ofs = new std::ofstream(sname.str().c_str(), std::ofstream::out);
+        // temp_ofs->open (sname.str().c_str(), std::ofstream::out);
         ofs3cry_effCompton.push_back(temp_ofs);
       }
     }
@@ -499,19 +507,15 @@ int main(int argc, char** argv)
 
           //using primaryID
           // find single event with primaryID
-          struct primary
-          {
-            int id;
-            int num;
-          };
 
-          std::vector<primary> primaryCounter;
+
+          std::vector<primary_t> primaryCounter;
           //look for different primaries
           for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
           {
             if(pCount == 0)
             {
-              primary tempPrimary;
+              primary_t tempPrimary;
               tempPrimary.id = points->at(pCount).primaryID;
               tempPrimary.num = 1;
               primaryCounter.push_back(tempPrimary);
@@ -526,7 +530,7 @@ int main(int argc, char** argv)
                 }
                 else
                 {
-                  primary tempPrimary;
+                  primary_t tempPrimary;
                   tempPrimary.id = points->at(pCount).primaryID;
                   tempPrimary.num = 1;
                   primaryCounter.push_back(tempPrimary);
@@ -956,7 +960,7 @@ int main(int argc, char** argv)
   summary_out << "Only 2 crystals  [all - in energy window]   = " << onlyTwoCrystals      << " - " << onlyTwoCrystalsInEnergyWindow   <<  std::endl;
   summary_out << "Only 3 crystals  [all - in energy window]   = " << onlyThreeCrystals    << " - " << onlyThreeCrystalsInEnergyWindow <<  std::endl;
   summary_out << "Only 4 crystals                             = " << onlyFourCrystals     << std::endl;
-  summary_out << "More than 4 crystals                        = " << moreThanFourCrystals << std::endl; 
+  summary_out << "More than 4 crystals                        = " << moreThanFourCrystals << std::endl;
 
   // Write the data to disk, and then close Michelogram file...
   //----------------------------------------------------------------
