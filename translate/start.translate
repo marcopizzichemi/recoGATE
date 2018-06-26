@@ -275,8 +275,6 @@ def main(argv):
                   "-o %(outputFile)s " \
                   "--inner-radius %(rmin)s " \
                   "--eff-steps  %(effSteps)s " \
-                  # "--energy-low %(enMin)s " \
-                  # "--energy-high %(enMax)s " \
                   "--energy-fwhm %(energyResolutionFWHM)s " \
                   "--rotation-angle %(rotationAngle)s " %parameters
 
