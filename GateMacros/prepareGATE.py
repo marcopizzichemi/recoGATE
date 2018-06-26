@@ -27,7 +27,7 @@ def main(argv):
    parser.add_argument('-q','--queue',help='Queue name ', required=True)
    parser.add_argument('-c','--convert',help='Translate command', required=True)
    parser.add_argument('-p','--specific',help='Specific args for start.translate', required=False)
-   parser.add_argument('-g','--target',help='target foe output folder', required=True)
+   parser.add_argument('-g','--target',help='target for output data folder', required=False)
    #parser.add_argument('-l','--life',help='Isotope half life [s]', required=False)
    args = parser.parse_args()
 
@@ -63,8 +63,19 @@ def main(argv):
    #if args.life != None:
      #thalf = float(args.life)
 
+
+   #print ("Isotope Half life [s]: %f" % thalf )
+
+   #make the output directory
+   os.makedirs(folder)
+   targetFolder = folder
+   #different folder for output files
+   if target != None:
+       os.makedirs(target)
+       targetFolder = target
+
    #print values
-   print ("Output folder                  : %s" % folder )
+   print ("Output folder                  : %s" % targetFolder )
    print ("Macros folder                  : %s" % macros )
    #print ("Angles                         : %d" % angles )
    print ("Jobs                           : %d" % jobs )
@@ -73,15 +84,12 @@ def main(argv):
    print ("lxplus Queue                   : %s" % queue )
    print ("Run type                       : %s = %d " % (args.runtype,runtype) )
    print ("Specific translate string      : %s " % specific )
-   #print ("Isotope Half life [s]: %f" % thalf )
 
-   #make the output directory
-   os.makedirs(folder)
-   cernboxBase = "/eos/user/m/mpizzich/Universita/Ideas/ComptonRecovery/Simulations/"
-   cernboxFolder = cernboxBase + args.folder
+   # targetBase = target
+   # targetFolder = targetBase + args.folder
 
-   if target == 'cernbox':
-       os.makedirs(cernboxFolder)
+   # if target == 'cernbox':
+   # os.makedirs(targetFolder)
 
 
 
@@ -101,14 +109,14 @@ def main(argv):
    for j in range(0, jobs):
      #make the job folder and store the base filename
      currentdir = folder + "/job" + str(jobcounter)
-     targetFolder = ''
-     if target == 'cernbox':
-         targetFolder = cernboxFolder
-     elif target == 'afs':
-         targetFolder = folder
-     else:
-         print 'ERROR: target not accepted <cernbox|afs>'
-         return 1
+     # targetFolder = ''
+     # if target == 'cernbox':
+     #     targetFolder = cernboxFolder
+     # elif target == 'afs':
+     #     targetFolder = folder
+     # else:
+     #     print 'ERROR: target not accepted <cernbox|afs>'
+     #     return 1
 
 
      os.makedirs(currentdir)
@@ -144,7 +152,7 @@ def main(argv):
        f.write("/control/execute %s/SNR_sources.mac \n" % macros)
      if runtype == 2: # full run with multiple sources and background. remember to change the activities... todo
        f.write("/control/execute %s/SNR_sources.mac \n" % macros)
-       f.write("/control/execute %s/sourceCilinder.mac \n" % macros)
+       f.write("/control/execute %s/sourceCylinder.mac \n" % macros)
      f.write("# ROTATE ALL FOV                                       \n")
      f.write("/gate/cylindricalPET/placement/setRotationAxis 0 1 0   \n")
      f.write("/gate/cylindricalPET/placement/setRotationAngle 90 deg \n")
