@@ -150,6 +150,7 @@ int main(int argc, char** argv)
   float enMax = 700.0;
   float plates_distance = 200.0;
   float rotationAngle = 0.0;
+  float energyFwhm = 0.12;
   //INPUT FILE AND TTREE
   std::string inputfilename,outputfilename ;
   // inputfilename = argv[1] ;
@@ -162,8 +163,8 @@ int main(int argc, char** argv)
   {
       { "inner-radius",required_argument, 0, 0},
       { "eff-steps",required_argument, 0, 0},
-      { "energy-low",required_argument, 0, 0},
-      { "energy-high",required_argument, 0, 0},
+      { "energy-fwhm",required_argument, 0, 0},
+      // { "energy-high",required_argument, 0, 0},
       { "binary-output",no_argument, 0, 0},
       { "listmode-output",no_argument, 0, 0},
       { "stir-output",no_argument, 0, 0},
@@ -194,30 +195,30 @@ int main(int argc, char** argv)
       effSteps = atoi((char *)optarg);
     }
     else if (c == 0 && optionIndex == 2){
-      enMin = atof((char *)optarg);
+      energyFwhm = atof((char *)optarg);
     }
+    // else if (c == 0 && optionIndex == 3){
+    //   enMax = atof((char *)optarg);
+    // }
     else if (c == 0 && optionIndex == 3){
-      enMax = atof((char *)optarg);
-    }
-    else if (c == 0 && optionIndex == 4){
       binary   = true;
       listmodeoutput = false;
       stir     = false;
     }
-    else if (c == 0 && optionIndex == 5){
+    else if (c == 0 && optionIndex == 4){
       binary   = false;
       listmodeoutput = true;
       stir     = false;
     }
-    else if (c == 0 && optionIndex == 6){
+    else if (c == 0 && optionIndex == 5){
       binary   = false;
       listmodeoutput = false;
       stir     = true;
     }
-    else if (c == 0 && optionIndex == 7){
+    else if (c == 0 && optionIndex == 6){
       NoBackground = true;
     }
-    else if (c == 0 && optionIndex == 8){
+    else if (c == 0 && optionIndex == 7){
       rotationAngle = atof((char *)optarg);
     }
 		else { //FIXME
@@ -241,7 +242,8 @@ int main(int argc, char** argv)
 		}
 	}
 
-
+  enMin = 511.0 - (511.0 * energyFwhm);
+  enMax = 511.0 + 2.0*(511.0 * energyFwhm);
   std::cout << "Rotation angle is = " << rotationAngle << std::endl;
   std::cout << "Input file name is " << inputfilename << std::endl;
   TFile *inputFile = TFile::Open(inputfilename.c_str());
@@ -284,6 +286,7 @@ int main(int argc, char** argv)
   // std::string ofs3cry_magicalComptonName =  baseName + "_3cry-magicalCompton";
   // std::string ofs3cry_effComptonName     =  baseName + "_3cry-effCompton";
   std::string ofs3cry_maxEnergyName      =  baseName + "_3cry-maxEnergy";
+  std::string summary_out_name           = baseName + "_summary";
   std::vector<std::string>  ofs3cry_effComptonName;
   float efficiency_step = (float) (max_efficiency - min_efficiency)/(effSteps-1);
   for(int i = 0 ; i < effSteps ; i++)
@@ -310,7 +313,10 @@ int main(int argc, char** argv)
   // std::ofstream ofs3cry_effCompton;
   std::ofstream ofs3cry_maxEnergy;
   std::vector<std::ofstream*> ofs3cry_effCompton;
+  std::ofstream summary_out;
 
+  summary_out_name += ".txt";
+  summary_out.open (summary_out_name.c_str(),  std::ofstream::out);
   // bool listmodeoutput = true;
   // std::ofstream *listMode2cry = NULL;
   // std::ofstream *listMode3cry_avg = NULL;
@@ -351,22 +357,23 @@ int main(int argc, char** argv)
     {
       ofs2cryName+= ".elm2";
       ofs3cry_avgName+= ".elm2";
-      // ofs3cry_magicalComptonName+= ".elm2";
-      // ofs3cry_effComptonName+= ".elm2";
       ofs3cry_maxEnergyName+= ".elm2";
 
       ofs2cry.open (ofs2cryName.c_str(), std::ios::binary);
       ofs3cry_avg.open (ofs3cry_avgName.c_str(), std::ios::binary);
-      // ofs3cry_magicalCompton.open (ofs3cry_magicalComptonName.c_str(), std::ios::binary);
-      // ofs3cry_effCompton.open (ofs3cry_effComptonName.c_str(), std::ios::binary);
       ofs3cry_maxEnergy.open (ofs3cry_maxEnergyName.c_str(), std::ios::binary);
+
       for(int i = 0 ; i < effSteps ; i++)
       {
         std::stringstream sname;
         sname << ofs3cry_effComptonName[i] << ".elm2";
+        // std::cout << sname.str() << std::endl;
         std::ofstream* temp_ofs;
-        temp_ofs->open (sname.str().c_str(), std::ios::binary);
+        temp_ofs = new std::ofstream(sname.str().c_str(), std::ios::binary);
+        // temp_ofs->open (sname.str().c_str(), std::ios::binary);
+        // std::cout << sname.str() << std::endl;
         ofs3cry_effCompton.push_back(temp_ofs);
+        // std::cout << sname.str() << std::endl;
       }
     }
     else
@@ -394,11 +401,15 @@ int main(int argc, char** argv)
 
 
   }
+
+  std::cout << "qui" << std::endl;
+
   if(stir)
   {
     Mich_r1r2fuFile = fopen(Moutputfilename.c_str(),"wb");
     Proj_File       = fopen(Poutputfilename.c_str(),"wb");
   }
+
 
 
   //COUNTERS
@@ -411,8 +422,8 @@ int main(int argc, char** argv)
   Int_t moreThanFourCrystals = 0;
   Int_t onlyTwoCrystalsInEnergyWindow = 0;
   Int_t onlyThreeCrystalsInEnergyWindow = 0;
-  Int_t onlyFourCrystalsInEnergyWindow = 0;
-  Int_t moreThanFourCrystalsInEnergyWindow = 0;
+  // Int_t onlyFourCrystalsInEnergyWindow = 0;
+  // Int_t moreThanFourCrystalsInEnergyWindow = 0;
 
   //COMPTON efficiency parameter
 
@@ -449,7 +460,10 @@ int main(int argc, char** argv)
         if(points->size() == 2)
         {
           onlyTwoCrystals++;
-          if(1000.0*points->at(0).energy > enMin && 1000.0*points->at(0).energy < enMax && 1000.0*points->at(1).energy > enMin && 1000.0*points->at(1).energy < enMax) //energy limits
+          if(1000.0*points->at(0).energy > enMin &&
+             1000.0*points->at(0).energy < enMax &&
+             1000.0*points->at(1).energy > enMin &&
+             1000.0*points->at(1).energy < enMax) //energy limits
           {
             onlyTwoCrystalsInEnergyWindow++; //baseline sensitivity
           }
@@ -471,7 +485,7 @@ int main(int argc, char** argv)
             fe.e2     = points->at(1).energy * 1000;// clearpem reco wants KeV
             fe.n2     = 1;
             // fe.dt     = (double) (points->at(0).time - points->at(1).time);
-            fe.dt     = (double) 1e-9;
+            fe.dt     = (double) (points->at(0).time - points->at(1).time);
             ofs2cry.write((char*)&fe,sizeof(fe));
           }
         }
@@ -482,6 +496,7 @@ int main(int argc, char** argv)
         //--------------------------//
         if(points->size() == 3)
         {
+
           //using primaryID
           // find single event with primaryID
           struct primary
@@ -521,6 +536,7 @@ int main(int argc, char** argv)
           }
           if(primaryCounter.size() == 2) // only if events from both primaries
           {
+            onlyThreeCrystals++;
             Int_t SinglePrimaryID;
             Int_t SingleID;
             if(primaryCounter[0].num == 1)
@@ -565,6 +581,11 @@ int main(int argc, char** argv)
                     firstCrystalID = pCount;
                   }
                 }
+              }
+
+              if(1000.0*points->at(SingleID).energy > enMin && 1000.0*points->at(SingleID).energy < enMax && sum_energy*1000.0 > enMin && 1000.0*sum_energy < enMax) //energy limits
+              {
+                onlyThreeCrystalsInEnergyWindow++; //baseline sensitivity
               }
 
               //---------------------------------------------//
@@ -864,7 +885,7 @@ int main(int argc, char** argv)
           // {
           //   //don't save the event for "reconstruction"
           // }
-          onlyThreeCrystals++;
+
         }
         //--------------------------//
 
@@ -875,15 +896,15 @@ int main(int argc, char** argv)
         if(points->size() == 4)
         {
           onlyFourCrystals++;
-          float sum_energy = 0;
-          for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
-          {
-            sum_energy += points->at(pCount).energy;
-          }
-          if(1000.0*sum_energy > 2.0*enMin && 1000.0*sum_energy < 2.0*enMax)
-          {
-            onlyFourCrystalsInEnergyWindow++;
-          }
+          // float sum_energy = 0;
+          // for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+          // {
+          //   sum_energy += points->at(pCount).energy;
+          // }
+          // if(1000.0*sum_energy > 2.0*enMin && 1000.0*sum_energy < 2.0*enMax)
+          // {
+          //   onlyFourCrystalsInEnergyWindow++;
+          // }
 
         }
         //--------------------------//
@@ -895,15 +916,15 @@ int main(int argc, char** argv)
         if(points->size() > 4)
         {
           moreThanFourCrystals++;
-          float sum_energy = 0;
-          for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
-          {
-            sum_energy += points->at(pCount).energy;
-          }
-          if(1000.0*sum_energy > 2.0*enMin && 1000.0*sum_energy < 2.0*enMax)
-          {
-            moreThanFourCrystalsInEnergyWindow++;
-          }
+          // float sum_energy = 0;
+          // for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+          // {
+          //   sum_energy += points->at(pCount).energy;
+          // }
+          // if(1000.0*sum_energy > 2.0*enMin && 1000.0*sum_energy < 2.0*enMax)
+          // {
+          //   moreThanFourCrystalsInEnergyWindow++;
+          // }
         }
         //--------------------------//
 
@@ -922,12 +943,20 @@ int main(int argc, char** argv)
   std::cout << std::endl;
 
   //SENSITIVITY COUNTS
-  std::cout << "Total dataset                       = " << nsamples << std::endl;
-  std::cout << "Only 1 crystal                      = " << onlyOneCrystals << std::endl;
-  std::cout << "Only 2 crystals                     = " << onlyTwoCrystals << "\t , @511 = " << onlyTwoCrystalsInEnergyWindow<< std::endl;
-  std::cout << "Only 3 crystals                     = " << onlyThreeCrystals << "\t , @511 = "<< onlyThreeCrystalsInEnergyWindow << std::endl;
-  std::cout << "Only 4 crystals                     = " << onlyFourCrystals << "\t , @511 = "<< onlyFourCrystalsInEnergyWindow <<std::endl;
-  std::cout << "More than 4 crystals                = " << moreThanFourCrystals << "\t , @511 = "<< moreThanFourCrystalsInEnergyWindow <<std::endl;
+  std::cout << "Total dataset                               = " << nsamples << std::endl;
+  std::cout << "Only 1 crystal                              = " << onlyOneCrystals      << std::endl;
+  std::cout << "Only 2 crystals  [all - in energy window]   = " << onlyTwoCrystals      << " - " << onlyTwoCrystalsInEnergyWindow   <<  std::endl;
+  std::cout << "Only 3 crystals  [all - in energy window]   = " << onlyThreeCrystals    << " - " << onlyThreeCrystalsInEnergyWindow <<  std::endl;
+  std::cout << "Only 4 crystals                             = " << onlyFourCrystals     << std::endl;
+  std::cout << "More than 4 crystals                        = " << moreThanFourCrystals << std::endl;
+
+
+  summary_out << "Total dataset                               = " << nsamples << std::endl;
+  summary_out << "Only 1 crystal                              = " << onlyOneCrystals      << std::endl;
+  summary_out << "Only 2 crystals  [all - in energy window]   = " << onlyTwoCrystals      << " - " << onlyTwoCrystalsInEnergyWindow   <<  std::endl;
+  summary_out << "Only 3 crystals  [all - in energy window]   = " << onlyThreeCrystals    << " - " << onlyThreeCrystalsInEnergyWindow <<  std::endl;
+  summary_out << "Only 4 crystals                             = " << onlyFourCrystals     << std::endl;
+  summary_out << "More than 4 crystals                        = " << moreThanFourCrystals << std::endl; 
 
   // Write the data to disk, and then close Michelogram file...
   //----------------------------------------------------------------
@@ -977,6 +1006,7 @@ int main(int argc, char** argv)
   inputFile->Close();
   ofs2cry.close();
   ofs3cry_avg.close();
+  summary_out.close();
   // ofs3cry_magicalCompton.close();
   for(int i = 0 ; i < effSteps ; i++)
   {

@@ -163,7 +163,7 @@ int main(int argc, char** argv)
   int smearedTime = 1;
   Double_t energyResolutionFWHM = 0.12; //12% FWHM @511, for the moment we take the same also for low energy...
   Double_t doiResolutionFWHM = 2.8; //2.8mm doi res measured on the module
-  Double_t timeResolutionFWHM = 200.0; //in ps
+  Double_t timeResolutionFWHM = 200.0 * 1e-12; //in ps
 
   bool fovRotation = false; // fov rotated?
   char* fovRotationAxis = NULL; // rotation axis for entire fov. can be only x y or z
@@ -334,6 +334,7 @@ int main(int argc, char** argv)
     }
     else if (c == 0 && optionIndex == 27){
       timeResolutionFWHM = atof((char *)optarg);
+      timeResolutionFWHM = timeResolutionFWHM*1e-12;
     }
     else if (c == 0 && optionIndex == 28){
       smearedTime = atoi((char *)optarg);
@@ -708,9 +709,11 @@ int main(int argc, char** argv)
       std::vector<std::vector < enDep > > separatedEnDep;
       if(energyDeposition.size() != 0)
       {
+
         std::sort(energyDeposition.begin(), energyDeposition.end(), compareByTime);
         for(int eEvent = 0; eEvent < energyDeposition.size(); eEvent++) //run on energy depositions and find in how many crystals energy was deposited
         {
+
           // std::cout << energyDeposition[eEvent].eventID << " " << energyDeposition[eEvent].globalCryID << " " <<  energyDeposition[eEvent].edep << " " << energyDeposition[eEvent].localPosX << " " << energyDeposition[eEvent].time << std::endl;
           //this for cycles on all the endep events. it stores them (each one is a struct) in a std::vector of structs, until the gamma changes crystal
           //when we enter a new crystal, the std::vector of that crystal is pushed_back into (guess what?) a std::vector of std::vector and another std::vector is created
@@ -1002,7 +1005,9 @@ int main(int argc, char** argv)
         }
 
         // outAvg = averageDepEvents;
+        // std::cout<< "aaaaaaaa" << std::endl;
         outputTree->Fill();
+        // std::cout<< "aaaaaaaa" << std::endl;
       }
       // std::cout<< "----------------------" << std::endl;
       //move to next pair of gammas, reset

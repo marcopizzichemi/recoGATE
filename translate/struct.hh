@@ -54,6 +54,7 @@ struct point
   Int_t sourceID;
   Int_t crystalIDforSTIR;
   Int_t ringIDforSTIR;
+  Int_t primaryID;
   float x;
   float y;
   float z;

@@ -164,6 +164,7 @@ def main(argv):
      #job.write("cd %s \n" % folder)
      job.write("%s --input ./out%s.root --output-dir ./ --fov-rotation-axis y --fov-rotation-angle 90 %s \n" %(translate_exec,filename,specific) )
      job.write("cp ./out*.elm2 %s \n" % (cernboxFolder) )
+     job.write("cp ./out*.txt %s \n" % (cernboxFolder) )
      # job.write("cp ./out%s_3cry-avg.elm2 %s \n" % (filename, cernboxFolder) )
      # job.write("cp ./out%s_3cry-magicalCompton.elm2 %s \n" % (filename, cernboxFolder) )
      # job.write("cp ./out%s_3cry-effCompton.elm2 %s \n" % (filename, cernboxFolder) )
