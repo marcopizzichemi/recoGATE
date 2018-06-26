@@ -710,6 +710,7 @@ int main(int argc, char** argv)
           {
             tempAvgEnDep.energy += separatedEnDep.at(iColl).at(iEndep).edep;
           }
+          float avgTime = INFINITY;
           if(tempAvgEnDep.energy != 0)
           {
             for(int iEndep = 0; iEndep < separatedEnDep.at(iColl).size(); iEndep++)
@@ -719,13 +720,17 @@ int main(int argc, char** argv)
                 tempAvgEnDep.x += separatedEnDep.at(iColl).at(iEndep).localPosX * separatedEnDep.at(iColl).at(iEndep).edep;
                 tempAvgEnDep.y += separatedEnDep.at(iColl).at(iEndep).localPosY * separatedEnDep.at(iColl).at(iEndep).edep;
                 tempAvgEnDep.z += separatedEnDep.at(iColl).at(iEndep).localPosZ * separatedEnDep.at(iColl).at(iEndep).edep;
-                tempAvgEnDep.time += separatedEnDep.at(iColl).at(iEndep).time * separatedEnDep.at(iColl).at(iEndep).edep;
+                if( separatedEnDep.at(iColl).at(iEndep).time < avgTime)
+                {
+                  avgTime = separatedEnDep.at(iColl).at(iEndep).time;
+                }
+                // tempAvgEnDep.time += separatedEnDep.at(iColl).at(iEndep).time * separatedEnDep.at(iColl).at(iEndep).edep;
               }
             }
             tempAvgEnDep.x = tempAvgEnDep.x / tempAvgEnDep.energy;
             tempAvgEnDep.y = tempAvgEnDep.y / tempAvgEnDep.energy;
             tempAvgEnDep.z = tempAvgEnDep.z / tempAvgEnDep.energy;
-            tempAvgEnDep.time = tempAvgEnDep.time / tempAvgEnDep.energy;
+            tempAvgEnDep.time = avgTime;
             float varx = 0.0; // variance (needed for stdev afterwards)
             float vary = 0.0;
             float varz = 0.0;
@@ -901,7 +906,7 @@ int main(int argc, char** argv)
 
           if(smearedTime)
           {
-            tempPoint.time = (Float_t) gaussianSmear(averageDepEvents[iAvg].time,averageDepEvents[iAvg].time*timeResolutionFWHM);
+            tempPoint.time = (Float_t) gaussianSmear(averageDepEvents[iAvg].time,timeResolutionFWHM);
           }
           else
           {
