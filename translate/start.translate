@@ -61,9 +61,11 @@ def main(argv):
     parser.add_option("--crystal-distance-z"   , dest="arraycryz",default=1.6)
     parser.add_option("--energy-resolution-fwhm", dest="energyResolutionFWHM",default=0.12)
     parser.add_option("--doi-resolution-fwhm"   , dest="doiResolutionFWHM",default=2.8)
+    parser.add_option("--time-resolution-fwhm"   , dest="timeResolutionFWHM",default=200)
     parser.add_option("--smeared-energy"        , dest="smearedEnergy",default=1)
     parser.add_option("--smeared-doi"           , dest="smearedDoi",default=1)
-    parser.add_option("--compton-efficiency"    , dest="compton_eff",default=0.65)
+    parser.add_option("--smeared-time"           , dest="smearedTime",default=1)
+    parser.add_option("--eff-steps"             , dest="effSteps",default=11)
     parser.add_option("--energy-low"            , dest="enMin",default=100)
     parser.add_option("--energy-high"           , dest="enMax",default=700)
     parser.add_option("--time-window"           , dest="dMax",default=4)
@@ -116,13 +118,15 @@ def main(argv):
                   'arraycryz':           options.arraycryz,
                   'energyResolutionFWHM':options.energyResolutionFWHM,
                   'doiResolutionFWHM':   options.doiResolutionFWHM,
+                  'timeResolutionFWHM':   options.timeResolutionFWHM,
                   'smearedDoi':          options.smearedDoi,
                   'smearedEnergy':       options.smearedEnergy,
+                  'smearedTime':         options.smearedTime,
                   'binary':              options.binary,
                   'listmode':            options.listmode,
                   'nobackground':        options.nobackground,
                   'stir':                options.stir,
-                  'compton_eff':         options.compton_eff,
+                  'effSteps':            options.effSteps,
                   'enMin':               options.enMin,
                   'enMax':               options.enMax,
                   'dMax':                options.dMax,
@@ -203,13 +207,15 @@ def main(argv):
     print 'arraycryz            = %(arraycryz)s' %parameters
     print 'energyResolutionFWHM = %(energyResolutionFWHM)s' %parameters
     print 'doiResolutionFWHM    = %(doiResolutionFWHM)s' %parameters
+    print 'timeResolutionFWHM    = %(timeResolutionFWHM)s' %parameters
     print 'smearedDoi           = %(smearedDoi)s' %parameters
     print 'smearedEnergy        = %(smearedEnergy)s' %parameters
+    print 'smearedTime          = %(smearedTime)s' %parameters
     print 'binary               = %(binary)s' %parameters
     print 'listmode             = %(listmode)s' %parameters
     print 'nobackground         = %(nobackground)s' %parameters
     print 'stir                 = %(stir)s' %parameters
-    print 'compton_eff          = %(compton_eff)s' %parameters
+    print 'effSteps             = %(effSteps)s' %parameters
     print 'enMin                = %(enMin)s' %parameters
     print 'enMax                = %(enMax)s' %parameters
     if parameters['fovRotation']:
@@ -243,7 +249,9 @@ def main(argv):
                     "--crystal-distance-z %(arraycryz)s " \
                     "--energy-resolution-fwhm %(energyResolutionFWHM)s " \
                     "--doi-resolution-fwhm %(doiResolutionFWHM)s " \
+                    "--time-resolution-fwhm %(timeResolutionFWHM)s " \
                     "--smeared-energy %(smearedEnergy)s " \
+                    "--smeared-time %(smearedTime)s " \
                     "--smeared-doi %(smearedDoi)s " %parameters
     if parameters['fovRotation']:
         simToData_cmd += "--fov-rotation-axis %(fovRotationAxis)s " \
@@ -266,7 +274,7 @@ def main(argv):
                   "-i %(pointsFile)s " \
                   "-o %(outputFile)s " \
                   "--inner-radius %(rmin)s " \
-                  "--compton-efficiency %(compton_eff)s " \
+                  "--eff-steps  %(effSteps)s " \
                   "--energy-low %(enMin)s " \
                   "--energy-high %(enMax)s " \
                   "--rotation-angle %(rotationAngle)s " %parameters

@@ -71,6 +71,7 @@ struct point
   Int_t sourceID;
   Int_t crystalIDforSTIR;
   Int_t ringIDforSTIR;
+  Int_t primaryID;
   float x;
   float y;
   float z;
@@ -153,11 +154,14 @@ int main(int argc, char** argv)
   std::string inputfilename,outputfilename ;
   // inputfilename = argv[1] ;
   // outputfilename = argv[2];
+  int effSteps = 11;
+  float min_efficiency = 0.5;
+  float max_efficiency = 1.0;
 
   static struct option longOptions[] =
   {
       { "inner-radius",required_argument, 0, 0},
-      { "compton-efficiency",required_argument, 0, 0},
+      { "eff-steps",required_argument, 0, 0},
       { "energy-low",required_argument, 0, 0},
       { "energy-high",required_argument, 0, 0},
       { "binary-output",no_argument, 0, 0},
@@ -187,7 +191,7 @@ int main(int argc, char** argv)
       plates_distance = 2.0*atof((char *)optarg);
     }
     else if (c == 0 && optionIndex == 1){
-      compton_eff = atof((char *)optarg);
+      effSteps = atoi((char *)optarg);
     }
     else if (c == 0 && optionIndex == 2){
       enMin = atof((char *)optarg);
@@ -226,7 +230,7 @@ int main(int argc, char** argv)
 			<< "\t\t" << "[ --filter-fwhm <0 to disable or FWHM in mm> ] " << std::endl
 			<< "\t\t" << "[ --filter-power < Metz power, 0 for gaussian ] " << std::endl
 			<< "\t\t" << "[ --filter-iter <filter each n iterations> ]" << std::endl
-			<< "\t\t"       << "[ --no-interfile ]" << std::endl
+			<< "\t\t" << "[ --no-interfile ]" << std::endl
 			<< "\t\t" << "[ --partial <event fraction %>" << std::endl
 			<< "\t\t" << "[ --rand-image <random file> ]" << std::endl
 			<< "\t\t" << "[ --rand-cut <random cut value, 0 to 0.5> ]" << std::endl
@@ -277,9 +281,18 @@ int main(int argc, char** argv)
   //OUTPUT STREAMS
   std::string ofs2cryName                =  baseName + "_2cry";
   std::string ofs3cry_avgName            =  baseName + "_3cry-avg";
-  std::string ofs3cry_magicalComptonName =  baseName + "_3cry-magicalCompton";
-  std::string ofs3cry_effComptonName     =  baseName + "_3cry-effCompton";
+  // std::string ofs3cry_magicalComptonName =  baseName + "_3cry-magicalCompton";
+  // std::string ofs3cry_effComptonName     =  baseName + "_3cry-effCompton";
   std::string ofs3cry_maxEnergyName      =  baseName + "_3cry-maxEnergy";
+  std::vector<std::string>  ofs3cry_effComptonName;
+  float efficiency_step = (float) (max_efficiency - min_efficiency)/(effSteps-1);
+  for(int i = 0 ; i < effSteps ; i++)
+  {
+    float efficiency = min_efficiency + i*efficiency_step;
+    std::stringstream sname;
+    sname << baseName << "_3cry-eff" << efficiency;
+    ofs3cry_effComptonName.push_back(sname.str());
+  }
 
   std::cout << ofs2cryName << " " << ofs3cry_avgName <<std::endl;
 
@@ -293,9 +306,10 @@ int main(int argc, char** argv)
 
   std::ofstream ofs2cry;
   std::ofstream ofs3cry_avg;
-  std::ofstream ofs3cry_magicalCompton;
-  std::ofstream ofs3cry_effCompton;
+  // std::ofstream ofs3cry_magicalCompton;
+  // std::ofstream ofs3cry_effCompton;
   std::ofstream ofs3cry_maxEnergy;
+  std::vector<std::ofstream*> ofs3cry_effCompton;
 
   // bool listmodeoutput = true;
   // std::ofstream *listMode2cry = NULL;
@@ -311,15 +325,25 @@ int main(int argc, char** argv)
   {
     ofs2cryName+= ".bin";
     ofs3cry_avgName+= ".bin";
-    ofs3cry_magicalComptonName+= ".bin";
-    ofs3cry_effComptonName+= ".bin";
+    // ofs3cry_magicalComptonName+= ".bin";
+    // ofs3cry_effComptonName+= ".bin";
     ofs3cry_maxEnergyName+= ".bin";
 
     ofs2cry.open (ofs2cryName.c_str(), std::ios::binary);
     ofs3cry_avg.open (ofs3cry_avgName.c_str(), std::ios::binary);
-    ofs3cry_magicalCompton.open (ofs3cry_magicalComptonName.c_str(), std::ios::binary);
-    ofs3cry_effCompton.open (ofs3cry_effComptonName.c_str(), std::ios::binary);
+    // ofs3cry_magicalCompton.open (ofs3cry_magicalComptonName.c_str(), std::ios::binary);
+    // ofs3cry_effCompton.open (ofs3cry_effComptonName.c_str(), std::ios::binary);
     ofs3cry_maxEnergy.open (ofs3cry_maxEnergyName.c_str(), std::ios::binary);
+    for(int i = 0 ; i < effSteps ; i++)
+    {
+      std::stringstream sname;
+      sname << ofs3cry_effComptonName[i] << ".bin";
+      std::ofstream* temp_ofs;
+      temp_ofs->open (sname.str(), std::ios::binary);
+      ofs3cry_effCompton.push_back(temp_ofs);
+    }
+
+
   }
   else
   {
@@ -327,29 +351,45 @@ int main(int argc, char** argv)
     {
       ofs2cryName+= ".elm2";
       ofs3cry_avgName+= ".elm2";
-      ofs3cry_magicalComptonName+= ".elm2";
-      ofs3cry_effComptonName+= ".elm2";
+      // ofs3cry_magicalComptonName+= ".elm2";
+      // ofs3cry_effComptonName+= ".elm2";
       ofs3cry_maxEnergyName+= ".elm2";
 
       ofs2cry.open (ofs2cryName.c_str(), std::ios::binary);
       ofs3cry_avg.open (ofs3cry_avgName.c_str(), std::ios::binary);
-      ofs3cry_magicalCompton.open (ofs3cry_magicalComptonName.c_str(), std::ios::binary);
-      ofs3cry_effCompton.open (ofs3cry_effComptonName.c_str(), std::ios::binary);
+      // ofs3cry_magicalCompton.open (ofs3cry_magicalComptonName.c_str(), std::ios::binary);
+      // ofs3cry_effCompton.open (ofs3cry_effComptonName.c_str(), std::ios::binary);
       ofs3cry_maxEnergy.open (ofs3cry_maxEnergyName.c_str(), std::ios::binary);
+      for(int i = 0 ; i < effSteps ; i++)
+      {
+        std::stringstream sname;
+        sname << ofs3cry_effComptonName[i] << ".elm2";
+        std::ofstream* temp_ofs;
+        temp_ofs->open (sname.str().c_str(), std::ios::binary);
+        ofs3cry_effCompton.push_back(temp_ofs);
+      }
     }
     else
     {
       ofs2cryName+= ".txt";
       ofs3cry_avgName+= ".txt";
-      ofs3cry_magicalComptonName+= ".txt";
-      ofs3cry_effComptonName+= ".txt";
+      // ofs3cry_magicalComptonName+= ".txt";
+      // ofs3cry_effComptonName+= ".txt";
       ofs3cry_maxEnergyName+= ".txt";
 
       ofs2cry.open (ofs2cryName.c_str(), std::ofstream::out);
       ofs3cry_avg.open (ofs3cry_avgName.c_str(), std::ofstream::out);
-      ofs3cry_magicalCompton.open (ofs3cry_magicalComptonName.c_str(), std::ofstream::out);
-      ofs3cry_effCompton.open (ofs3cry_effComptonName.c_str(), std::ofstream::out);
-      ofs3cry_maxEnergy.open (ofs3cry_maxEnergyName.c_str(), std::ios::binary);
+      // ofs3cry_magicalCompton.open (ofs3cry_magicalComptonName.c_str(), std::ofstream::out);
+      // ofs3cry_effCompton.open (ofs3cry_effComptonName.c_str(), std::ofstream::out);
+      ofs3cry_maxEnergy.open (ofs3cry_maxEnergyName.c_str(),  std::ofstream::out);
+      for(int i = 0 ; i < effSteps ; i++)
+      {
+        std::stringstream sname;
+        sname << ofs3cry_effComptonName[i] << ".txt";
+        std::ofstream* temp_ofs;
+        temp_ofs->open (sname.str().c_str(), std::ofstream::out);
+        ofs3cry_effCompton.push_back(temp_ofs);
+      }
     }
 
 
@@ -408,39 +448,31 @@ int main(int argc, char** argv)
         //--------------------------//
         if(points->size() == 2)
         {
-          // if(points->at(0).z * points->at(1).z > 0)
-          if(false) // removed the check on "heads"
+          onlyTwoCrystals++;
+          if(1000.0*points->at(0).energy > enMin && 1000.0*points->at(0).energy < enMax && 1000.0*points->at(1).energy > enMin && 1000.0*points->at(1).energy < enMax) //energy limits
           {
-            //two hits in same head!
+            onlyTwoCrystalsInEnergyWindow++; //baseline sensitivity
           }
-          else
+          if(listmodeoutput)
           {
-            onlyTwoCrystals++;
-            if(1000.0*points->at(0).energy > enMin && 1000.0*points->at(0).energy < enMax && 1000.0*points->at(1).energy > enMin && 1000.0*points->at(1).energy < enMax) //energy limits
-            {
-              onlyTwoCrystalsInEnergyWindow++; //baseline sensitivity
-            }
-            if(listmodeoutput)
-            {
-              EventFormat fe;
-              fe.ts     = timeCounter;
-              fe.random = 0;
-              fe.d      = plates_distance;
-              fe.yozRot = (rotationAngle / 180.0) * 3.1415;
-              fe.x1     = points->at(0).x;
-              fe.y1     = points->at(0).y;
-              fe.z1     = points->at(0).z;
-              fe.e1     = points->at(0).energy * 1000;  // clearpem reco wants KeV
-              fe.n1     = 1;
-              fe.x2     = points->at(1).x;
-              fe.y2     = points->at(1).y;
-              fe.z2     = points->at(1).z;
-              fe.e2     = points->at(1).energy * 1000;// clearpem reco wants KeV
-              fe.n2     = 1;
-              // fe.dt     = (double) (points->at(0).time - points->at(1).time);
-              fe.dt     = (double) 1e-9;
-              ofs2cry.write((char*)&fe,sizeof(fe));
-            }
+            EventFormat fe;
+            fe.ts     = timeCounter;
+            fe.random = 0;
+            fe.d      = plates_distance;
+            fe.yozRot = 0;
+            fe.x1     = points->at(0).x;
+            fe.y1     = points->at(0).y;
+            fe.z1     = points->at(0).z;
+            fe.e1     = points->at(0).energy * 1000;  // clearpem reco wants KeV
+            fe.n1     = 1;
+            fe.x2     = points->at(1).x;
+            fe.y2     = points->at(1).y;
+            fe.z2     = points->at(1).z;
+            fe.e2     = points->at(1).energy * 1000;// clearpem reco wants KeV
+            fe.n2     = 1;
+            // fe.dt     = (double) (points->at(0).time - points->at(1).time);
+            fe.dt     = (double) 1e-9;
+            ofs2cry.write((char*)&fe,sizeof(fe));
           }
         }
         //--------------------------//
@@ -450,33 +482,91 @@ int main(int argc, char** argv)
         //--------------------------//
         if(points->size() == 3)
         {
-          //indentification of the pair. at least one must be in the "511 window", i.e. should have experienced photoelectric deposition by one of the 2 gammas
-          bool foundSingle511 = false;
-          int SingleID = -1;
+          //using primaryID
+          // find single event with primaryID
+          struct primary
+          {
+            int id;
+            int num;
+          };
+
+          std::vector<primary> primaryCounter;
+          //look for different primaries
           for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
           {
-            if(1000.0*points->at(pCount).energy > enMin && 1000.0*points->at(pCount).energy < enMax)
+            if(pCount == 0)
             {
-              foundSingle511 = true;
-              SingleID = pCount;    //take the ID of the single 511 deposition
+              primary tempPrimary;
+              tempPrimary.id = points->at(pCount).primaryID;
+              tempPrimary.num = 1;
+              primaryCounter.push_back(tempPrimary);
             }
-          }
-          if(foundSingle511) //now take the other two
-          {
-            float sum_energy = 0;
-            for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+            else
             {
-              if(pCount != SingleID) //only the others
+              for(Int_t prI = 0 ; prI < primaryCounter.size() ; prI++)
               {
-                //sum the energies
-                sum_energy += points->at(pCount).energy;
+                if(primaryCounter[prI].id == points->at(pCount).primaryID)
+                {
+                  primaryCounter[prI].num++;
+                }
+                else
+                {
+                  primary tempPrimary;
+                  tempPrimary.id = points->at(pCount).primaryID;
+                  tempPrimary.num = 1;
+                  primaryCounter.push_back(tempPrimary);
+                }
               }
             }
-            //check if sum is in window
-            if(1000.0*sum_energy > enMin && 1000.0*sum_energy < enMax)
+          }
+          if(primaryCounter.size() == 2) // only if events from both primaries
+          {
+            Int_t SinglePrimaryID;
+            Int_t SingleID;
+            if(primaryCounter[0].num == 1)
             {
-              //count this event as 3 crystals only, in energy window
-              onlyThreeCrystalsInEnergyWindow++;
+              SinglePrimaryID = primaryCounter[0].id;
+            }
+            else
+            {
+              SinglePrimaryID = primaryCounter[1].id;
+            }
+
+            if(listmodeoutput)
+            {
+              EventFormat fe;
+              fe.ts     = timeCounter;
+              fe.random = 0;
+              fe.d      = plates_distance;
+              fe.yozRot = 0;
+
+              float sum_energy = 0;
+              float first_time = INFINITY;
+              Int_t firstCrystalID;
+              for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+              {
+                if(points->at(pCount).primaryID == SinglePrimaryID)
+                {
+                  SingleID = pCount;
+                  //save first gamma
+                  fe.x1     = points->at(pCount).x;
+                  fe.y1     = points->at(pCount).y;
+                  fe.z1     = points->at(pCount).z;
+                  fe.e1     = points->at(pCount).energy * 1000;  // clearpem reco wants KeV
+                  fe.n1     = 1;
+                }
+                else
+                {
+                  //sum energy and find first point
+                  sum_energy += points->at(pCount).energy;
+                  if(points->at(pCount).time < first_time)
+                  {
+                    first_time = points->at(pCount).time;
+                    firstCrystalID = pCount;
+                  }
+                }
+              }
+
               //---------------------------------------------//
               //strategy a: calculate an average event
               //---------------------------------------------//
@@ -493,117 +583,19 @@ int main(int argc, char** argv)
                   temp_z += (points->at(pCount).z * points->at(pCount).energy) / sum_energy;
                 }
               }
-              //save in another file
-              if(binary)
-              {
-                pair.x1 = points->at(SingleID).x;
-                pair.y1 = points->at(SingleID).y;
-                pair.z1 = points->at(SingleID).z;
-                pair.x2 = temp_x;
-                pair.y2 = temp_y;
-                pair.z2 = temp_z;
-                ofs3cry_avg.write((char*)&pair,sizeof(pair));
-              }
-              else
-              {
-                ofs3cry_avg << points->at(SingleID).x << " "
-                << points->at(SingleID).y << " "
-                << points->at(SingleID).z << " "
-                << temp_x << " "
-                << temp_y << " "
-                << temp_z
-                << std::endl;
-              }
+              fe.x2     = temp_x;
+              fe.y2     = temp_y;
+              fe.z2     = temp_z;
+              fe.e2     = sum_energy * 1000.0;// clearpem reco wants KeV
+              fe.n2     = 1;
+              // fe.dt     = (double) (points->at(0).time - points->at(1).time);
+              fe.dt     = (double) (points->at(SingleID).time - first_time);
+              ofs3cry_avg.write((char*)&fe,sizeof(fe));
+              //---------------------------------------------//
 
 
               //---------------------------------------------//
-              //strategy b: magical compton
-              //---------------------------------------------//
-              //check which crystal was hit first
-              Int_t firstCrystalID;
-              float timeOfFirst = INFINITY;
-              for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
-              {
-                if(pCount != SingleID)
-                {
-                  if(points->at(pCount).time <  timeOfFirst)
-                  {
-                    timeOfFirst = points->at(pCount).time;
-                    firstCrystalID = pCount;
-                  }
-                }
-              }
-
-              //now save only the single 511 and the position of first between the two comptons (100% efficient compton discrimination)
-              if(binary)
-              {
-                pair.x1 = points->at(SingleID).x;
-                pair.y1 = points->at(SingleID).y;
-                pair.z1 = points->at(SingleID).z;
-                pair.x2 = points->at(firstCrystalID).x;
-                pair.y2 = points->at(firstCrystalID).y;
-                pair.z2 = points->at(firstCrystalID).z;
-                ofs3cry_magicalCompton.write((char*)&pair,sizeof(pair));
-              }
-              else
-              {
-                ofs3cry_magicalCompton << points->at(SingleID).x << " "
-                << points->at(SingleID).y << " "
-                << points->at(SingleID).z << " "
-                << points->at(firstCrystalID).x << " "
-                << points->at(firstCrystalID).y << " "
-                << points->at(firstCrystalID).z
-                << std::endl;
-              }
-
-
-              //---------------------------------------------//
-              //strategy c: compton with efficiency
-              //---------------------------------------------//
-              //get the remaing id among 0,1,2
-              Int_t otherID = -1;
-              for(int fastI = 0 ; fastI < 3 ; fastI++)
-              {
-                if(fastI != SingleID && fastI != firstCrystalID)
-                otherID = fastI;
-              }
-              if(otherID == -1) std::cout << "ERROR!!!!!!!!!!!!" << std::endl;
-              // choose the right one with an efficiency
-              double dice = (double)rand() / (double)RAND_MAX;
-              Int_t chosenCryID;
-              if(dice <= compton_eff)
-              {
-                chosenCryID = firstCrystalID;
-              }
-              else
-              {
-                chosenCryID = otherID;
-              }
-
-
-              if(binary)
-              {
-                pair.x1 = points->at(SingleID).x;
-                pair.y1 = points->at(SingleID).y;
-                pair.z1 = points->at(SingleID).z;
-                pair.x2 = points->at(chosenCryID).x;
-                pair.y2 = points->at(chosenCryID).y;
-                pair.z2 = points->at(chosenCryID).z;
-                ofs3cry_effCompton.write((char*)&pair,sizeof(pair));
-              }
-              else
-              {
-                ofs3cry_effCompton << points->at(SingleID).x    << " "
-                << points->at(SingleID).y    << " "
-                << points->at(SingleID).z    << " "
-                << points->at(chosenCryID).x << " "
-                << points->at(chosenCryID).y << " "
-                << points->at(chosenCryID).z
-                << std::endl;
-              }
-
-              //---------------------------------------------//
-              //strategy d: assign first hit to greater charge
+              //strategy b: assign first hit to greater charge
               //---------------------------------------------//
               Double_t maxEnergy = 0.0;
               Int_t maxEnergyID = -1;
@@ -618,37 +610,260 @@ int main(int argc, char** argv)
                   }
                 }
               }
+              fe.x2     = points->at(maxEnergyID).x;
+              fe.y2     = points->at(maxEnergyID).y;
+              fe.z2     = points->at(maxEnergyID).z;
+              //fe.e2     = sum_energy * 1000.0;// clearpem reco wants KeV
+              // fe.n2     = 1;
+              // fe.dt     = (double) (points->at(0).time - points->at(1).time);
+              fe.dt     = (double) (points->at(SingleID).time - points->at(maxEnergyID).time);
+              ofs3cry_maxEnergy.write((char*)&fe,sizeof(fe));
+              //---------------------------------------------//
 
-              if(binary)
+
+              // ofs3cry_effCompton
+              //---------------------------------------------//
+              //strategy c: compton with efficiency
+              //---------------------------------------------//
+              Int_t otherID = -1;
+              for(int fastI = 0 ; fastI < 3 ; fastI++)
               {
-                pair.x1 = points->at(SingleID).x;
-                pair.y1 = points->at(SingleID).y;
-                pair.z1 = points->at(SingleID).z;
-                pair.x2 = points->at(maxEnergyID).x;
-                pair.y2 = points->at(maxEnergyID).y;
-                pair.z2 = points->at(maxEnergyID).z;
-                ofs3cry_maxEnergy.write((char*)&pair,sizeof(pair));
+                if(fastI != SingleID && fastI != firstCrystalID)
+                otherID = fastI;
               }
-              else
+              for(int iEff = 0 ; iEff < effSteps ; iEff++)
               {
-                ofs3cry_maxEnergy << points->at(SingleID).x    << " "
-                << points->at(SingleID).y    << " "
-                << points->at(SingleID).z    << " "
-                << points->at(maxEnergyID).x << " "
-                << points->at(maxEnergyID).y << " "
-                << points->at(maxEnergyID).z
-                << std::endl;
+
+                float efficiency = min_efficiency + iEff*efficiency_step;
+                if(otherID == -1) std::cout << "ERROR!!!!!!!!!!!!" << std::endl;
+                // choose the right one with an efficiency
+                double dice = (double)rand() / (double)RAND_MAX;
+                Int_t chosenCryID;
+                if(dice <= efficiency)
+                {
+                  chosenCryID = firstCrystalID;
+                }
+                else
+                {
+                  chosenCryID = otherID;
+                }
+
+                fe.x2     = points->at(chosenCryID).x;
+                fe.y2     = points->at(chosenCryID).y;
+                fe.z2     = points->at(chosenCryID).z;
+                fe.dt     = (double) (points->at(SingleID).time - points->at(chosenCryID).time);
+                ofs3cry_effCompton[iEff]->write((char*)&fe,sizeof(fe));
               }
             }
-            else // the two scatter don't sum up to enter 511 window
-            {
-              //don't save the event for "reconstruction"
-            }
           }
-          else // no crystal among the 3 has a deposition that enters the 511 window
-          {
-            //don't save the event for "reconstruction"
-          }
+
+
+
+
+
+          // indentification of the pair. at least one must be in the "511 window", i.e. should have experienced photoelectric deposition by one of the 2 gammas
+          // bool foundSingle511 = false;
+          // int SingleID = -1;
+          // for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+          // {
+          //   if(1000.0*points->at(pCount).energy > enMin && 1000.0*points->at(pCount).energy < enMax)
+          //   {
+          //     foundSingle511 = true;
+          //     SingleID = pCount;    //take the ID of the single 511 deposition
+          //   }
+          // }
+          // if(foundSingle511) //now take the other two
+          // {
+          //   float sum_energy = 0;
+          //   for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+          //   {
+          //     if(pCount != SingleID) //only the others
+          //     {
+          //       //sum the energies
+          //       sum_energy += points->at(pCount).energy;
+          //     }
+          //   }
+          //   //check if sum is in window
+          //   if(1000.0*sum_energy > enMin && 1000.0*sum_energy < enMax)
+          //   {
+          //     //count this event as 3 crystals only, in energy window
+          //     onlyThreeCrystalsInEnergyWindow++;
+          //     //---------------------------------------------//
+          //     //strategy a: calculate an average event
+          //     //---------------------------------------------//
+          //     float temp_x = 0;
+          //     float temp_y = 0;
+          //     float temp_z = 0;
+          //     for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+          //     {
+          //       if(pCount != SingleID)
+          //       {
+          //         //average x,y,z
+          //         temp_x += (points->at(pCount).x * points->at(pCount).energy) / sum_energy;
+          //         temp_y += (points->at(pCount).y * points->at(pCount).energy) / sum_energy;
+          //         temp_z += (points->at(pCount).z * points->at(pCount).energy) / sum_energy;
+          //       }
+          //     }
+          //     //save in another file
+          //     if(binary)
+          //     {
+          //       pair.x1 = points->at(SingleID).x;
+          //       pair.y1 = points->at(SingleID).y;
+          //       pair.z1 = points->at(SingleID).z;
+          //       pair.x2 = temp_x;
+          //       pair.y2 = temp_y;
+          //       pair.z2 = temp_z;
+          //       ofs3cry_avg.write((char*)&pair,sizeof(pair));
+          //     }
+          //     else
+          //     {
+          //       ofs3cry_avg << points->at(SingleID).x << " "
+          //       << points->at(SingleID).y << " "
+          //       << points->at(SingleID).z << " "
+          //       << temp_x << " "
+          //       << temp_y << " "
+          //       << temp_z
+          //       << std::endl;
+          //     }
+          //
+          //
+          //     //---------------------------------------------//
+          //     //strategy b: magical compton
+          //     //---------------------------------------------//
+          //     //check which crystal was hit first
+          //     Int_t firstCrystalID;
+          //     float timeOfFirst = INFINITY;
+          //     for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+          //     {
+          //       if(pCount != SingleID)
+          //       {
+          //         if(points->at(pCount).time <  timeOfFirst)
+          //         {
+          //           timeOfFirst = points->at(pCount).time;
+          //           firstCrystalID = pCount;
+          //         }
+          //       }
+          //     }
+          //
+          //     //now save only the single 511 and the position of first between the two comptons (100% efficient compton discrimination)
+          //     if(binary)
+          //     {
+          //       pair.x1 = points->at(SingleID).x;
+          //       pair.y1 = points->at(SingleID).y;
+          //       pair.z1 = points->at(SingleID).z;
+          //       pair.x2 = points->at(firstCrystalID).x;
+          //       pair.y2 = points->at(firstCrystalID).y;
+          //       pair.z2 = points->at(firstCrystalID).z;
+          //       ofs3cry_magicalCompton.write((char*)&pair,sizeof(pair));
+          //     }
+          //     else
+          //     {
+          //       ofs3cry_magicalCompton << points->at(SingleID).x << " "
+          //       << points->at(SingleID).y << " "
+          //       << points->at(SingleID).z << " "
+          //       << points->at(firstCrystalID).x << " "
+          //       << points->at(firstCrystalID).y << " "
+          //       << points->at(firstCrystalID).z
+          //       << std::endl;
+          //     }
+          //
+          //
+          //     //---------------------------------------------//
+          //     //strategy c: compton with efficiency
+          //     //---------------------------------------------//
+          //     //get the remaing id among 0,1,2
+          //
+          //     Int_t otherID = -1;
+          //     for(int fastI = 0 ; fastI < 3 ; fastI++)
+          //     {
+          //       if(fastI != SingleID && fastI != firstCrystalID)
+          //       otherID = fastI;
+          //     }
+          //     if(otherID == -1) std::cout << "ERROR!!!!!!!!!!!!" << std::endl;
+          //
+          //
+          //     // choose the right one with an efficiency
+          //     double dice = (double)rand() / (double)RAND_MAX;
+          //     Int_t chosenCryID;
+          //
+          //     if(dice <= efficiency)
+          //     {
+          //       chosenCryID = firstCrystalID;
+          //     }
+          //     else
+          //     {
+          //       chosenCryID = otherID;
+          //     }
+          //
+          //
+          //     if(binary)
+          //     {
+          //       pair.x1 = points->at(SingleID).x;
+          //       pair.y1 = points->at(SingleID).y;
+          //       pair.z1 = points->at(SingleID).z;
+          //       pair.x2 = points->at(chosenCryID).x;
+          //       pair.y2 = points->at(chosenCryID).y;
+          //       pair.z2 = points->at(chosenCryID).z;
+          //       ofs3cry_effCompton.write((char*)&pair,sizeof(pair));
+          //     }
+          //     else
+          //     {
+          //       ofs3cry_effCompton << points->at(SingleID).x    << " "
+          //       << points->at(SingleID).y    << " "
+          //       << points->at(SingleID).z    << " "
+          //       << points->at(chosenCryID).x << " "
+          //       << points->at(chosenCryID).y << " "
+          //       << points->at(chosenCryID).z
+          //       << std::endl;
+          //     }
+          //
+          //     //---------------------------------------------//
+          //     //strategy d: assign first hit to greater charge
+          //     //---------------------------------------------//
+          //     Double_t maxEnergy = 0.0;
+          //     Int_t maxEnergyID = -1;
+          //     for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+          //     {
+          //       if(pCount != SingleID)
+          //       {
+          //         if(points->at(pCount).energy >  maxEnergy)
+          //         {
+          //           maxEnergy = points->at(pCount).energy;
+          //           maxEnergyID = pCount;
+          //         }
+          //       }
+          //     }
+          //
+          //     if(binary)
+          //     {
+          //       pair.x1 = points->at(SingleID).x;
+          //       pair.y1 = points->at(SingleID).y;
+          //       pair.z1 = points->at(SingleID).z;
+          //       pair.x2 = points->at(maxEnergyID).x;
+          //       pair.y2 = points->at(maxEnergyID).y;
+          //       pair.z2 = points->at(maxEnergyID).z;
+          //       ofs3cry_maxEnergy.write((char*)&pair,sizeof(pair));
+          //     }
+          //     else
+          //     {
+          //       ofs3cry_maxEnergy << points->at(SingleID).x    << " "
+          //       << points->at(SingleID).y    << " "
+          //       << points->at(SingleID).z    << " "
+          //       << points->at(maxEnergyID).x << " "
+          //       << points->at(maxEnergyID).y << " "
+          //       << points->at(maxEnergyID).z
+          //       << std::endl;
+          //     }
+          //   }
+          //   else // the two scatter don't sum up to enter 511 window
+          //   {
+          //     //don't save the event for "reconstruction"
+          //   }
+          // }
+          // else // no crystal among the 3 has a deposition that enters the 511 window
+          // {
+          //   //don't save the event for "reconstruction"
+          // }
           onlyThreeCrystals++;
         }
         //--------------------------//
@@ -762,8 +977,11 @@ int main(int argc, char** argv)
   inputFile->Close();
   ofs2cry.close();
   ofs3cry_avg.close();
-  ofs3cry_magicalCompton.close();
-  ofs3cry_effCompton.close();
+  // ofs3cry_magicalCompton.close();
+  for(int i = 0 ; i < effSteps ; i++)
+  {
+    ofs3cry_effCompton[i]->close();
+  }
   ofs3cry_maxEnergy.close();
   return 0;
 }

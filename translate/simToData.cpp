@@ -44,6 +44,7 @@ struct enDep
   Float_t  localPosX;
   Float_t  localPosY;
   Float_t  localPosZ;
+  Int_t    primaryID;
   Int_t    parentID;
   Int_t    trackID;
   Int_t    globalCryID;
@@ -72,6 +73,7 @@ struct avgCryEnergyDep
   Int_t crystalID;
   Int_t layerID;
   Int_t sourceID;
+  Int_t primaryID;
   float x;
   float y;
   float z;
@@ -90,6 +92,7 @@ struct point
   Int_t sourceID;
   Int_t crystalIDforSTIR;
   Int_t ringIDforSTIR;
+  Int_t primaryID;
   float x;
   float y;
   float z;
@@ -157,8 +160,10 @@ int main(int argc, char** argv)
   //detector parameters
   int smearedDoi = 1;
   int smearedEnergy = 1;
+  int smearedTime = 1;
   Double_t energyResolutionFWHM = 0.12; //12% FWHM @511, for the moment we take the same also for low energy...
   Double_t doiResolutionFWHM = 2.8; //2.8mm doi res measured on the module
+  Double_t timeResolutionFWHM = 200.0; //in ps
 
   bool fovRotation = false; // fov rotated?
   char* fovRotationAxis = NULL; // rotation axis for entire fov. can be only x y or z
@@ -225,6 +230,8 @@ int main(int argc, char** argv)
       { "smeared-doi", required_argument, 0, 0},
       { "fov-rotation-axis", required_argument, 0, 0},
       { "fov-rotation-angle", required_argument, 0, 0},
+      { "time-resolution-fwhm", required_argument, 0, 0},
+      { "smeared-time", required_argument, 0, 0},
 			{ NULL, 0, 0, 0 }
 	};
 
@@ -325,6 +332,12 @@ int main(int argc, char** argv)
     else if (c == 0 && optionIndex == 26){
       fovRotationAngle = atof((char *)optarg);
     }
+    else if (c == 0 && optionIndex == 27){
+      timeResolutionFWHM = atof((char *)optarg);
+    }
+    else if (c == 0 && optionIndex == 28){
+      smearedTime = atoi((char *)optarg);
+    }
 		else { //FIXME
 			std::cout	<< "Usage: " << argv[0] << std::endl
 			<< "\t\t" << "[ -i <input file> ] " << std::endl
@@ -393,8 +406,10 @@ int main(int argc, char** argv)
             << "arraycryz            = " << arraycryz           << std::endl
             << "smearedDoi           = " << smearedDoi          << std::endl
             << "smearedEnergy        = " << smearedEnergy       << std::endl
+            << "smearedTime          = " << smearedTime         << std::endl
             << "energyResolutionFWHM = " << energyResolutionFWHM<< std::endl
-            << "doiResolutionFWHM    = " << doiResolutionFWHM   << std::endl;
+            << "doiResolutionFWHM    = " << doiResolutionFWHM   << std::endl
+            << "timeResolutionFWHM   = " << timeResolutionFWHM  << std::endl;
   if(fovRotation)
   {
     std::cout << "FOV is rotated around axis " << fovRotationAxis << " by angle " << fovRotationAngle <<  " degrees" << std::endl;
@@ -756,6 +771,7 @@ int main(int argc, char** argv)
           tempAvgEnDep.crystalID = separatedEnDep.at(iColl).at(0).crystalID;
           tempAvgEnDep.layerID = separatedEnDep.at(iColl).at(0).layerID;
           tempAvgEnDep.sourceID = separatedEnDep.at(iColl).at(0).sourceID;
+          tempAvgEnDep.primaryID = separatedEnDep.at(iColl).at(0).primaryID;
           tempAvgEnDep.x = 0;
           tempAvgEnDep.y = 0;
           tempAvgEnDep.z = 0;
@@ -940,6 +956,7 @@ int main(int argc, char** argv)
           tempPoint.parentID = averageDepEvents[iAvg].parentID;
           tempPoint.trackID = averageDepEvents[iAvg].trackID;
           tempPoint.sourceID = averageDepEvents[iAvg].sourceID;
+          tempPoint.primaryID = averageDepEvents[iAvg].primaryID;
           // calculate also the crystal and ring ID for STIR...
           // everything is recalculated according to rings
           Int_t N_MOD_xy  =  repmody;   // number of modules in xy plane
@@ -958,7 +975,20 @@ int main(int argc, char** argv)
           tempPoint.x = x;
           tempPoint.y = y;
           tempPoint.z = z;
-          tempPoint.time = averageDepEvents[iAvg].time;
+
+          if(smearedTime)
+          {
+            tempPoint.time = (Float_t) gaussianSmear(averageDepEvents[iAvg].time,averageDepEvents[iAvg].time*timeResolutionFWHM);
+          }
+          else
+          {
+            tempPoint.time = averageDepEvents[iAvg].time;
+          }
+
+
+
+
+
           if(smearedEnergy)
           {
             tempPoint.energy = (Float_t) gaussianSmear(averageDepEvents[iAvg].energy,averageDepEvents[iAvg].energy*energyResolutionFWHM);
@@ -991,6 +1021,7 @@ int main(int argc, char** argv)
     hitDeposition.localPosZ    = HITSlocalPosZ;
     hitDeposition.eventID      = HITSeventID;
     hitDeposition.parentID     = HITSparentID;
+    hitDeposition.primaryID    = HITSprimaryID;
     hitDeposition.trackID      = HITStrackID;
     hitDeposition.globalCryID  = HITSrsectorID * (nModulesXRSector * nSubmodulesXModule * nCrystalXSubmodule * nLayersXCrystal) +
                                  HITSmoduleID  * (nSubmodulesXModule * nCrystalXSubmodule * nLayersXCrystal) +
