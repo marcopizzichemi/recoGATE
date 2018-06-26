@@ -151,7 +151,7 @@ def main(argv):
      if runtype == 1: # sources run
        f.write("/control/execute %s/SNR_sources.mac \n" % macros)
      if runtype == 2: # full run with multiple sources and background. remember to change the activities... todo
-       f.write("/control/execute %s/SNR_sources.mac \n" % macros)
+       f.write("/control/execute %s/SNR_source.mac \n" % macros)
        f.write("/control/execute %s/sourceCylinder.mac \n" % macros)
      f.write("# ROTATE ALL FOV                                       \n")
      f.write("/gate/cylindricalPET/placement/setRotationAxis 0 1 0   \n")
