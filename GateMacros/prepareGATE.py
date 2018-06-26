@@ -27,6 +27,7 @@ def main(argv):
    parser.add_argument('-q','--queue',help='Queue name ', required=True)
    parser.add_argument('-c','--convert',help='Translate command', required=True)
    parser.add_argument('-p','--specific',help='Specific args for start.translate', required=False)
+   parser.add_argument('-g','--target',help='target foe output folder', required=True)
    #parser.add_argument('-l','--life',help='Isotope half life [s]', required=False)
    args = parser.parse_args()
 
@@ -42,6 +43,7 @@ def main(argv):
    tslice         = float(args.tslice)
    queue          = args.queue
    translate_exec = args.convert
+   target         = args.target
    if(args.specific == None):
        specific = ""
    else:
@@ -55,6 +57,8 @@ def main(argv):
    else:
      print 'ERROR: runtype needs to be one of <normalization|sources|full>'
      return 1
+
+
 
    #if args.life != None:
      #thalf = float(args.life)
@@ -75,7 +79,11 @@ def main(argv):
    os.makedirs(folder)
    cernboxBase = "/eos/user/m/mpizzich/Universita/Ideas/ComptonRecovery/Simulations/"
    cernboxFolder = cernboxBase + args.folder
-   os.makedirs(cernboxFolder)
+
+   if target == 'cernbox':
+       os.makedirs(cernboxFolder)
+
+
 
    #calculating the angles
    #angle_step = 360.0 / (angles*2);
@@ -93,6 +101,16 @@ def main(argv):
    for j in range(0, jobs):
      #make the job folder and store the base filename
      currentdir = folder + "/job" + str(jobcounter)
+     targetFolder = ''
+     if target == 'cernbox':
+         targetFolder = cernboxFolder
+     elif target == 'afs':
+         targetFolder = folder
+     else:
+         print 'ERROR: target not accepted <cernbox|afs>'
+         return 1
+
+
      os.makedirs(currentdir)
 
      filename = str(jobcounter)
@@ -165,12 +183,12 @@ def main(argv):
      job.write("%s --input ./out%s.root --output-dir ./ --fov-rotation-axis y --fov-rotation-angle 90 %s \n" %(translate_exec,filename,specific) )
      # job.write("cp ./out*.elm2 %s \n" % (cernboxFolder) )
      # job.write("cp ./out*.txt %s \n" % (cernboxFolder) )
-     job.write("cp ./out* %s \n" % (folder) )
+     job.write("cp ./out* %s \n" % (targetFolder) )
      # job.write("cp ./out%s_3cry-avg.elm2 %s \n" % (filename, cernboxFolder) )
      # job.write("cp ./out%s_3cry-magicalCompton.elm2 %s \n" % (filename, cernboxFolder) )
      # job.write("cp ./out%s_3cry-effCompton.elm2 %s \n" % (filename, cernboxFolder) )
      # job.write("cp ./out%s_3cry-maxEnergy.elm2 %s \n" % (filename, cernboxFolder) )
-     job.write("cd %s \n" % folder)
+     job.write("cd %s \n" % targetFolder)
      #job.write("rm ./out%s_points.root \n" % filename)
      job.close()
      #and make it executable
