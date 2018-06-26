@@ -431,12 +431,14 @@ int main(int argc, char** argv)
   // inputfilename = filedir + "*.root" ;
 
   std::cout << "Input file name is " << inputfilename << std::endl;
-  TChain *Hits = new TChain("Hits") ;
-  TChain *Singles = new TChain("Singles") ;
-  TChain *Coincidences = new TChain("Coincidences") ;
-  Hits->Add(inputfilename.c_str());
-  Singles->Add(inputfilename.c_str());
-  Coincidences->Add(inputfilename.c_str());
+  TTree *Hits;
+  TFile *_file0 = TFile::Open(inputfilename.c_str());
+  Hits = (TTree*)_file0->Get("Hits");
+  // TChain *Singles = new TChain("Singles") ;
+  // TChain *Coincidences = new TChain("Coincidences") ;
+  // Hits->Add(inputfilename.c_str());
+  // Singles->Add(inputfilename.c_str());
+  // Coincidences->Add(inputfilename.c_str());
   long int Trues = 0;
   long int Scatters = 0;
   long int Randoms = 0;
@@ -459,220 +461,138 @@ int main(int argc, char** argv)
   //######################################################################################
 
   //HITS
-  Int_t HITSPDGEncoding;
-  Int_t HITStrackID;
-  Int_t HITSparentID;
+  Int_t    HITSPDGEncoding;
+  Int_t    HITStrackID;
+  Int_t    HITSparentID;
   Double_t HITStime;
-  Float_t HITSedep;
-  Float_t HITSstepLength;
-  Float_t HITSposX;
-  Float_t HITSposY;
-  Float_t HITSposZ;
-  Float_t HITSlocalPosX;
-  Float_t HITSlocalPosY;
-  Float_t HITSlocalPosZ;
-  Int_t HITSgantryID;
-  Int_t HITSrsectorID;
-  Int_t HITSmoduleID;
-  Int_t HITSsubmoduleID;
-  Int_t HITScrystalID;
-  Int_t HITSlayerID;
-  Int_t HITSphotonID;
-  Int_t HITSnPhantomCompton;
-  Int_t HITSnCrystalCompton;
-  Int_t HITSnPhantomRayleigh;
-  Int_t HITSnCrystalRayleigh;
-  Int_t HITSprimaryID;
-  Float_t HITSsourcePosX;
-  Float_t HITSsourcePosY;
-  Float_t HITSsourcePosZ;
-  Int_t HITSsourceID;
-  Int_t HITSeventID;
-  Int_t HITSrunID;
-  Float_t HITSaxialPos;
-  Float_t HITSrotationAngle;
-  Int_t HITSvolumeID;
-  Char_t HITSprocessName[40];
-  Char_t HITScomptVolName[40];
-  Char_t HITSRayleighVolName[40];
+  Float_t  HITSedep;
+  Float_t  HITSstepLength;
+  Float_t  HITSposX;
+  Float_t  HITSposY;
+  Float_t  HITSposZ;
+  Float_t  HITSlocalPosX;
+  Float_t  HITSlocalPosY;
+  Float_t  HITSlocalPosZ;
+  Int_t    HITSgantryID;
+  Int_t    HITSrsectorID;
+  Int_t    HITSmoduleID;
+  Int_t    HITSsubmoduleID;
+  Int_t    HITScrystalID;
+  Int_t    HITSlayerID;
+  Int_t    HITSphotonID;
+  Int_t    HITSnPhantomCompton;
+  Int_t    HITSnCrystalCompton;
+  Int_t    HITSnPhantomRayleigh;
+  Int_t    HITSnCrystalRayleigh;
+  Int_t    HITSprimaryID;
+  Float_t  HITSsourcePosX;
+  Float_t  HITSsourcePosY;
+  Float_t  HITSsourcePosZ;
+  Int_t    HITSsourceID;
+  Int_t    HITSeventID;
+  Int_t    HITSrunID;
+  Float_t  HITSaxialPos;
+  Float_t  HITSrotationAngle;
+  // Int_t    HITSvolumeID;
+  // Char_t   HITSprocessName[40];
+  // Char_t   HITScomptVolName[40];
+  // Char_t   HITSRayleighVolName[40];
 
   //SINGLES
-  Int_t SINGLESrunID;
-  Int_t SINGLESeventID;
-  Int_t SINGLESsourceID;
-  Float_t SINGLESsourcePosX;
-  Float_t SINGLESsourcePosY;
-  Float_t SINGLESsourcePosZ;
-  Float_t SINGLEStime;
-  Float_t SINGLESenergy;
-  Float_t SINGLESglobalPosX;
-  Float_t SINGLESglobalPosY;
-  Float_t SINGLESglobalPosZ;
-  Int_t SINGLESgantryID;
-  Int_t SINGLESrsectorID;
-  Int_t SINGLESmoduleID;
-  Int_t SINGLESsubmoduleID;
-  Int_t SINGLEScrystalID;
-  Int_t SINGLESlayerID;
-  Int_t SINGLEScomptonPhantom;
-  Int_t SINGLEScomptonCrystal;
-  Int_t SINGLESRayleighPhantom;
-  Int_t SINGLESRayleighCrystal;
-  Float_t SINGLESaxialPos;
-  Float_t SINGLESrotationAngle;
-  Char_t SINGLEScomptVolName[40];
-  Char_t SINGLESRayleighVolName[40];
+  // Int_t SINGLESrunID;
+  // Int_t SINGLESeventID;
+  // Int_t SINGLESsourceID;
+  // Float_t SINGLESsourcePosX;
+  // Float_t SINGLESsourcePosY;
+  // Float_t SINGLESsourcePosZ;
+  // Float_t SINGLEStime;
+  // Float_t SINGLESenergy;
+  // Float_t SINGLESglobalPosX;
+  // Float_t SINGLESglobalPosY;
+  // Float_t SINGLESglobalPosZ;
+  // Int_t SINGLESgantryID;
+  // Int_t SINGLESrsectorID;
+  // Int_t SINGLESmoduleID;
+  // Int_t SINGLESsubmoduleID;
+  // Int_t SINGLEScrystalID;
+  // Int_t SINGLESlayerID;
+  // Int_t SINGLEScomptonPhantom;
+  // Int_t SINGLEScomptonCrystal;
+  // Int_t SINGLESRayleighPhantom;
+  // Int_t SINGLESRayleighCrystal;
+  // Float_t SINGLESaxialPos;
+  // Float_t SINGLESrotationAngle;
+  // Char_t SINGLEScomptVolName[40];
+  // Char_t SINGLESRayleighVolName[40];
 
   //COINCIDENCES
-  Float_t         CoincAxialPos, CoincRotationAngle, sinogramS, sinogramTheta;
-  Char_t          comptVolName1[40], comptVolName2[40];
-  Char_t          RayleighVolName1[40], RayleighVolName2[40];
-  Int_t           comptonPhantom1, comptonPhantom2;
-  Int_t           comptonCrystal1, comptonCrystal2;
-  Int_t           RayleighPhantom1, RayleighPhantom2;
-  Int_t           RayleighCrystal1, RayleighCrystal2;
-  Int_t           CoincRunID, sourceID1, sourceID2, eventID1, eventID2;
-  Int_t           layerID1, layerID2, crystalID1, crystalID2;
-  Int_t           submoduleID1, submoduleID2, moduleID1, moduleID2, rsectorID1, rsectorID2, gantryID1, gantryID2;
-  Float_t         energy1, energy2;
-  Float_t         globalPosX1, globalPosX2, globalPosY1, globalPosY2, globalPosZ1, globalPosZ2;
-  Float_t         sourcePosX1, sourcePosX2, sourcePosY1, sourcePosY2, sourcePosZ1, sourcePosZ2;
-  Double_t        time1, time2;
+  // Float_t         CoincAxialPos, CoincRotationAngle, sinogramS, sinogramTheta;
+  // Char_t          comptVolName1[40], comptVolName2[40];
+  // Char_t          RayleighVolName1[40], RayleighVolName2[40];
+  // Int_t           comptonPhantom1, comptonPhantom2;
+  // Int_t           comptonCrystal1, comptonCrystal2;
+  // Int_t           RayleighPhantom1, RayleighPhantom2;
+  // Int_t           RayleighCrystal1, RayleighCrystal2;
+  // Int_t           CoincRunID, sourceID1, sourceID2, eventID1, eventID2;
+  // Int_t           layerID1, layerID2, crystalID1, crystalID2;
+  // Int_t           submoduleID1, submoduleID2, moduleID1, moduleID2, rsectorID1, rsectorID2, gantryID1, gantryID2;
+  // Float_t         energy1, energy2;
+  // Float_t         globalPosX1, globalPosX2, globalPosY1, globalPosY2, globalPosZ1, globalPosZ2;
+  // Float_t         sourcePosX1, sourcePosX2, sourcePosY1, sourcePosY2, sourcePosZ1, sourcePosZ2;
+  // Double_t        time1, time2;
 
   //######################################################################################
   //#                        Set branch addresses                                        #
   //######################################################################################
 
+  // TBranch *
+  // fchain->SetBranchAddress("ExtendedTimeTag", &ChainExtendedTimeTag, &bChainExtendedTimeTag);
+
   //TTree Hits
-  Hits->SetBranchStatus("*",0); //WHY?
-  Hits->SetBranchAddress("PDGEncoding",&HITSPDGEncoding);
-  Hits->SetBranchAddress("trackID",&HITStrackID);
-  Hits->SetBranchAddress("parentID",&HITSparentID);
-  Hits->SetBranchAddress("time",&HITStime);
-  Hits->SetBranchAddress("edep",&HITSedep);
-  Hits->SetBranchAddress("stepLength",&HITSstepLength);
-  Hits->SetBranchAddress("posX",&HITSposX);
-  Hits->SetBranchAddress("posY",&HITSposY);
-  Hits->SetBranchAddress("posZ",&HITSposZ);
-  Hits->SetBranchAddress("localPosX",&HITSlocalPosX);
-  Hits->SetBranchAddress("localPosY",&HITSlocalPosY);
-  Hits->SetBranchAddress("localPosZ",&HITSlocalPosZ);
-  Hits->SetBranchAddress("gantryID",&HITSgantryID);
-  Hits->SetBranchAddress("rsectorID",&HITSrsectorID);
-  Hits->SetBranchAddress("moduleID",&HITSmoduleID);
-  Hits->SetBranchAddress("submoduleID",&HITSsubmoduleID);
-  Hits->SetBranchAddress("crystalID",&HITScrystalID);
-  Hits->SetBranchAddress("layerID",&HITSlayerID);
-  Hits->SetBranchAddress("photonID",&HITSphotonID);
-  Hits->SetBranchAddress("nPhantomCompton",&HITSnPhantomCompton);
-  Hits->SetBranchAddress("nCrystalCompton",&HITSnCrystalCompton);
-  Hits->SetBranchAddress("nPhantomRayleigh",&HITSnPhantomRayleigh);
-  Hits->SetBranchAddress("nCrystalRayleigh",&HITSnCrystalRayleigh);
-  Hits->SetBranchAddress("primaryID",&HITSprimaryID);
-  Hits->SetBranchAddress("sourcePosX",&HITSsourcePosX);
-  Hits->SetBranchAddress("sourcePosY",&HITSsourcePosY);
-  Hits->SetBranchAddress("sourcePosZ",&HITSsourcePosZ);
-  Hits->SetBranchAddress("sourceID",&HITSsourceID);
-  Hits->SetBranchAddress("eventID",&HITSeventID);
-  Hits->SetBranchAddress("runID",&HITSrunID);
-  Hits->SetBranchAddress("axialPos",&HITSaxialPos);
-  Hits->SetBranchAddress("rotationAngle",&HITSrotationAngle);
-  Hits->SetBranchAddress("volumeID",&HITSvolumeID);
-  Hits->SetBranchAddress("processName",&HITSprocessName);
-  Hits->SetBranchAddress("comptVolName",&HITScomptVolName);
-  Hits->SetBranchAddress("RayleighVolName",&HITSRayleighVolName);
+  // Hits->SetBranchStatus("*",0); //WHY?
+  Hits->SetBranchAddress("PDGEncoding"     ,&HITSPDGEncoding         );
+  Hits->SetBranchAddress("trackID"         ,&HITStrackID             );
+  Hits->SetBranchAddress("parentID"        ,&HITSparentID            );
+  Hits->SetBranchAddress("time"            ,&HITStime                );
+  Hits->SetBranchAddress("edep"            ,&HITSedep                );
+  Hits->SetBranchAddress("stepLength"      ,&HITSstepLength          );
+  Hits->SetBranchAddress("posX"            ,&HITSposX                );
+  Hits->SetBranchAddress("posY"            ,&HITSposY                );
+  Hits->SetBranchAddress("posZ"            ,&HITSposZ                );
+  Hits->SetBranchAddress("localPosX"       ,&HITSlocalPosX           );
+  Hits->SetBranchAddress("localPosY"       ,&HITSlocalPosY           );
+  Hits->SetBranchAddress("localPosZ"       ,&HITSlocalPosZ           );
+  Hits->SetBranchAddress("gantryID"        ,&HITSgantryID            );
+  Hits->SetBranchAddress("rsectorID"       ,&HITSrsectorID           );
+  Hits->SetBranchAddress("moduleID"        ,&HITSmoduleID            );
+  Hits->SetBranchAddress("submoduleID"     ,&HITSsubmoduleID         );
+  Hits->SetBranchAddress("crystalID"       ,&HITScrystalID           );
+  Hits->SetBranchAddress("layerID"         ,&HITSlayerID             );
+  Hits->SetBranchAddress("photonID"        ,&HITSphotonID            );
+  Hits->SetBranchAddress("nPhantomCompton" ,&HITSnPhantomCompton     );
+  Hits->SetBranchAddress("nCrystalCompton" ,&HITSnCrystalCompton     );
+  Hits->SetBranchAddress("nPhantomRayleigh",&HITSnPhantomRayleigh    );
+  Hits->SetBranchAddress("nCrystalRayleigh",&HITSnCrystalRayleigh    );
+  Hits->SetBranchAddress("primaryID"       ,&HITSprimaryID           );
+  Hits->SetBranchAddress("sourcePosX"      ,&HITSsourcePosX          );
+  Hits->SetBranchAddress("sourcePosY"      ,&HITSsourcePosY          );
+  Hits->SetBranchAddress("sourcePosZ"      ,&HITSsourcePosZ          );
+  Hits->SetBranchAddress("sourceID"        ,&HITSsourceID            );
+  Hits->SetBranchAddress("eventID"         ,&HITSeventID             );
+  Hits->SetBranchAddress("runID"           ,&HITSrunID               );
+  Hits->SetBranchAddress("axialPos"        ,&HITSaxialPos            );
+  Hits->SetBranchAddress("rotationAngle"   ,&HITSrotationAngle       );
+  // Hits->SetBranchAddress("volumeID"        ,&HITSvolumeID            );
+  // Hits->SetBranchAddress("processName"     ,&HITSprocessName         );
+  // Hits->SetBranchAddress("comptVolName"    ,&HITScomptVolName        );
+  // Hits->SetBranchAddress("RayleighVolName" ,&HITSRayleighVolName     );
 
-  //TTree Singles
-  Singles->SetBranchStatus("*",0); //WHY?
-  Singles->SetBranchAddress("runID",&SINGLESrunID);
-  Singles->SetBranchAddress("eventID",&SINGLESeventID);
-  Singles->SetBranchAddress("sourceID",&SINGLESsourceID);
-  Singles->SetBranchAddress("sourcePosX",&SINGLESsourcePosX);
-  Singles->SetBranchAddress("sourcePosY",&SINGLESsourcePosY);
-  Singles->SetBranchAddress("sourcePosZ",&SINGLESsourcePosZ);
-  Singles->SetBranchAddress("time",&SINGLEStime);
-  Singles->SetBranchAddress("energy",&SINGLESenergy);
-  Singles->SetBranchAddress("globalPosX",&SINGLESglobalPosX);
-  Singles->SetBranchAddress("globalPosY",&SINGLESglobalPosY);
-  Singles->SetBranchAddress("globalPosZ",&SINGLESglobalPosZ);
-  Singles->SetBranchAddress("gantryID",&SINGLESgantryID);
-  Singles->SetBranchAddress("rsectorID",&SINGLESrsectorID);
-  Singles->SetBranchAddress("moduleID",&SINGLESmoduleID);
-  Singles->SetBranchAddress("submoduleID",&SINGLESsubmoduleID);
-  Singles->SetBranchAddress("crystalID",&SINGLEScrystalID);
-  Singles->SetBranchAddress("layerID",&SINGLESlayerID);
-  Singles->SetBranchAddress("comptonPhantom",&SINGLEScomptonPhantom);
-  Singles->SetBranchAddress("comptonCrystal",&SINGLEScomptonCrystal);
-  Singles->SetBranchAddress("RayleighPhantom",&SINGLESRayleighPhantom);
-  Singles->SetBranchAddress("RayleighCrystal",&SINGLESRayleighCrystal);
-  Singles->SetBranchAddress("axialPos",&SINGLESaxialPos);
-  Singles->SetBranchAddress("rotationAngle",&SINGLESrotationAngle);
-  Singles->SetBranchAddress("comptVolName",&SINGLEScomptVolName);
-  Singles->SetBranchAddress("RayleighVolName",&SINGLESRayleighVolName);
 
-  //TTree Coincidences
-  Coincidences->SetBranchStatus("*",0); //WHY?
-  Coincidences->SetBranchAddress("axialPos",&CoincAxialPos);
-  Coincidences->SetBranchAddress("comptVolName1",&comptVolName1);
-  Coincidences->SetBranchAddress("comptVolName2",&comptVolName2);
-  Coincidences->SetBranchAddress("comptonCrystal1",&comptonCrystal1);
-  Coincidences->SetBranchAddress("comptonCrystal2",&comptonCrystal2);
-  Coincidences->SetBranchAddress("crystalID1",&crystalID1);
-  Coincidences->SetBranchAddress("crystalID2",&crystalID2);
-  Coincidences->SetBranchAddress("comptonPhantom1",&comptonPhantom1);
-  Coincidences->SetBranchAddress("comptonPhantom2",&comptonPhantom2);
-  Coincidences->SetBranchAddress("RayleighVolName1",&RayleighVolName1);
-  Coincidences->SetBranchAddress("RayleighVolName2",&RayleighVolName2);
-  Coincidences->SetBranchAddress("RayleighPhantom1",&RayleighPhantom1);
-  Coincidences->SetBranchAddress("RayleighPhantom2",&RayleighPhantom2);
-  Coincidences->SetBranchAddress("RayleighCrystal1",&RayleighCrystal1);
-  Coincidences->SetBranchAddress("RayleighCrystal2",&RayleighCrystal2);
-  Coincidences->SetBranchAddress("energy1",&energy1);
-  Coincidences->SetBranchAddress("energy2",&energy2);
-  Coincidences->SetBranchAddress("eventID1",&eventID1);
-  Coincidences->SetBranchAddress("eventID2",&eventID2);
-  Coincidences->SetBranchAddress("globalPosX1",&globalPosX1);
-  Coincidences->SetBranchAddress("globalPosX2",&globalPosX2);
-  Coincidences->SetBranchAddress("globalPosY1",&globalPosY1);
-  Coincidences->SetBranchAddress("globalPosY2",&globalPosY2);
-  Coincidences->SetBranchAddress("globalPosZ1",&globalPosZ1);
-  Coincidences->SetBranchAddress("globalPosZ2",&globalPosZ2);
-  Coincidences->SetBranchAddress("gantryID1",&gantryID1);
-  Coincidences->SetBranchAddress("gantryID2",&gantryID2);
-  Coincidences->SetBranchAddress("layerID1",&layerID1);
-  Coincidences->SetBranchAddress("layerID2",&layerID2);
-  Coincidences->SetBranchAddress("moduleID1",&moduleID1);
-  Coincidences->SetBranchAddress("moduleID2",&moduleID2);
-  Coincidences->SetBranchAddress("rotationAngle",&CoincRotationAngle);
-  Coincidences->SetBranchAddress("rsectorID1",&rsectorID1);
-  Coincidences->SetBranchAddress("rsectorID2",&rsectorID2);
-  Coincidences->SetBranchAddress("runID",&CoincRunID);
-  Coincidences->SetBranchAddress("sinogramS",&sinogramS);
-  Coincidences->SetBranchAddress("sinogramTheta",&sinogramTheta);
-  Coincidences->SetBranchAddress("sourceID1",&sourceID1);
-  Coincidences->SetBranchAddress("sourceID2",&sourceID2);
-  Coincidences->SetBranchAddress("sourcePosX1",&sourcePosX1);
-  Coincidences->SetBranchAddress("sourcePosX2",&sourcePosX2);
-  Coincidences->SetBranchAddress("sourcePosY1",&sourcePosY1);
-  Coincidences->SetBranchAddress("sourcePosY2",&sourcePosY2);
-  Coincidences->SetBranchAddress("sourcePosZ1",&sourcePosZ1);
-  Coincidences->SetBranchAddress("sourcePosZ2",&sourcePosZ2);
-  Coincidences->SetBranchAddress("submoduleID1",&submoduleID1);
-  Coincidences->SetBranchAddress("submoduleID2",&submoduleID2);
-  Coincidences->SetBranchAddress("time1",&time1);
-  Coincidences->SetBranchAddress("time2",&time2);
 
   Int_t HITSnentries = (Int_t)(Hits->GetEntries());
-  Int_t SINGLESCnentries = (Int_t)(Singles->GetEntries());
-  Int_t COINCnentries = (Int_t)(Coincidences->GetEntries());
   std::cout << "Number of hits         = " << HITSnentries << std::endl;
-  std::cout << "Number of singles      = " << SINGLESCnentries << std::endl;
-  std::cout << "Number of coincidences = " << COINCnentries << std::endl;
-
   Int_t eventsCheck = -1;
   std::vector<enDep> energyDeposition;
-
-
 
   //######################################################################################
   //#                        Parameters                                                  #
@@ -691,12 +611,12 @@ int main(int argc, char** argv)
 
   Int_t eventCounter = 0;
   int statuscounter = 0;
-  for (Int_t i = 0 ; i < (Int_t)(Hits->GetEntries()) ; i++)
+  for (Int_t i = 0 ; i < HITSnentries ; i++)
   // for (Int_t i = 1244500 ; i < 1244611 ; i++)
   // for (Int_t i = 0 ; i < 40 ; i++)
   {
     Hits->GetEntry(i); // each i is a energyDeposition
-    // std::cout<< eventsCheck << " " << HITSeventID << " " << HITStrackID <<  std::endl;
+    // std::cout<< i << " " <<  eventsCheck << " " << HITSeventID << " " << HITStrackID <<  std::endl;
 
     if(eventsCheck != HITSeventID)
     {
@@ -988,10 +908,6 @@ int main(int argc, char** argv)
             tempPoint.time = averageDepEvents[iAvg].time;
           }
 
-
-
-
-
           if(smearedEnergy)
           {
             tempPoint.energy = (Float_t) gaussianSmear(averageDepEvents[iAvg].energy,averageDepEvents[iAvg].energy*energyResolutionFWHM);
@@ -1006,6 +922,7 @@ int main(int argc, char** argv)
 
         // outAvg = averageDepEvents;
         // std::cout<< "aaaaaaaa" << std::endl;
+        // doDataset(points);
         outputTree->Fill();
         // std::cout<< "aaaaaaaa" << std::endl;
       }

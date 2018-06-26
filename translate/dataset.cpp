@@ -110,7 +110,7 @@ Float_t distance3D(Float_t ax, Float_t ay, Float_t az, Float_t bx, Float_t by, F
 {
  Float_t v[3] = {bx-ax, by-ay, bz-az};
  Float_t vMod = sqrt(pow(v[0],2) + pow(v[1],2) + pow(v[2],2));
- return vMod;
+ return fabs(vMod);
 }
 
 //STIR PART
@@ -552,23 +552,23 @@ int main(int argc, char** argv)
           float distance[3];
           Int_t SingleID;
           distance[0] = distance3D(points->at(0).x,
-                                         points->at(0).y,
-                                         points->at(0).z,
-                                         points->at(1).x,
-                                         points->at(1).y,
-                                         points->at(1).z);
+                                   points->at(0).y,
+                                   points->at(0).z,
+                                   points->at(1).x,
+                                   points->at(1).y,
+                                   points->at(1).z);
           distance[1] = distance3D(points->at(0).x,
-                                         points->at(0).y,
-                                         points->at(0).z,
-                                         points->at(2).x,
-                                         points->at(2).y,
-                                         points->at(2).z);
+                                   points->at(0).y,
+                                   points->at(0).z,
+                                   points->at(2).x,
+                                   points->at(2).y,
+                                   points->at(2).z);
           distance[2] = distance3D(points->at(2).x,
-                                         points->at(2).y,
-                                         points->at(2).z,
-                                         points->at(1).x,
-                                         points->at(1).y,
-                                         points->at(1).z);
+                                   points->at(2).y,
+                                   points->at(2).z,
+                                   points->at(1).x,
+                                   points->at(1).y,
+                                   points->at(1).z);
           float minDistance = INFINITY;
           int distanceID;
           for(int iMin = 0 ; iMin < 3 ; iMin++)
