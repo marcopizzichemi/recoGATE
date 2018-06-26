@@ -95,14 +95,23 @@ struct EventFormat {
 		float e2;
 	  u_int8_t n2;
 		float dt;
-	} __attribute__((__packed__));
+} __attribute__((__packed__));
 
 
-  struct primary_t
-  {
-    int id;
-    int num;
-  };
+struct primary_t
+{
+  int id;
+  int num;
+};
+
+
+  //distance between 2 points in 3d space
+Float_t distance3D(Float_t ax, Float_t ay, Float_t az, Float_t bx, Float_t by, Float_t bz)
+{
+ Float_t v[3] = {bx-ax, by-ay, bz-az};
+ Float_t vMod = sqrt(pow(v[0],2) + pow(v[1],2) + pow(v[2],2));
+ return vMod;
+}
 
 //STIR PART
 Float_t    Mich_r1r2fu[N_RINGS][N_RINGS][N_DET/2][S_WIDTH]={0};
@@ -504,183 +513,234 @@ int main(int argc, char** argv)
         //--------------------------//
         if(points->size() == 3)
         {
+          onlyThreeCrystals++;
 
           //using primaryID
           // find single event with primaryID
 
 
-          std::vector<primary_t> primaryCounter;
-          //look for different primaries
-          for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+          // std::vector<primary_t> primaryCounter;
+          // //look for different primaries
+          // for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+          // {
+          //   if(pCount == 0)
+          //   {
+          //     primary_t tempPrimary;
+          //     tempPrimary.id = points->at(pCount).primaryID;
+          //     tempPrimary.num = 1;
+          //     primaryCounter.push_back(tempPrimary);
+          //   }
+          //   else
+          //   {
+          //     for(Int_t prI = 0 ; prI < primaryCounter.size() ; prI++)
+          //     {
+          //       if(primaryCounter[prI].id == points->at(pCount).primaryID)
+          //       {
+          //         primaryCounter[prI].num++;
+          //       }
+          //       else
+          //       {
+          //         primary_t tempPrimary;
+          //         tempPrimary.id = points->at(pCount).primaryID;
+          //         tempPrimary.num = 1;
+          //         primaryCounter.push_back(tempPrimary);
+          //       }
+          //     }
+          //   }
+          // }
+
+          float distance[3];
+          Int_t SingleID;
+          distance[0] = distance3D(points->at(0).x,
+                                         points->at(0).y,
+                                         points->at(0).z,
+                                         points->at(1).x,
+                                         points->at(1).y,
+                                         points->at(1).z);
+          distance[1] = distance3D(points->at(0).x,
+                                         points->at(0).y,
+                                         points->at(0).z,
+                                         points->at(2).x,
+                                         points->at(2).y,
+                                         points->at(2).z);
+          distance[2] = distance3D(points->at(2).x,
+                                         points->at(2).y,
+                                         points->at(2).z,
+                                         points->at(1).x,
+                                         points->at(1).y,
+                                         points->at(1).z);
+          float minDistance = INFINITY;
+          int distanceID;
+          for(int iMin = 0 ; iMin < 3 ; iMin++)
           {
-            if(pCount == 0)
+            if(distance[iMin] < minDistance)
             {
-              primary_t tempPrimary;
-              tempPrimary.id = points->at(pCount).primaryID;
-              tempPrimary.num = 1;
-              primaryCounter.push_back(tempPrimary);
-            }
-            else
-            {
-              for(Int_t prI = 0 ; prI < primaryCounter.size() ; prI++)
-              {
-                if(primaryCounter[prI].id == points->at(pCount).primaryID)
-                {
-                  primaryCounter[prI].num++;
-                }
-                else
-                {
-                  primary_t tempPrimary;
-                  tempPrimary.id = points->at(pCount).primaryID;
-                  tempPrimary.num = 1;
-                  primaryCounter.push_back(tempPrimary);
-                }
-              }
+              minDistance = distance[iMin];
+              distanceID = iMin;
             }
           }
-          if(primaryCounter.size() == 2) // only if events from both primaries
+
+          if(distanceID == 0) // 2 is single, 0 and 1 summed
           {
-            onlyThreeCrystals++;
-            Int_t SinglePrimaryID;
-            Int_t SingleID;
-            if(primaryCounter[0].num == 1)
+            SingleID = 2;
+          }
+          if(distanceID == 1) // 1 is single, 0 and 2 summed
+          {
+            SingleID = 1;
+          }
+          if(distanceID == 2) // 0 is single, 1 and 2 summed
+          {
+            SingleID = 0;
+          }
+
+          // for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+          // {
+          //
+          // }
+          //
+          // // if(primaryCounter.size() == 2) // only if events from both primaries
+          // // {
+          //
+          // Int_t SinglePrimaryID;
+          //
+          // if(primaryCounter[0].num == 1)
+          // {
+          //   SinglePrimaryID = primaryCounter[0].id;
+          // }
+          // else
+          // {
+          //   SinglePrimaryID = primaryCounter[1].id;
+          // }
+
+          if(listmodeoutput)
+          {
+            EventFormat fe;
+            fe.ts     = timeCounter;
+            fe.random = 0;
+            fe.d      = plates_distance;
+            fe.yozRot = 0;
+
+            float sum_energy = 0;
+            float first_time = INFINITY;
+            Int_t firstCrystalID;
+            for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
             {
-              SinglePrimaryID = primaryCounter[0].id;
+              if(pCount == SingleID)
+              {
+                // SingleID = pCount;
+                //save first gamma
+                fe.x1     = points->at(pCount).x;
+                fe.y1     = points->at(pCount).y;
+                fe.z1     = points->at(pCount).z;
+                fe.e1     = points->at(pCount).energy * 1000;  // clearpem reco wants KeV
+                fe.n1     = 1;
+              }
+              else
+              {
+                //sum energy and find first point
+                sum_energy += points->at(pCount).energy;
+                if(points->at(pCount).time < first_time)
+                {
+                  first_time = points->at(pCount).time;
+                  firstCrystalID = pCount;
+                }
+              }
             }
-            else
+
+            if(1000.0*points->at(SingleID).energy > enMin && 1000.0*points->at(SingleID).energy < enMax && sum_energy*1000.0 > enMin && 1000.0*sum_energy < enMax) //energy limits
             {
-              SinglePrimaryID = primaryCounter[1].id;
+              onlyThreeCrystalsInEnergyWindow++; //baseline sensitivity
             }
 
-            if(listmodeoutput)
+            //---------------------------------------------//
+            //strategy a: calculate an average event
+            //---------------------------------------------//
+            float temp_x = 0;
+            float temp_y = 0;
+            float temp_z = 0;
+            for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
             {
-              EventFormat fe;
-              fe.ts     = timeCounter;
-              fe.random = 0;
-              fe.d      = plates_distance;
-              fe.yozRot = 0;
-
-              float sum_energy = 0;
-              float first_time = INFINITY;
-              Int_t firstCrystalID;
-              for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+              if(pCount != SingleID)
               {
-                if(points->at(pCount).primaryID == SinglePrimaryID)
-                {
-                  SingleID = pCount;
-                  //save first gamma
-                  fe.x1     = points->at(pCount).x;
-                  fe.y1     = points->at(pCount).y;
-                  fe.z1     = points->at(pCount).z;
-                  fe.e1     = points->at(pCount).energy * 1000;  // clearpem reco wants KeV
-                  fe.n1     = 1;
-                }
-                else
-                {
-                  //sum energy and find first point
-                  sum_energy += points->at(pCount).energy;
-                  if(points->at(pCount).time < first_time)
-                  {
-                    first_time = points->at(pCount).time;
-                    firstCrystalID = pCount;
-                  }
-                }
+                //average x,y,z
+                temp_x += (points->at(pCount).x * points->at(pCount).energy) / sum_energy;
+                temp_y += (points->at(pCount).y * points->at(pCount).energy) / sum_energy;
+                temp_z += (points->at(pCount).z * points->at(pCount).energy) / sum_energy;
               }
+            }
+            fe.x2     = temp_x;
+            fe.y2     = temp_y;
+            fe.z2     = temp_z;
+            fe.e2     = sum_energy * 1000.0;// clearpem reco wants KeV
+            fe.n2     = 1;
+            // fe.dt     = (double) (points->at(0).time - points->at(1).time);
+            fe.dt     = (double) (points->at(SingleID).time - first_time);
+            ofs3cry_avg.write((char*)&fe,sizeof(fe));
+            //---------------------------------------------//
 
-              if(1000.0*points->at(SingleID).energy > enMin && 1000.0*points->at(SingleID).energy < enMax && sum_energy*1000.0 > enMin && 1000.0*sum_energy < enMax) //energy limits
-              {
-                onlyThreeCrystalsInEnergyWindow++; //baseline sensitivity
-              }
 
-              //---------------------------------------------//
-              //strategy a: calculate an average event
-              //---------------------------------------------//
-              float temp_x = 0;
-              float temp_y = 0;
-              float temp_z = 0;
-              for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+            //---------------------------------------------//
+            //strategy b: assign first hit to greater charge
+            //---------------------------------------------//
+            Double_t maxEnergy = 0.0;
+            Int_t maxEnergyID = -1;
+            for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+            {
+              if(pCount != SingleID)
               {
-                if(pCount != SingleID)
+                if(points->at(pCount).energy >  maxEnergy)
                 {
-                  //average x,y,z
-                  temp_x += (points->at(pCount).x * points->at(pCount).energy) / sum_energy;
-                  temp_y += (points->at(pCount).y * points->at(pCount).energy) / sum_energy;
-                  temp_z += (points->at(pCount).z * points->at(pCount).energy) / sum_energy;
+                  maxEnergy = points->at(pCount).energy;
+                  maxEnergyID = pCount;
                 }
               }
-              fe.x2     = temp_x;
-              fe.y2     = temp_y;
-              fe.z2     = temp_z;
-              fe.e2     = sum_energy * 1000.0;// clearpem reco wants KeV
-              fe.n2     = 1;
-              // fe.dt     = (double) (points->at(0).time - points->at(1).time);
-              fe.dt     = (double) (points->at(SingleID).time - first_time);
-              ofs3cry_avg.write((char*)&fe,sizeof(fe));
-              //---------------------------------------------//
+            }
+            fe.x2     = points->at(maxEnergyID).x;
+            fe.y2     = points->at(maxEnergyID).y;
+            fe.z2     = points->at(maxEnergyID).z;
+            //fe.e2     = sum_energy * 1000.0;// clearpem reco wants KeV
+            // fe.n2     = 1;
+            // fe.dt     = (double) (points->at(0).time - points->at(1).time);
+            fe.dt     = (double) (points->at(SingleID).time - points->at(maxEnergyID).time);
+            ofs3cry_maxEnergy.write((char*)&fe,sizeof(fe));
+            //---------------------------------------------//
 
 
-              //---------------------------------------------//
-              //strategy b: assign first hit to greater charge
-              //---------------------------------------------//
-              Double_t maxEnergy = 0.0;
-              Int_t maxEnergyID = -1;
-              for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+            // ofs3cry_effCompton
+            //---------------------------------------------//
+            //strategy c: compton with efficiency
+            //---------------------------------------------//
+            Int_t otherID = -1;
+            for(int fastI = 0 ; fastI < 3 ; fastI++)
+            {
+              if(fastI != SingleID && fastI != firstCrystalID)
+              otherID = fastI;
+            }
+            for(int iEff = 0 ; iEff < effSteps ; iEff++)
+            {
+
+              float efficiency = min_efficiency + iEff*efficiency_step;
+              if(otherID == -1) std::cout << "ERROR!!!!!!!!!!!!" << std::endl;
+              // choose the right one with an efficiency
+              double dice = (double)rand() / (double)RAND_MAX;
+              Int_t chosenCryID;
+              if(dice <= efficiency)
               {
-                if(pCount != SingleID)
-                {
-                  if(points->at(pCount).energy >  maxEnergy)
-                  {
-                    maxEnergy = points->at(pCount).energy;
-                    maxEnergyID = pCount;
-                  }
-                }
+                chosenCryID = firstCrystalID;
               }
-              fe.x2     = points->at(maxEnergyID).x;
-              fe.y2     = points->at(maxEnergyID).y;
-              fe.z2     = points->at(maxEnergyID).z;
-              //fe.e2     = sum_energy * 1000.0;// clearpem reco wants KeV
-              // fe.n2     = 1;
-              // fe.dt     = (double) (points->at(0).time - points->at(1).time);
-              fe.dt     = (double) (points->at(SingleID).time - points->at(maxEnergyID).time);
-              ofs3cry_maxEnergy.write((char*)&fe,sizeof(fe));
-              //---------------------------------------------//
-
-
-              // ofs3cry_effCompton
-              //---------------------------------------------//
-              //strategy c: compton with efficiency
-              //---------------------------------------------//
-              Int_t otherID = -1;
-              for(int fastI = 0 ; fastI < 3 ; fastI++)
+              else
               {
-                if(fastI != SingleID && fastI != firstCrystalID)
-                otherID = fastI;
+                chosenCryID = otherID;
               }
-              for(int iEff = 0 ; iEff < effSteps ; iEff++)
-              {
 
-                float efficiency = min_efficiency + iEff*efficiency_step;
-                if(otherID == -1) std::cout << "ERROR!!!!!!!!!!!!" << std::endl;
-                // choose the right one with an efficiency
-                double dice = (double)rand() / (double)RAND_MAX;
-                Int_t chosenCryID;
-                if(dice <= efficiency)
-                {
-                  chosenCryID = firstCrystalID;
-                }
-                else
-                {
-                  chosenCryID = otherID;
-                }
-
-                fe.x2     = points->at(chosenCryID).x;
-                fe.y2     = points->at(chosenCryID).y;
-                fe.z2     = points->at(chosenCryID).z;
-                fe.dt     = (double) (points->at(SingleID).time - points->at(chosenCryID).time);
-                ofs3cry_effCompton[iEff]->write((char*)&fe,sizeof(fe));
-              }
+              fe.x2     = points->at(chosenCryID).x;
+              fe.y2     = points->at(chosenCryID).y;
+              fe.z2     = points->at(chosenCryID).z;
+              fe.dt     = (double) (points->at(SingleID).time - points->at(chosenCryID).time);
+              ofs3cry_effCompton[iEff]->write((char*)&fe,sizeof(fe));
             }
           }
+
 
 
 
