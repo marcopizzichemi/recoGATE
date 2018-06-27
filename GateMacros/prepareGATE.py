@@ -54,7 +54,7 @@ def main(argv):
      runtype = 1
    elif args.runtype == 'full':
      runtype = 2
- elif args.runtype == 'spatialres':
+   elif args.runtype == 'spatialres':
      runtype = 3
    else:
      print 'ERROR: runtype needs to be one of <normalization|sources|full|spatialres>'
