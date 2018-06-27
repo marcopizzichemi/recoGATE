@@ -1,0 +1,15 @@
+# this is the cylinder
+/gate/source/addSource sourceNa22Large
+/gate/source/sourceNa22Large/setType backtoback
+/gate/source/sourceNa22Large/gps/centre 0. 0. 0. mm
+/gate/source/sourceNa22Large/gps/particle gamma
+/gate/source/sourceNa22Large/gps/energytype Mono
+/gate/source/sourceNa22Large/gps/monoenergy 0.511 MeV
+/gate/source/sourceNa22Large/gps/type Volume
+/gate/source/sourceNa22Large/gps/shape Cylinder
+/gate/source/sourceNa22Large/gps/radius 125 mm
+/gate/source/sourceNa22Large/gps/halfz 104 mm
+/gate/source/sourceNa22Large/gps/angtype iso
+
+/gate/source/sourceNa22Large/attachTo cylinderSource
+/gate/source/sourceNa22Large/setActivity 20800000 becquerel

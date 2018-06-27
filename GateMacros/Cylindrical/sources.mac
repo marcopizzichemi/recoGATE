@@ -199,22 +199,22 @@
 
 # small sources (0.3 mm diameter), activity/mm3 = bg x 10 for detectability test
 # high activity for spatial resolution test
-/gate/source/source0_0/setActivity 100000 becquerel
-/gate/source/source0_1/setActivity 100000 becquerel
-/gate/source/source0_2/setActivity 100000 becquerel
-/gate/source/source0_3/setActivity 100000 becquerel
-/gate/source/source0_4/setActivity 100000 becquerel
-/gate/source/source0_5/setActivity 100000 becquerel
-/gate/source/source0_6/setActivity 100000 becquerel
-/gate/source/source0_7/setActivity 100000 becquerel
-/gate/source/source1_0/setActivity 100000 becquerel
-/gate/source/source1_1/setActivity 100000 becquerel
-/gate/source/source1_2/setActivity 100000 becquerel
-/gate/source/source1_3/setActivity 100000 becquerel
-/gate/source/source1_4/setActivity 100000 becquerel
-/gate/source/source1_5/setActivity 100000 becquerel
-/gate/source/source1_6/setActivity 100000 becquerel
-/gate/source/source1_7/setActivity 100000 becquerel
+/gate/source/source0_0/setActivity 0.144 becquerel
+/gate/source/source0_1/setActivity 0.144 becquerel
+/gate/source/source0_2/setActivity 0.144 becquerel
+/gate/source/source0_3/setActivity 0.144 becquerel
+/gate/source/source0_4/setActivity 0.144 becquerel
+/gate/source/source0_5/setActivity 0.144 becquerel
+/gate/source/source0_6/setActivity 0.144 becquerel
+/gate/source/source0_7/setActivity 0.144 becquerel
+/gate/source/source1_0/setActivity 0.144 becquerel
+/gate/source/source1_1/setActivity 0.144 becquerel
+/gate/source/source1_2/setActivity 0.144 becquerel
+/gate/source/source1_3/setActivity 0.144 becquerel
+/gate/source/source1_4/setActivity 0.144 becquerel
+/gate/source/source1_5/setActivity 0.144 becquerel
+/gate/source/source1_6/setActivity 0.144 becquerel
+/gate/source/source1_7/setActivity 0.144 becquerel
 
 
 
@@ -234,4 +234,3 @@
 #/gate/source/source1_5/visualize 1000 red 2
 #/gate/source/source1_6/visualize 1000 red 2
 #/gate/source/source1_7/visualize 1000 red 2
-

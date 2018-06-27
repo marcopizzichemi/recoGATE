@@ -54,8 +54,10 @@ def main(argv):
      runtype = 1
    elif args.runtype == 'full':
      runtype = 2
+ elif args.runtype == 'spatialres':
+     runtype = 3
    else:
-     print 'ERROR: runtype needs to be one of <normalization|sources|full>'
+     print 'ERROR: runtype needs to be one of <normalization|sources|full|spatialres>'
      return 1
 
 
@@ -150,9 +152,12 @@ def main(argv):
        f.write("/control/execute %s/background.mac \n" % macros)
      if runtype == 1: # sources run
        f.write("/control/execute %s/SNR_sources.mac \n" % macros)
-     if runtype == 2: # full run with multiple sources and background. remember to change the activities... todo
+     if runtype == 2: # full run with SNR sources and background
        f.write("/control/execute %s/SNR_source.mac \n" % macros)
        f.write("/control/execute %s/sourceCylinder.mac \n" % macros)
+     if runtype == 3: # full run with multiple sources and background
+       f.write("/control/execute %s/sources.mac \n" %macros )
+       f.write("/control/execute %s/sourceCylinderLarge.mac \n" % macros)
      f.write("# ROTATE ALL FOV                                       \n")
      f.write("/gate/cylindricalPET/placement/setRotationAxis 0 1 0   \n")
      f.write("/gate/cylindricalPET/placement/setRotationAngle 90 deg \n")
