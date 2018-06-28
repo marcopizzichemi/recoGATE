@@ -33,7 +33,7 @@ fi
 #start chain
 pigz -d -c ${inputFile} > cat_pipe &
 ${binfolder}/elm2todkfz -o lmf_pipe --energy-low ${eMin} --energy-high ${eMax} --time-window ${dt} --scatter-total-events scatter.txt - < cat_pipe &
-${binfolder}/ClearPEM_LMRec -i lmf_pipe -d ${distance} --axial-size ${axial} --pixel-length ${pixel} --threads ${threads} -n ${sensitivity} -o ${output}
+${binfolder}/ClearPEM_LMRec -i lmf_pipe -d ${distance} --axial-size ${axial} --pixel-length ${pixel} --threads ${threads} --save-iterations 1 -n ${sensitivity} -o ${output}
 
 #remove pipes
 rm cat_pipe
