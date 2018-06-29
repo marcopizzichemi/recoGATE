@@ -1,0 +1,46 @@
+# VISUALITATION
+/vis/disable
+#/control/execute ./visu.mac
+
+# MATERIALS AND PHYSICS
+/gate/geometry/setMaterialDatabase ./GateMaterials.db
+/control/execute ./physics.mac
+/gate/random/setEngineSeed 123456789
+
+# GEOMETRY
+/control/execute ./geometry.mac    # 2 plates about as big as clearpem
+/control/execute ./attachToSystem.mac
+
+# INITIALIZE
+/gate/run/initialize
+
+# SOURCES
+#/control/execute ./sourceCylinderLarge.mac    # background cylinder, can be bg to the sources or the uniform cylinder for Normalization
+#/control/execute ./sourceCylinder.mac    # background cylinder, can be bg to the sources or the uniform cylinder for Normalization
+/control/execute ./sources.mac        # point sources
+#/control/execute ./SNR_source.mac
+# /control/execute ./derenzo_geom.mac        # derenzo phantom
+
+# ROTATE ALL FOV
+/gate/cylindricalPET/placement/setRotationAxis 0 1 0
+/gate/cylindricalPET/placement/setRotationAngle 90 deg
+/gate/cylinderSource/placement/setRotationAxis 0 1 0
+/gate/cylinderSource/placement/setRotationAngle 90 deg
+
+
+/gate/geometry/rebuild
+
+# OUTPUT
+# ROOT Output format
+/gate/output/root/enable
+/gate/output/root/setFileName Sources
+/gate/output/root/setRootSinglesFlag 0
+/gate/output/root/setRootCoincidencesFlag 0
+
+# SIMULATION DURATION
+/gate/application/setTimeSlice     0.001  s
+/gate/application/setTimeStart     0.   s
+/gate/application/setTimeStop      0.001  s
+
+# S T A R T   T H E   A C Q U I S I T I O N
+#/gate/application/startDAQ

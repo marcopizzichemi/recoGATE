@@ -1,0 +1,17 @@
+# B A C K G R O U N D
+/gate/source/addSource background
+/gate/source/background/setType backtoback
+/gate/source/background/gps/centre 0. 0. 0. mm
+/gate/source/background/gps/particle gamma
+/gate/source/background/gps/energytype Mono
+/gate/source/background/gps/monoenergy 0.511 MeV
+/gate/source/background/gps/type Volume
+/gate/source/background/gps/shape Cylinder
+/gate/source/background/gps/radius 100 mm
+/gate/source/background/gps/halfz 91 mm
+/gate/source/background/gps/angtype iso
+
+# attach to the volume that will rotate
+/gate/source/background/attachTo cylinderSource
+/gate/source/background/setActivity 1000000 becquerel
+#/gate/source/background/visualize 1000 red 2
