@@ -7,8 +7,8 @@
 /gate/source/background/gps/monoenergy 0.511 MeV
 /gate/source/background/gps/type Volume
 /gate/source/background/gps/shape Cylinder
-/gate/source/background/gps/radius 45 mm
-/gate/source/background/gps/halfz 58 mm
+/gate/source/background/gps/radius 49 mm
+/gate/source/background/gps/halfz 58.5 mm
 /gate/source/background/gps/angtype iso
 
 # attach to the volume that will rotate
