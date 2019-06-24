@@ -173,6 +173,7 @@ int main(int argc, char** argv)
   int effSteps = 11;
   float min_efficiency = 0.5;
   float max_efficiency = 1.0;
+  float gammaEnergy = 511.0;
 
   static struct option longOptions[] =
   {
@@ -185,6 +186,7 @@ int main(int argc, char** argv)
       { "stir-output",no_argument, 0, 0},
       { "no-background",no_argument, 0, 0},
       { "rotation-angle",required_argument, 0, 0},
+      { "gamma-energy",required_argument, 0, 0},
 			{ NULL, 0, 0, 0 }
 	};
 
@@ -236,6 +238,9 @@ int main(int argc, char** argv)
     else if (c == 0 && optionIndex == 7){
       rotationAngle = atof((char *)optarg);
     }
+    else if (c == 0 && optionIndex == 8){
+      gammaEnergy = atof((char *)optarg);
+    }
 		else { //FIXME
 			std::cout	<< "Usage: " << argv[0] << std::endl
 			<< "\t\t" << "[ -i <input file> ] " << std::endl
@@ -257,8 +262,10 @@ int main(int argc, char** argv)
 		}
 	}
 
-  enMin = 511.0 - (511.0 * energyFwhm);
-  enMax = 511.0 + 2.0*(511.0 * energyFwhm);
+
+
+  enMin =gammaEnergy - (gammaEnergy * energyFwhm);
+  enMax = gammaEnergy + 2.0*(gammaEnergy * energyFwhm);
   std::cout << "Rotation angle is = " << rotationAngle << std::endl;
   std::cout << "Input file name is " << inputfilename << std::endl;
   TFile *inputFile = TFile::Open(inputfilename.c_str());
@@ -436,11 +443,20 @@ int main(int argc, char** argv)
   Int_t onlyTwoCrystals = 0;
   Int_t onlyThreeCrystals = 0;
   Int_t onlyFourCrystals = 0;
+  Int_t NoCrystals = 0;
+
   Int_t moreThanFourCrystals = 0;
+  Int_t onlyOneCrystalsInEnergyWindow = 0;
   Int_t onlyTwoCrystalsInEnergyWindow = 0;
   Int_t onlyThreeCrystalsInEnergyWindow = 0;
-  // Int_t onlyFourCrystalsInEnergyWindow = 0;
-  // Int_t moreThanFourCrystalsInEnergyWindow = 0;
+  Int_t onlyFourCrystalsInEnergyWindow = 0;
+  Int_t moreThanFourCrystalsInEnergyWindow = 0;
+  Int_t onlyTwoCrystalsHitBySameGammaInEnergyWindow = 0;
+
+  Int_t twoCrystalsSamePrimary = 0;
+  Int_t twoCrystalsDiffPrimary = 0;
+  Int_t moreThanThreeCrystals = 0;
+  Int_t moreThanThreeCrystalsInEnergyWindow = 0;
 
   //COMPTON efficiency parameter
 
@@ -453,6 +469,11 @@ int main(int argc, char** argv)
     timeCounter += 1e-6;
     Pairs pair;  //the output pair
 
+    if(points->size() == 0)
+    {
+      NoCrystals++;
+    }
+
     if(points->size() > 0) //why points == 0????
     {
       // std::cout << points->at(0).sourceID << std::endl;
@@ -464,9 +485,14 @@ int main(int argc, char** argv)
       }
       else
       {
-        if(points->size() < 2)  //single crystal hit, count and discard
+        if(points->size() == 1)  //single crystal hit, count and discard
         {
           onlyOneCrystals++;
+          if(1000.0*points->at(0).energy > enMin &&
+             1000.0*points->at(0).energy < enMax ) //energy limits
+          {
+            onlyOneCrystalsInEnergyWindow++;
+          }
         }
         //--------------------------//
 
@@ -477,14 +503,36 @@ int main(int argc, char** argv)
         if(points->size() == 2)
         {
           onlyTwoCrystals++;
-          if(1000.0*points->at(0).energy > enMin &&
-             1000.0*points->at(0).energy < enMax &&
-             1000.0*points->at(1).energy > enMin &&
-             1000.0*points->at(1).energy < enMax) //energy limits
+          if(points->at(0).primaryID == points->at(1).primaryID)
           {
-            onlyTwoCrystalsInEnergyWindow++; //baseline sensitivity
+            twoCrystalsSamePrimary++;
+            // onlyTwoCrystalsHitBySameGamma++;
+            float sum_energy_for_compton_camera = 1000.0*points->at(0).energy + 1000.0*points->at(1).energy;
+            if(sum_energy_for_compton_camera > enMin &&
+               sum_energy_for_compton_camera < enMax) //energy limits
+            {
+              onlyTwoCrystalsHitBySameGammaInEnergyWindow++; //baseline sensitivity
+            }
           }
-          if(listmodeoutput)
+          else
+          {
+            twoCrystalsDiffPrimary++;
+            // classic PET event, two crystals hit, 511 KeV in each crystal
+            if(1000.0*points->at(0).energy > enMin &&
+               1000.0*points->at(0).energy < enMax &&
+               1000.0*points->at(1).energy > enMin &&
+               1000.0*points->at(1).energy < enMax) //energy limits
+            {
+              onlyTwoCrystalsInEnergyWindow++; //baseline sensitivity
+            }
+          }
+
+
+
+
+
+
+          if(listmodeoutput) //save anyway all the coincidences, even with wrong energy, they are filtered by reco
           {
             EventFormat fe;
             fe.ts     = timeCounter;
@@ -960,15 +1008,15 @@ int main(int argc, char** argv)
         if(points->size() == 4)
         {
           onlyFourCrystals++;
-          // float sum_energy = 0;
-          // for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
-          // {
-          //   sum_energy += points->at(pCount).energy;
-          // }
-          // if(1000.0*sum_energy > 2.0*enMin && 1000.0*sum_energy < 2.0*enMax)
-          // {
-          //   onlyFourCrystalsInEnergyWindow++;
-          // }
+          float sum_energy = 0;
+          for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+          {
+            sum_energy += points->at(pCount).energy;
+          }
+          if(1000.0*sum_energy > 2.0*enMin && 1000.0*sum_energy < 2.0*enMax)
+          {
+            onlyFourCrystalsInEnergyWindow++;
+          }
 
         }
         //--------------------------//
@@ -980,15 +1028,15 @@ int main(int argc, char** argv)
         if(points->size() > 4)
         {
           moreThanFourCrystals++;
-          // float sum_energy = 0;
-          // for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
-          // {
-          //   sum_energy += points->at(pCount).energy;
-          // }
-          // if(1000.0*sum_energy > 2.0*enMin && 1000.0*sum_energy < 2.0*enMax)
-          // {
-          //   moreThanFourCrystalsInEnergyWindow++;
-          // }
+          float sum_energy = 0;
+          for(Int_t pCount = 0 ; pCount < points->size() ; pCount++)
+          {
+            sum_energy += points->at(pCount).energy;
+          }
+          if(1000.0*sum_energy > 2.0*enMin && 1000.0*sum_energy < 2.0*enMax)
+          {
+            moreThanFourCrystalsInEnergyWindow++;
+          }
         }
         //--------------------------//
 
@@ -1007,20 +1055,61 @@ int main(int argc, char** argv)
   std::cout << std::endl;
 
   //SENSITIVITY COUNTS
-  std::cout << "Total dataset                               = " << nsamples << std::endl;
-  std::cout << "Only 1 crystal                              = " << onlyOneCrystals      << std::endl;
-  std::cout << "Only 2 crystals  [all - in energy window]   = " << onlyTwoCrystals      << " - " << onlyTwoCrystalsInEnergyWindow   <<  std::endl;
-  std::cout << "Only 3 crystals  [all - in energy window]   = " << onlyThreeCrystals    << " - " << onlyThreeCrystalsInEnergyWindow <<  std::endl;
-  std::cout << "Only 4 crystals                             = " << onlyFourCrystals     << std::endl;
-  std::cout << "More than 4 crystals                        = " << moreThanFourCrystals << std::endl;
+  std::cout << "Total interactions with det.           = " << nsamples << std::endl;
+  std::cout << "0 crystals hit                         = " << NoCrystals <<  std::endl;
+  std::cout << "1 crystal hit                          = " << onlyOneCrystals <<  std::endl;
+  std::cout << "1 crystal hit - in energy. window      = " << onlyOneCrystalsInEnergyWindow <<  std::endl;
+  std::cout << "2 crystals hit                         = " << onlyTwoCrystals <<  std::endl;
+  std::cout << "2 crystals same primary                = " << twoCrystalsSamePrimary <<  std::endl;
+  std::cout << "2 cry same primary - in energy. window = " << onlyTwoCrystalsHitBySameGammaInEnergyWindow <<  std::endl;
+  std::cout << "2 crystals diff primary                = " << twoCrystalsDiffPrimary <<  std::endl;
+  std::cout << "2 cry diff primary - in energy. window = " << onlyTwoCrystalsInEnergyWindow <<  std::endl;
+  std::cout << "3 crystals hit                         = " << onlyThreeCrystals <<  std::endl;
+  std::cout << "3 crystals hit - in energy. window     = " << onlyThreeCrystalsInEnergyWindow <<  std::endl;
+  std::cout << "4 crystals hit                         = " << onlyFourCrystals <<  std::endl;
+  std::cout << "4 crystals hit - in energy. window     = " << onlyFourCrystalsInEnergyWindow <<  std::endl;
+  std::cout << "More than 4 crystals hit               = " << moreThanFourCrystals <<  std::endl;
+  std::cout << "More than 4 - in energy. window        = " << moreThanFourCrystalsInEnergyWindow <<  std::endl;
 
 
-  summary_out << "Total dataset                               = " << nsamples << std::endl;
-  summary_out << "Only 1 crystal                              = " << onlyOneCrystals      << std::endl;
-  summary_out << "Only 2 crystals  [all - in energy window]   = " << onlyTwoCrystals      << " - " << onlyTwoCrystalsInEnergyWindow   <<  std::endl;
-  summary_out << "Only 3 crystals  [all - in energy window]   = " << onlyThreeCrystals    << " - " << onlyThreeCrystalsInEnergyWindow <<  std::endl;
-  summary_out << "Only 4 crystals                             = " << onlyFourCrystals     << std::endl;
-  summary_out << "More than 4 crystals                        = " << moreThanFourCrystals << std::endl;
+  //SENSITIVITY COUNTS
+  summary_out << "Total interactions with det.           = " << nsamples << std::endl;
+  summary_out << "0 crystals hit                         = " << NoCrystals <<  std::endl;
+  summary_out << "1 crystal hit                          = " << onlyOneCrystals <<  std::endl;
+  summary_out << "1 crystal hit - in energy. window      = " << onlyOneCrystalsInEnergyWindow <<  std::endl;
+  summary_out << "2 crystals hit                         = " << onlyTwoCrystals <<  std::endl;
+  summary_out << "2 crystals same primary                = " << twoCrystalsSamePrimary <<  std::endl;
+  summary_out << "2 cry same primary - in energy. window = " << onlyTwoCrystalsHitBySameGammaInEnergyWindow <<  summary_out;
+  summary_out << "2 crystals diff primary                = " << twoCrystalsDiffPrimary <<  std::endl;
+  summary_out << "2 cry diff primary - in energy. window = " << onlyTwoCrystalsInEnergyWindow <<  std::endl;
+  summary_out << "3 crystals hit                         = " << onlyThreeCrystals <<  std::endl;
+  summary_out << "3 crystals hit - in energy. window     = " << onlyThreeCrystalsInEnergyWindow <<  std::endl;
+  summary_out << "4 crystals hit                         = " << onlyFourCrystals <<  std::endl;
+  summary_out << "4 crystals hit - in energy. window     = " << onlyFourCrystalsInEnergyWindow <<  std::endl;
+  summary_out << "More than 4 crystals hit               = " << moreThanFourCrystals <<  std::endl;
+  summary_out << "More than 4 - in energy. window        = " << moreThanFourCrystalsInEnergyWindow <<  std::endl;
+  // std::cout << "Only 1 crystal   [all - in energy window]   = " << onlyOneCrystals   << " - " << onlyOneCrystalsInEnergyWindow   << std::endl;
+  // std::cout << "Only 2 crystals  [all - in energy window]   = " << onlyTwoCrystals      << " - " << onlyTwoCrystalsInEnergyWindow   <<  std::endl;
+  //
+  // std::cout <<
+  //
+  // onlyTwoCrystalsHitBySameGamma
+  // onlyTwoCrystalsHitBySameGammaInEnergyWindow
+  //
+  // "onlyTwoCrystalsFromSameGammaInEnergyWindow   = " << onlyTwoCrystalsFromSameGammaInEnergyWindow  <<  std::endl;
+  //
+  //
+  // std::cout << "Only 3 crystals  [all - in energy window]   = " << onlyThreeCrystals    << " - " << onlyThreeCrystalsInEnergyWindow <<  std::endl;
+  // std::cout << "Only 4 crystals                             = " << onlyFourCrystals     << std::endl;
+  // std::cout << "More than 4 crystals                        = " << moreThanFourCrystals << std::endl;
+  //
+  //
+  // summary_out << "Total dataset                               = " << nsamples << std::endl;
+  // summary_out << "Only 1 crystal   [all - in energy window]   = " << onlyOneCrystals   << " - " << onlyOneCrystalsInEnergyWindow   << std::endl;
+  // summary_out << "Only 2 crystals  [all - in energy window]   = " << onlyTwoCrystals      << " - " << onlyTwoCrystalsInEnergyWindow   <<  std::endl;
+  // summary_out << "Only 3 crystals  [all - in energy window]   = " << onlyThreeCrystals    << " - " << onlyThreeCrystalsInEnergyWindow <<  std::endl;
+  // summary_out << "Only 4 crystals                             = " << onlyFourCrystals     << std::endl;
+  // summary_out << "More than 4 crystals                        = " << moreThanFourCrystals << std::endl;
 
   // Write the data to disk, and then close Michelogram file...
   //----------------------------------------------------------------

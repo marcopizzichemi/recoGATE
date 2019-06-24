@@ -620,6 +620,7 @@ int main(int argc, char** argv)
 
     if(eventsCheck != HITSeventID)
     {
+      eventCounter++;
       int CurrentID = -1;
       // "average" what happened into each crystal
       // stackingaction in g4 is last-in-first-out so we need to sort energyDeposition before we check what crystal was hit first (needed in gATE?)
@@ -978,6 +979,7 @@ int main(int argc, char** argv)
 
   }
   std::cout << std::endl;
+  std::cout << "eventCounter = " << eventCounter <<  std::endl;
 
 
   outputFile->cd();
